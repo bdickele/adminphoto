@@ -1,0 +1,47 @@
+@main("Categories")(){
+
+@menu.topmenu(views.menu.TopMenuElement.Category)
+
+<br>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Category management
+    </div>
+    <div class="panel-body">
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-plus"></span> Add
+            </button>
+        </div>
+        <br><br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th style="text-align:center;">Nom</th>
+                <th style="text-align:center;">Online</th>
+                <th style="text-align:center;">Up</th>
+                <th style="text-align:center;">Down</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>2013</td>
+                <td style="text-align:center;"><label><input type="checkbox" checked></label></td>
+                <td style="text-align:center;">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-chevron-up"></span>
+                    </button>
+                </td>
+                <td style="text-align:center;">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+}

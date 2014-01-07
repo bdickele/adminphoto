@@ -17,7 +17,7 @@ case class PictureFolders(mainFolders: List[FolderYear])
 
 /**
  * "Main" folder
- * @param name Name such as 2004
+ * @param name Name, for instance 2004
  * @param folders List of sub-folder names
  */
 case class FolderYear(name: String, folders: List[String])
