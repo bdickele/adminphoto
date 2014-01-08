@@ -1,7 +1,10 @@
 @(index: views.menu.TopMenuElement.Value)
+
+@import views.menu.TopMenuElement
+
 <br>
 <ul class="nav nav-pills nav-justified">
-    <li @if(index==views.menu.TopMenuElement.Gallery){class="active"}><a href="@controllers.routes.Galleries.main()">Galleries</a></li>
-    <li @if(index==views.menu.TopMenuElement.Picture){class="active"}><a href="@controllers.routes.Pictures.main()">Pictures</a></li>
-    <li @if(index==views.menu.TopMenuElement.Category){class="active"}><a href="@controllers.routes.Categories.main()">Categories</a></li>
+    <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.routes.Galleries.main()">Galleries</a></li>
+    <li @if(index==TopMenuElement.Picture){class="active"}><a href="@controllers.routes.Pictures.pictures0()">Pictures</a></li>
+    <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.routes.Categories.main()">Categories</a></li>
 </ul>

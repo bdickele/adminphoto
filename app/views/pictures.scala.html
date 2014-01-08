@@ -1,0 +1,40 @@
+@(mainFolders: List[String], subFolders: List[String], mainFolder: String, subFolder: String)
+
+@main("Pictures")() {
+
+@menu.topmenu(views.menu.TopMenuElement.Picture)
+
+<br>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Folder :
+        <select name="folder1" id="folder1" class="input-sm">
+            @for(mainFolder <- mainFolders) {
+                <option value="@mainFolder">@mainFolder</option>
+            }
+        </select>
+
+        &nbsp;&nbsp; Sub-folder :
+        <select name="folder2" id="folder2" class="input-sm">
+            @for(subFolder <- subFolders) {
+                <option value="@subFolder">@subFolder</option>
+            }
+
+        </select>
+
+        &nbsp;&nbsp;<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-refresh"></i> Rescan list of folders</button>
+    </div>
+
+    <div class="panel-body">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm">
+                <i class="glyphicon glyphicon-refresh"></i> Rescan
+            </button>
+        </div>
+        <br><br>
+
+    </div>
+</div>
+
+}

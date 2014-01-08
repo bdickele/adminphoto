@@ -16,15 +16,15 @@ class PictureSpec extends Specification {
 
   "The list of categories" should {
     "contains references from 2004 to 2013" in {
-      val actual = mainFolders.map(f => f.name).toList
-      actual must equalTo(List("2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013"))
+      val actual = mainFolders
+      actual must equalTo(List("2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004"))
     }
+  }
 
-    "contains 2004 with 2 galleries : misc and venise" in {
-      val first = mainFolders.head
-
-      first.name must equalTo("2004")
-      first.folders must equalTo(List("0406_misc", "0408_venise"))
+  "The list of sub-folders for 2004" should {
+    "contains 2 galleries : misc and venise" in {
+      val subFolderNames = Picture.subFolders(mainFolders.last)
+      subFolderNames must equalTo(List("0406_misc", "0408_venise"))
     }
   }
 
