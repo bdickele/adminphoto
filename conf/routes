@@ -6,8 +6,8 @@
 GET     /                                   controllers.Application.index
 
 GET     /galleries                          controllers.Galleries.main
-GET     /pictures                           controllers.Pictures.pictures0()
-GET     /pictures/refresh                   controllers.Pictures.refreshFolders()
+GET     /pictures                           controllers.Pictures.pictures0
+GET     /pictures/refreshFolders            controllers.Pictures.refreshFolders
 GET     /pictures/:mainFolder               controllers.Pictures.pictures1(mainFolder)
 GET     /pictures/:mainFolder/:subFolder    controllers.Pictures.pictures2(mainFolder, subFolder)
 GET     /categories                         controllers.Categories.main

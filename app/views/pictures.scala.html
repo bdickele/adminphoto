@@ -1,6 +1,22 @@
-@(mainFolders: List[String], subFolders: List[String], mainFolder: String, subFolder: String)
+@(mainFolders: List[String], subFolders: List[String],
+    selectedMainFolder: String, selectedSubFolder: String,
+    pictures: List[models.PicturePath])
 
-@main("Pictures")() {
+@**********************************
+ Number of rows required
+ *********************************@
+@numberOfRows(nbPics: Integer) = @{
+    val picPerRow = 4
+    var nbFullRows = nbPics / picPerRow
+    //if ((nbPics % picPerRow) > 0) {
+        //nbRows = nbRows + 1
+    //}
+    nbFullRows
+}
+
+@main("Pictures"){
+    <script src='@routes.Assets.at("javascripts/pictures.js")'></script>
+} {
 
 @menu.topmenu(views.menu.TopMenuElement.Picture)
 
@@ -11,30 +27,39 @@
         Folder :
         <select name="folder1" id="folder1" class="input-sm">
             @for(mainFolder <- mainFolders) {
-                <option value="@mainFolder">@mainFolder</option>
+                <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
             }
         </select>
 
         &nbsp;&nbsp; Sub-folder :
         <select name="folder2" id="folder2" class="input-sm">
             @for(subFolder <- subFolders) {
-                <option value="@subFolder">@subFolder</option>
+                <option value="@subFolder" @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
             }
 
         </select>
 
-        &nbsp;&nbsp;<button type="button" class="btn btn-default btn-sm"><i class="glyphicon glyphicon-refresh"></i> Rescan list of folders</button>
+        &nbsp;&nbsp;
+        <button type="button" class="btn btn-default btn-sm" id="rescanFolders">
+            <i class="glyphicon glyphicon-refresh"></i> Refresh list of folders
+        </button>
     </div>
 
     <div class="panel-body">
         <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm">
-                <i class="glyphicon glyphicon-refresh"></i> Rescan
+                <i class="glyphicon glyphicon-refresh"></i> Refresh list of pictures
             </button>
         </div>
         <br><br>
 
+
+        @for(picture <- pictures) {
+            <img src='@picture.thumbnailComplete'>
+        }
     </div>
 </div>
+
+
 
 }

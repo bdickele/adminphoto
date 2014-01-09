@@ -35,7 +35,8 @@ object Pictures extends Controller {
       case None => subFolders.head
     }
 
-    Ok(views.html.pictures(mainFolders, subFolders, mainFolderName, subFolderName))
+    Ok(views.html.pictures(mainFolders, subFolders, mainFolderName, subFolderName,
+      Picture.pictures(mainFolderName, subFolderName)))
   }
 
 }

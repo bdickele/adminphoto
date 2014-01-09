@@ -10,13 +10,6 @@ import java.io.File
  */
 
 /**
- * "Main" folder
- * @param name Name, for instance 2004
- * @param folders List of sub-folder names
- */
-case class FolderYear(name: String, folders: List[String])
-
-/**
  * <p>Paths for a picture : complete and short versions (without root of photo stock).<br>
  * Complete paths are there so that picture can be displayed in the admin web site.<br>
  * Short ones are stored in the DB</p>
@@ -26,7 +19,7 @@ case class FolderYear(name: String, folders: List[String])
  * @param webShort Short path to web version (mandatory)
  * @param printShort Short path to print version (optional)
  */
-case class Picture(thumbnailComplete: String,
+case class PicturePath(thumbnailComplete: String,
                    webComplete: String,
                    thumbnailShort: String,
                    webShort: String,
@@ -36,6 +29,7 @@ object Picture {
 
   // TODO Mettre LocalRoot dans application.conf
   val LocalRoot = "/Users/bdickele/Dev/www/photostock/"
+  val WebRoot = "http://www.dickele.com/photostock/"
   val FolderWeb = "web/"
   val FolderThumbnail = "thumbnail/"
   val FolderPrint = "print/"
@@ -45,7 +39,7 @@ object Picture {
 
   /** Clear cache from main and sub folders */
   def clearCache =
-    (Cache.getAs[List[String]](CacheMainFolders): @unchecked) match {
+    Cache.getAs[List[String]](CacheMainFolders) match {
       case Some(list) => {
         // Clearing cache of sub folders
         for (name <- list) {
@@ -54,6 +48,7 @@ object Picture {
         // Clearing cache of main folders
         Cache.remove(CacheMainFolders)
       }
+      case None => // Nothing to do
     }
 
   /** @return picture folders from cache or load it if not already cached */
@@ -66,7 +61,7 @@ object Picture {
   def mainFolders: List[String] =
     new File(LocalRoot).
       listFiles().
-      filter(f => f.isDirectory).
+      filter(_.isDirectory).
       map(_.getName).
       toList.
       reverse
@@ -85,11 +80,27 @@ object Picture {
    * @param mainFolderName Name of main folder
    * @return List of sub-folders
    */
-  def subFolders(mainFolderName: String): List[String] =
+  def subFolders(mainFolderName: String): List[String] = {
+    println(LocalRoot + mainFolderName)
     new File(LocalRoot + mainFolderName).
       listFiles().
-      filter(f => f.isDirectory).
+      filter(_.isDirectory).
+      map(_.getName).
+      toList.
+      reverse
+  }
+
+  def pictures(mainFolder: String, subFolder: String): List[PicturePath] = {
+    val pathThumbnail = LocalRoot + mainFolder + "/" + subFolder + "/" + FolderThumbnail
+    val pathThumbnailWeb = WebRoot + mainFolder + "/" + subFolder + "/" + FolderThumbnail
+
+    val picWebs : List[String] = new File(pathThumbnail).
+      listFiles().
+      filter(f => f.isFile && f.toString.endsWith(".jpg")).
       map(_.getName).
       toList
+
+    picWebs.map(s => PicturePath(pathThumbnailWeb + s, "", s, "", None)).toList
+  }
 
 }
