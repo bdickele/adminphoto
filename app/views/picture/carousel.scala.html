@@ -1,0 +1,35 @@
+@(pictures: List[models.PicturePath])
+
+<div class="modal fade" id="modalCarousel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" style="width:660px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Pictures</h4>
+            </div>
+            <div class="modal-body">
+                <div id="carousel-example-generic" class="carousel slide">
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" id="carouselInner">
+                        @for(picture <- pictures){
+                        <div id="@picture.webShort" class="item">
+                            <p style="margin: 0px; text-align:center">
+                                <img src='@picture.webComplete'></p>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                        <span class="icon-prev"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                        <span class="icon-next"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

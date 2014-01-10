@@ -1,0 +1,80 @@
+@(mainFolders: List[String], subFolders: List[String],
+    selectedMainFolder: String, selectedSubFolder: String,
+    pictures: List[models.PicturePath])
+
+@*** Icon : print version or not ***@
+@printIcon(print: Option[String]) = @{
+print match {
+case None => <span class='glyphicon glyphicon-remove'></span>
+case Some(s) => <span class='glyphicon glyphicon-ok'></span>
+}
+}
+
+@main("Pictures"){
+    @carousel(pictures)
+    <script src='@routes.Assets.at("javascripts/picture/picture.js")'></script>
+} {
+
+@menu.topmenu(views.menu.TopMenuElement.Picture)
+
+<br>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Folder :
+        <select name="folder1" id="folder1" class="input-sm">
+            @for(mainFolder <- mainFolders) {
+            <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
+            }
+        </select>
+
+        &nbsp;&nbsp; Sub-folder :
+        <select name="folder2" id="folder2" class="input-sm">
+            @for(subFolder <- subFolders) {
+            <option value="@subFolder" @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
+            }
+
+        </select>
+
+        &nbsp;&nbsp;
+        <button type="button" class="btn btn-default btn-sm" id="rescanFolders">
+            <i class="glyphicon glyphicon-refresh"></i> Refresh list of folders
+        </button>
+    </div>
+
+    <div class="panel-body">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm">
+                <i class="glyphicon glyphicon-refresh"></i> Refresh list of pictures
+            </button>
+        </div>
+        <br><br>
+
+        @for(subList <- pictures.sliding(4, 4)) {
+        <div class="row">
+            @for(picture <- subList) {
+            <div class="col-xs-6 col-md-3">
+                <div class="thumbnail">
+                    <table style="width:100%; text-align:center">
+                        <tbody>
+                        <tr>
+                            <td><img src='@picture.thumbnailComplete' onclick="showCarousel('@picture.webShort'); return false"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-default" style="height:35px" disabled>10x15
+                                        @printIcon(picture.printShort)
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>
+}

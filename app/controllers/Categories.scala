@@ -9,7 +9,7 @@ import play.api.mvc.{Action, Controller}
 object Categories extends Controller {
 
   def main = Action {
-    Ok(views.html.categories())
+    Ok(views.html.category.category())
   }
 
 }

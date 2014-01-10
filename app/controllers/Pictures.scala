@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.mvc.{AnyContent, Result, Action, Controller}
+import play.api.mvc.{AnyContent, Action, Controller}
 import models.Picture
 
 /**
@@ -9,8 +9,8 @@ import models.Picture
  */
 object Pictures extends Controller {
 
-  def refreshFolders = {
-    Picture.clearCache
+  def refreshFolders() = {
+    Picture.clearCache()
     pictures0
   }
 
@@ -35,7 +35,7 @@ object Pictures extends Controller {
       case None => subFolders.head
     }
 
-    Ok(views.html.pictures(mainFolders, subFolders, mainFolderName, subFolderName,
+    Ok(views.html.picture.picture(mainFolders, subFolders, mainFolderName, subFolderName,
       Picture.pictures(mainFolderName, subFolderName)))
   }
 
