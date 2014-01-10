@@ -2,14 +2,6 @@
     selectedMainFolder: String, selectedSubFolder: String,
     pictures: List[models.PicturePath])
 
-@*** Icon : print version or not ***@
-@printIcon(print: Option[String]) = @{
-print match {
-case None => <span class='glyphicon glyphicon-remove'></span>
-case Some(s) => <span class='glyphicon glyphicon-ok'></span>
-}
-}
-
 @main("Pictures"){
     @carousel(pictures)
     <script src='@routes.Assets.at("javascripts/picture/picture.js")'></script>
@@ -64,7 +56,10 @@ case Some(s) => <span class='glyphicon glyphicon-ok'></span>
                             <td style="text-align:center">
                                 <div class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-default" style="height:35px" disabled>10x15
-                                        @printIcon(picture.printShort)
+                                        @{picture.printShort match {
+                                            case None => <span class='glyphicon glyphicon-remove'></span>
+                                            case Some(s) => <span class='glyphicon glyphicon-ok'></span>
+                                        }}
                                 </div>
                             </td>
                         </tr>
