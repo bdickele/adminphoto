@@ -1,9 +1,9 @@
-package app.models
+package app.models.picture
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.FunSuite
-import models.Picture
+import models.picture.Picture
 
 
 /**

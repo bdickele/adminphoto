@@ -4,7 +4,7 @@
 
 <br>
 <ul class="nav nav-pills nav-justified">
-    <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.routes.Galleries.main()">Galleries</a></li>
-    <li @if(index==TopMenuElement.Picture){class="active"}><a href="@controllers.routes.Pictures.pictures0()">Pictures</a></li>
-    <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.routes.Categories.main()">Categories</a></li>
+    <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.gallery.routes.Galleries.main()">Galleries</a></li>
+    <li @if(index==TopMenuElement.Picture){class="active"}><a href="@controllers.picture.routes.Pictures.pictures0()">Pictures</a></li>
+    <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.category.routes.Categories.main()">Categories</a></li>
 </ul>

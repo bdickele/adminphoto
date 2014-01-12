@@ -1,0 +1,39 @@
+package models.category
+
+import reactivemongo.bson._
+import models.util.Access
+
+/**
+ * User: bdickele
+ * Date: 1/11/14
+ */
+case class Category(id: Option[BSONObjectID],
+                    categoryId: Long,
+                    title: String,
+                    description: String,
+                    online: Boolean,
+                    access: Access.Value)
+
+object Category {
+
+  implicit object CategoryBSONHandler extends BSONDocumentReader[Category] with BSONDocumentWriter[Category] {
+
+    def read(doc: BSONDocument): Category =
+      Category(
+        doc.getAs[BSONObjectID]("_id"),
+        doc.getAs[BSONLong]("categoryId").get.value,
+        doc.getAs[BSONString]("title").get.value,
+        doc.getAs[BSONString]("description").get.value,
+        doc.getAs[BSONBoolean]("online").get.value,
+        doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
+
+    def write(c: Category) =
+      BSONDocument(
+        "_id" -> c.id.getOrElse(BSONObjectID.generate),
+        "categoryId" -> BSONLong(c.categoryId),
+        "title" -> BSONString(c.title),
+        "description" -> BSONString(c.description),
+        "online" -> BSONBoolean(c.online),
+        "access" -> BSONString(c.access.asInstanceOf[Access.AccessVal].dbId))
+  }
+}

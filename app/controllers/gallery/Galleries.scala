@@ -1,4 +1,4 @@
-package controllers
+package controllers.gallery
 
 import play.api.mvc.Controller
 

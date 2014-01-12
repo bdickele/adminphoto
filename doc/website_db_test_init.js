@@ -1,4 +1,4 @@
-use website
+use websitetest
 
 // remove existing collection
 db.category.drop()
@@ -7,7 +7,7 @@ db.runCommand({create: "category"})
 // first insert
 db.category.insert({
 	categoryId: NumberLong(1),
-	title: "2004", 
+	title: "2004 test",
 	description: "Année 2004", 
 	online: true, 
 	access: "G", 
@@ -32,7 +32,7 @@ db.category.insert({
 })
 db.category.insert({
 	categoryId: NumberLong(2),
-	title: "2005",
+	title: "2005 test",
 	description: "Année 2005",
 	online: true,
 	access: "G",

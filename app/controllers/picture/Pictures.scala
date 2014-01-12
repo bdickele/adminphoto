@@ -1,7 +1,7 @@
-package controllers
+package controllers.picture
 
 import play.api.mvc.{AnyContent, Action, Controller}
-import models.Picture
+import models.picture.Picture
 
 /**
  * User: bdickele

@@ -1,8 +1,8 @@
-package app.models
+package app.models.picture
 
 import org.specs2.mutable._
 
-import models.Picture
+import models.picture.Picture
 
 /**
  * User: bdickele

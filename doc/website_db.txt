@@ -11,13 +11,13 @@ Indexs :
 Contenu :
 {
 	// Categorie
-	id: 		ObjectId,
-	categoryId	Integer,		sera utilisée comme paramètre de l'URL
-	title: 		String,		
+	id: 		    ObjectId,
+	categoryId:	    Integer,		sera utilisée comme paramètre de l'URL
+	title: 		    String,
 	description:	String,
-	online: 	Boolean,
-	access: 	String, 	G = guest (tout le monde) / U = user (authentifié)
-	galleries : [{	galleryId	String,		sera utilisée comme paramètre de l'URL
+	online: 	    Boolean,
+	access: 	    String, 	G = guest (tout le monde) / U = user (authentifié)
+	galleries : [{	galleryId:	String,		sera utilisée comme paramètre de l'URL
 				    date: 		{year: Integer, month: Integer},
                     title:		String,
                     description:	String,

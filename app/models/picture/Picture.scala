@@ -1,29 +1,8 @@
-package models
+package models.picture
 
 import play.api.Play.current
 import play.api.cache.Cache
 import java.io.File
-
-/**
- * User: bdickele
- * Date: 1/5/14
- */
-
-/**
- * <p>Paths for a picture : complete and short versions (without root of photo stock).<br>
- * Complete paths are there so that picture can be displayed in the admin web site.<br>
- * Short ones are stored in the DB</p>
- * @param thumbnailComplete Complete path to thumbnail (mandatory)
- * @param webComplete Complete path to web version (mandatory)
- * @param thumbnailShort Short path to thumbnail (mandatory)
- * @param webShort Short path to web version (mandatory)
- * @param printShort Short path to print version (optional)
- */
-case class PicturePath(thumbnailComplete: String,
-                       webComplete: String,
-                       thumbnailShort: String,
-                       webShort: String,
-                       printShort: Option[String])
 
 object Picture {
 
@@ -83,6 +62,8 @@ object Picture {
       filter(_.isDirectory).
       map(_.getName).
       toList
+
+  //TODO Mettre les images en cache avec possibilite de vider le cache
 
   /**
    * @param mainFolder Main folder

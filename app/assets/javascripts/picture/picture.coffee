@@ -1,3 +1,6 @@
+# Pas convaincu par les liens pour folder1/2.onchange et rescanFolders.onclick
+# mais je vois pas comment faire autrement
+
 this.folder1.onchange = ->
     self.location = "/picture/" + folder1.value
 

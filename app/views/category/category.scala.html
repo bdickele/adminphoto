@@ -1,3 +1,5 @@
+@(categories: List[models.category.Category])
+
 @main("Categories")(){
 
 @menu.topmenu(views.menu.TopMenuElement.Category)
@@ -26,9 +28,10 @@
             </tr>
             </thead>
             <tbody>
+            @for(category <- categories){
             <tr>
-                <td>2013</td>
-                <td style="text-align:center;"><label><input type="checkbox" checked></label></td>
+                <td>@category.title</td>
+                <td style="text-align:center;"><label><input type="checkbox" @if(category.online){checked}></label></td>
                 <td style="text-align:center;">
                     <button type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-chevron-up"></span>
@@ -40,6 +43,7 @@
                     </button>
                 </td>
             </tr>
+            }
             </tbody>
         </table>
     </div>
