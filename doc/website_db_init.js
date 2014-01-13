@@ -6,14 +6,14 @@ db.category.drop()
 db.runCommand({create: "category"})
 // first insert
 db.category.insert({
-	categoryId: NumberLong(1),
+	categoryId: NumberInt(1),
 	title: "2004", 
 	description: "Année 2004", 
 	online: true, 
 	access: "G", 
 	galleries: [{
 		galleryId: "200406",
-		date : {year: NumberLong(2004), month: NumberLong(6)},
+		date : {year: NumberInt(2004), month: NumberInt(6)},
 		title: "Eté 2004: divers",
 		description: "Ce ne sont pas nos toutes toutes premières photos, mais en tout cas les premières numérisées.", 
 		thumbnail: "2004/0406_misc/thumbnail/small_0406_Versailles_01.jpg",
@@ -31,7 +31,7 @@ db.category.insert({
 		}]
 })
 db.category.insert({
-	categoryId: NumberLong(2),
+	categoryId: NumberInt(2),
 	title: "2005",
 	description: "Année 2005",
 	online: true,

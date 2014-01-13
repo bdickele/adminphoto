@@ -13,7 +13,7 @@ case class GalleryPicture(thumbnail: String,
                           web: String,
                           print: Option[String])
 
-case class Gallery(sectionId: Long,
+case class Gallery(sectionId: Int,
                    galleryId: String,
                    date: YearMonth,
                    title: String,

@@ -8,7 +8,7 @@ import models.util.Access
  * Date: 1/11/14
  */
 case class Category(id: Option[BSONObjectID],
-                    categoryId: Long,
+                    categoryId: Int,
                     title: String,
                     description: String,
                     online: Boolean,
@@ -21,7 +21,7 @@ object Category {
     def read(doc: BSONDocument): Category =
       Category(
         doc.getAs[BSONObjectID]("_id"),
-        doc.getAs[BSONLong]("categoryId").get.value,
+        doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONString]("title").get.value,
         doc.getAs[BSONString]("description").get.value,
         doc.getAs[BSONBoolean]("online").get.value,
@@ -30,7 +30,7 @@ object Category {
     def write(c: Category) =
       BSONDocument(
         "_id" -> c.id.getOrElse(BSONObjectID.generate),
-        "categoryId" -> BSONLong(c.categoryId),
+        "categoryId" -> BSONInteger(c.categoryId),
         "title" -> BSONString(c.title),
         "description" -> BSONString(c.description),
         "online" -> BSONBoolean(c.online),
