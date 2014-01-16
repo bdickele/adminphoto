@@ -14,7 +14,7 @@ import models.picture.Picture
 class PictureSuite extends FunSuite {
 
   test("list of categories") {
-    val expected = List("2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013")
+    val expected = List("2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013").reverse
     val actual = Picture.mainFolders
     assert(actual === expected)
   }

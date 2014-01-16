@@ -6,14 +6,15 @@ import java.io.File
 
 object Picture {
 
-  val LocalRoot = "/Users/bdickele/Dev/www/photostock/"
+  //TODO Depend de la machine : comment faire ? A priori mettre ca dans un fichier de conf qui sera dans .gitignore
+  val LocalRoot = "/Users/bdickele/Development/www/photostock/"
   val WebRoot = "http://www.dickele.com/photostock/"
   val FolderWeb = "web/"
   val FolderThumbnail = "thumbnail/"
   val FolderPrint = "print/"
 
-  val CacheMainFolders = "mainFolders"
-  val CacheSubFolders = "subFolders."
+  val CacheMainFolders = "CacheMainFolders"
+  val CacheSubFolders = "CacheSubFolders."
 
   /** Clear cache from main and sub folders */
   def clearCache() =

@@ -1,31 +1,31 @@
-package controllers.gallery
+package models.gallery
 
 import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
-import models.gallery.GalleryBasic
-import play.api.libs.concurrent.Execution.Implicits._
-import reactivemongo.core.commands._
 import reactivemongo.api.collections.default.BSONCollection
+import scala.concurrent.Future
+import reactivemongo.core.commands.{Unwind, Match, Aggregate}
 import reactivemongo.bson.BSONDocument
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
-
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
- * User: bdickele
- * Date: 1/11/14
+ * Created by bdickele on 16/01/14.
  */
-
-object GalleryRW extends Controller with MongoController {
+object CategoryAndGalleryRW extends Controller with MongoController {
 
   def collection = db.collection[BSONCollection]("category")
+
+
+  def find(categoryId: Int): Future[Option[CategoryAndGallery]] =
+    collection.
+      find(BSONDocument("categoryId" -> categoryId)).
+      one[CategoryAndGallery]
 
 
   /**
    * @return All categories, from the most recent to the older
    */
-  def findAllBasic(categoryId: Int): Future[List[GalleryBasic]] = {
+  def findOLD(categoryId: Int): Future[List[GalleryBasic]] = {
     /*
       collection.
         find(BSONDocument("categoryId" -> categoryId)).
@@ -38,7 +38,7 @@ object GalleryRW extends Controller with MongoController {
 
     val result = db.command(command)
 
-     //result.map(s => )
+    //result.map(s => )
     //val future: Future[List[GalleryBasic]] = result.map(r => r.toList.map(doc => GalleryBasic.readGallery(doc)))
     //Await.result(future, Duration(1, TimeUnit.SECONDS))
 
@@ -51,4 +51,5 @@ object GalleryRW extends Controller with MongoController {
 
     Future[List[GalleryBasic]](List())
   }
+
 }

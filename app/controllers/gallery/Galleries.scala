@@ -1,8 +1,9 @@
 package controllers.gallery
 
-import play.api.mvc.{AnyContent, Action, Controller}
+import play.api.mvc.{Action, Controller}
 import scala.concurrent.Future
-import models.gallery.GalleryBasic
+import models.category.{Category, CategoryRW}
+import models.gallery.{CategoryAndGalleryRW, CategoryAndGallery}
 import play.api.libs.concurrent.Execution.Implicits._
 
 /**
@@ -11,22 +12,20 @@ import play.api.libs.concurrent.Execution.Implicits._
  */
 object Galleries extends Controller {
 
-  //TODO calculer l'ID de la derniere categorie
-  def view  = TODO
+  def view = Action.async {
+    val categories: List[Category] = CategoryRW.loadAll
+    val lastCategory = categories.last
 
-  /*
-  def view(categoryId: Int) = Unit {
-    //val future: Future[List[GalleryBasic]] = GalleryRW.findAllBasic(categoryId)
-    val future: List[GalleryBasic] = GalleryRW.findAllBasic(categoryId)
 
-    future.map {
-      galleries => Ok(views.html.gallery.gallery(galleries))
+    val futureCategory: Future[Option[CategoryAndGallery]] = CategoryAndGalleryRW.find(lastCategory.categoryId)
+
+    futureCategory.map {
+      category => Ok(views.html.gallery.gallery(categories, category.get))
     }.recover {
       case e =>
         e.printStackTrace()
         BadRequest(e.getMessage())
     }
   }
-  */
 
 }
