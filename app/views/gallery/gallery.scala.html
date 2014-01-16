@@ -1,0 +1,60 @@
+@(galleries: List[models.gallery.GalleryBasic])
+
+@main("Galleries")(){
+
+@menu.topmenu(views.menu.TopMenuElement.Gallery)
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Category :
+        <select name="category" id="cateogry" class="input-sm">
+
+        </select>
+    </div>
+    <div class="panel-body">
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-plus"></span> Add
+            </button>
+            <button type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-refresh"></span> Refresh
+            </button>
+        </div>
+        <br><br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th style="text-align:center; width:130px">&nbsp;</th>
+                <th style="text-align:center;">Titre</th>
+                <th style="text-align:center; width:30">Photos</th>
+                <th style="text-align:center; width:30">Online</th>
+                <th style="text-align:center;">Up</th>
+                <th style="text-align:center;">Down</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for(gallery <- galleries;
+                picPathComplete = routes.Assets.at("images/" + gallery.thumbnail)){
+            <tr>
+                <td><img src='@picPathComplete'></td>
+                <td>@gallery.title</td>
+                <td style="text-align:center;">@gallery.nbPictures</td>
+                <td style="text-align:center;"><label><input type="checkbox" @if(gallery.online){checked}></label></td>
+                <td style="text-align:center;">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-chevron-up"></span>
+                    </button>
+                </td>
+                <td style="text-align:center;">
+                    <button type="button" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </button>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+}
