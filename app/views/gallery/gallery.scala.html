@@ -1,4 +1,4 @@
-@(categories: List[models.category.Category], category: models.gallery.CategoryAndGallery)
+@(categories: List[models.category.Category], galleries: List[models.gallery.GalleryBasic])
 
 @main("Galleries")(){
 
@@ -34,10 +34,9 @@
             </tr>
             </thead>
             <tbody>
-            @for(gallery <- category.galleries;
-                picPathComplete = routes.Assets.at("images/" + gallery.thumbnail)){
+            @for(gallery <- galleries){
             <tr>
-                <td><img src='@picPathComplete'></td>
+                <td><img src='@gallery.thumbnail'></td>
                 <td>@gallery.title</td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;"><label><input type="checkbox" @if(gallery.online){checked}></label></td>

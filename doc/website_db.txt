@@ -1,34 +1,32 @@
 Database : website
 
-Collection : category
-
-Indexs :
-- Category : categoryId (unique)
-- Category : categoryId + titre + online + access		        Pour l'admin et le site utilisateur
-- Gallery : galleryId (unique)
-- Gallery : galleryId + titre + thumbnail + online + access	    Pour le site utilisateur
-
-Contenu :
+Collection "category" :
 {
-	// Categorie
 	id: 		    ObjectId,
-	categoryId:	    Integer,		sera utilisée comme paramètre de l'URL
+	categoryId:	    Integer,    paramètre URL
+	rank:           Integer,
 	title: 		    String,
 	description:	String,
 	online: 	    Boolean,
-	access: 	    String, 	G = guest (tout le monde) / U = user (authentifié)
-	galleries : [{	galleryId:	String,		sera utilisée comme paramètre de l'URL
-				    date: 		{year: Integer, month: Integer},
-                    title:		String,
-                    description:	String,
-                    thumbnail: 	String,
-                    online:		Boolean,
-                    access:		String,
-                    pictures: 	[{  folder:		String,
-                                    thumbnail: 	String,
-                                    web:		String,
-                                    description:	String}
-						        ]
-				}]
+	access: 	    String 	    G = guest (tout le monde) / U = user (authentifié)
+}
+
+Collection "gallery" :
+{
+	id: 		    ObjectId,
+	categoryId:	    Integer,
+	rank:           Integer,
+	galleryId:	    Integer,    paramètre URL
+    date: 		    String,     format year/month
+    title:		    String,
+    description:	String,
+    thumbnail: 	    String,
+    online:		    Boolean,
+    access:		    String,
+    pictures: 	    [{  thumbnail: 	    String,
+                        web:		    String,
+                        print:          String,
+                        description:	String}
+                    ]
 }
 

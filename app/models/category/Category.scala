@@ -9,6 +9,7 @@ import models.util.Access
  */
 case class Category(id: Option[BSONObjectID],
                     categoryId: Int,
+                    rank: Int,
                     title: String,
                     description: String,
                     online: Boolean,
@@ -22,6 +23,7 @@ object Category {
       Category(
         doc.getAs[BSONObjectID]("_id"),
         doc.getAs[BSONInteger]("categoryId").get.value,
+        doc.getAs[BSONInteger]("rank").get.value,
         doc.getAs[BSONString]("title").get.value,
         doc.getAs[BSONString]("description").get.value,
         doc.getAs[BSONBoolean]("online").get.value,
@@ -31,6 +33,7 @@ object Category {
       BSONDocument(
         "_id" -> c.id.getOrElse(BSONObjectID.generate),
         "categoryId" -> BSONInteger(c.categoryId),
+        "rank" -> BSONInteger(c.rank),
         "title" -> BSONString(c.title),
         "description" -> BSONString(c.description),
         "online" -> BSONBoolean(c.online),

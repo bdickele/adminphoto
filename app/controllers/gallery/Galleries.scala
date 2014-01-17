@@ -3,7 +3,7 @@ package controllers.gallery
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.Future
 import models.category.{Category, CategoryRW}
-import models.gallery.{CategoryAndGalleryRW, CategoryAndGallery}
+import models.gallery.{GalleryBasic, GalleryBasicRW}
 import play.api.libs.concurrent.Execution.Implicits._
 
 /**
@@ -17,10 +17,10 @@ object Galleries extends Controller {
     val lastCategory = categories.last
 
 
-    val futureCategory: Future[Option[CategoryAndGallery]] = CategoryAndGalleryRW.find(lastCategory.categoryId)
+    val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(lastCategory.categoryId)
 
-    futureCategory.map {
-      category => Ok(views.html.gallery.gallery(categories, category.get))
+    future.map {
+      galleries => Ok(views.html.gallery.gallery(categories, galleries))
     }.recover {
       case e =>
         e.printStackTrace()

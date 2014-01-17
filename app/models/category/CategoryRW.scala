@@ -44,11 +44,12 @@ object CategoryRW extends Controller with MongoController {
   def findCategories: List[Category] = {
     val future: Future[List[Category]] = collection.
       find(findAllQuery).
-      sort(BSONDocument("categoryId" -> -1)).
+      sort(BSONDocument("rank" -> -1)).
       cursor[Category].
       collect[List]()
 
-    // Ca c'est pas top mais je veux mettre cette liste en cache
+    // Is it a good practice ? I don't know to this day, but I need it now
+    // so that I can put that list in the cache
     Await.result(future, Duration(5, TimeUnit.SECONDS))
   }
 

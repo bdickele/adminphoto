@@ -3,12 +3,10 @@ package models.picture
 import play.api.Play.current
 import play.api.cache.Cache
 import java.io.File
+import models.util.Const
 
 object Picture {
 
-  //TODO Depend de la machine : comment faire ? A priori mettre ca dans un fichier de conf qui sera dans .gitignore
-  val LocalRoot = "/Users/bdickele/Development/www/photostock/"
-  val WebRoot = "http://www.dickele.com/photostock/"
   val FolderWeb = "web/"
   val FolderThumbnail = "thumbnail/"
   val FolderPrint = "print/"
@@ -38,7 +36,7 @@ object Picture {
 
   /** @return complete list of main folders */
   def mainFolders: List[String] =
-    foldersOfFolder(LocalRoot).reverse
+    foldersOfFolder(Const.LocalRoot).reverse
 
   /**
    * Loads sub-folders of a main folder (from cache if already cached)
@@ -55,7 +53,7 @@ object Picture {
    * @return List of sub-folders
    */
   def subFolders(mainFolderName: String): List[String] =
-    foldersOfFolder(LocalRoot + mainFolderName).reverse
+    foldersOfFolder(Const.LocalRoot + mainFolderName).reverse
 
   def foldersOfFolder(folder: String): List[String] =
     new File(folder).
@@ -72,8 +70,8 @@ object Picture {
    * @return Complete list of picture of a gallery
    */
   def pictures(mainFolder: String, subFolder: String): List[PicturePath] = {
-    val galleryLocal = LocalRoot + mainFolder + "/" + subFolder + "/"
-    val galleryUrl = WebRoot + mainFolder + "/" + subFolder + "/"
+    val galleryLocal = Const.LocalRoot + mainFolder + "/" + subFolder + "/"
+    val galleryUrl = Const.WebRoot + mainFolder + "/" + subFolder + "/"
 
     val pathThumbnailLocal = galleryLocal + FolderThumbnail
     val pathThumbnailUrl = galleryUrl + FolderThumbnail
