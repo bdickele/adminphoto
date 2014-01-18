@@ -9,9 +9,9 @@ import models.picture.Picture
  */
 object Pictures extends Controller {
 
-  def refresh() = {
+  def refresh() = Action {
     Picture.clearCache()
-    view()
+    Redirect(routes.Pictures.view("", ""))
   }
 
   def view(mainFolder: String = "", subFolder: String = "") = Action {

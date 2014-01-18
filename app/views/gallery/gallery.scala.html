@@ -1,6 +1,8 @@
 @(selectedGalleryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.GalleryBasic])
 
-@main("Galleries")(){
+@main("Galleries"){
+    <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
+} {
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 

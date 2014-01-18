@@ -1,4 +1,4 @@
-# Pas convaincu par les liens pour folder1/2.onchange et rescanFolders.onclick
+# Pas convaincu par les liens pour folder1/2.onchange
 # mais je vois pas comment faire autrement
 
 this.folder1.onchange = ->
