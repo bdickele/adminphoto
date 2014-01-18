@@ -1,13 +1,9 @@
 package app.models.category
 
 import org.specs2.mutable.Specification
-import scala.concurrent.{Await, Future}
 import models.category.{CategoryRW, Category}
 import app.models.TestApplication
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
 import models.util.Access
-import controllers.category.Categories
 
 
 /**
@@ -18,7 +14,7 @@ class CategoryRWSpec extends Specification {
 
   "Total list of categories" should {
 
-    lazy val list: List[Category] = CategoryRW.findCategories
+    lazy val list: List[Category] = CategoryRW.findAllFromDB
 
     "contain all categories" in new TestApplication {
       list.foreach(c => println("> Found " + c.toString))

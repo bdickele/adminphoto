@@ -12,6 +12,7 @@ GET     /picture/refresh                    controllers.picture.Pictures.refresh
 GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
 GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
 GET     /category                           controllers.category.Categories.view
+GET     /category/up/:categoryId            controllers.category.Categories.up(categoryId: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

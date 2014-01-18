@@ -31,7 +31,8 @@
                 <td>@category.title</td>
                 <td style="text-align:center;"><label><input type="checkbox" @if(category.online){checked}></label></td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm">
+                    <button type="button" class="btn btn-default btn-sm"
+                            onclick="self.location='/category/up/@category.categoryId'">
                         <span class="glyphicon glyphicon-chevron-up"></span>
                     </button>
                 </td>

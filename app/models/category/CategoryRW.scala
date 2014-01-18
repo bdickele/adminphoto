@@ -23,14 +23,16 @@ object CategoryRW extends Controller with MongoController {
   val CacheCategory = "CacheCategory"
 
 
-  /** @return Complete list of categories, from the cache or from DB */
+  /** @return Complete list of categories, from the cache or from DB, sorted from the
+    *         category with greater rank to lower rank */
   def findAll: List[Category] =
     Cache.getOrElse[List[Category]](CacheCategory) {
-      findCategories
+      findAllFromDB
     }
 
-  /** @return complete list of categories from DB */
-  def findCategories: List[Category] = {
+  /** @return complete list of categories from DB, sorted from the
+    *         category with greater rank to lower rank */
+  def findAllFromDB: List[Category] = {
     val future: Future[List[Category]] = collection.
       find(findAllQuery).
       sort(BSONDocument("rank" -> -1)).

@@ -5,6 +5,7 @@ import scala.concurrent.Future
 import models.category.{Category, CategoryRW}
 import models.gallery.{GalleryBasic, GalleryBasicRW}
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.Logger
 
 /**
  * User: bdickele
@@ -22,8 +23,8 @@ object Galleries extends Controller {
       galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
     }.recover {
       case e =>
-        e.printStackTrace()
-        BadRequest(e.getMessage())
+        Logger.error(e.getMessage)
+        BadRequest(e.getMessage)
     }
   }
 

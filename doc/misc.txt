@@ -1,2 +1,8 @@
 play -Dconfig.file=conf/application_test.conf "run 9100"
 play -Dconfig.file=conf/application_dev.conf "run 9100"
+
+
+Questions :
+- Liens dans les fichiers javascript/coffeescript : peut-on éviter les liens en dur ?
+- Fichier routes : peut-on configurer à la fois sans et avec le dernier slash en une seule ligne ?
+Avec Play 1 on pouvait mais avec Play 2 je n'ai pas trouvé pour l'instant
