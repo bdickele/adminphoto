@@ -4,6 +4,7 @@ import reactivemongo.bson._
 import reactivemongo.bson.BSONString
 import reactivemongo.bson.BSONInteger
 import models.util.{Const, Access}
+import org.joda.time.YearMonth
 
 /**
  * User: bdickele
@@ -14,6 +15,7 @@ case class GalleryBasic(categoryId: Int,
                         rank: Int,
                         galleryId: Int,
                         title: String,
+                        date: YearMonth,
                         thumbnail: String,
                         nbPictures: Int,
                         online: Boolean,
@@ -29,6 +31,7 @@ object GalleryBasic {
         doc.getAs[BSONInteger]("rank").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
         doc.getAs[BSONString]("title").get.value,
+        Gallery.buildDate(doc.getAs[BSONString]("date").get.value),
         Const.WebRoot + doc.getAs[BSONString]("thumbnail").get.value,
         doc.getAs[BSONArray]("pictures").get.length,
         doc.getAs[BSONBoolean]("online").get.value,

@@ -12,15 +12,15 @@ import play.api.libs.concurrent.Execution.Implicits._
  */
 object Galleries extends Controller {
 
-  def view = Action.async {
+  def view(passedCategoryId: Int = -1) = Action.async {
     val categories: List[Category] = CategoryRW.loadAll
-    val lastCategory = categories.last
+    val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
-
-    val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(lastCategory.categoryId)
+    println("categoryId = " + categoryId)
+    val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(categoryId)
 
     future.map {
-      galleries => Ok(views.html.gallery.gallery(categories, galleries))
+      galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
     }.recover {
       case e =>
         e.printStackTrace()

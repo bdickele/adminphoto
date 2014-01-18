@@ -7,8 +7,8 @@ this.folder1.onchange = ->
 this.folder2.onchange = ->
     self.location = "/picture/" + folder1.value + "/" + folder2.value
 
-this.rescanFolders.onclick = ->
-    self.location = "/picture/refreshFolders"
+#this.rescanFolders.onclick = ->
+#    self.location = "/picture/refreshFolders"
 
 this.showCarousel = (picToSelect) ->
     divInner = document.getElementById('carouselInner')

@@ -5,11 +5,12 @@
 # Home page
 GET     /                                   controllers.Application.index
 
-GET     /gallery                            controllers.gallery.Galleries.view
-GET     /picture                            controllers.picture.Pictures.pictures0
-GET     /picture/refreshFolders             controllers.picture.Pictures.refreshFolders
-GET     /picture/:mainFolder                controllers.picture.Pictures.pictures1(mainFolder)
-GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.pictures2(mainFolder, subFolder)
+GET     /gallery                            controllers.gallery.Galleries.view(categoryId: Int = -1)
+GET     /gallery/:categoryId                controllers.gallery.Galleries.view(categoryId: Int)
+GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
+GET     /picture/refresh                    controllers.picture.Pictures.refresh
+GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
+GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
 GET     /category                           controllers.category.Categories.view
 
 # Map static resources from the /public folder to the /assets URL path

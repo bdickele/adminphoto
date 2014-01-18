@@ -23,3 +23,11 @@ case class Gallery(categoryId: Int,
                    online: Boolean,
                    access: Access.Value,
                    pictures: List[GalleryPicture])
+
+object Gallery {
+
+  def buildDate(s: String): YearMonth = {
+    val data = s.split("/")
+    new YearMonth(data(0).toInt, data(1).toInt)
+  }
+}

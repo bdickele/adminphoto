@@ -95,11 +95,13 @@ object Picture {
    * @param folder Folder name
    * @return Complete list of jpg of passed folder
    */
-  def picturesFromFolder(folder: String): List[String] =
+  def picturesFromFolder(folder: String): List[String] = {
+    println(folder)
     new File(folder).
       listFiles().
       filter(f => f.isFile && f.toString.endsWith(".jpg")).
       map(_.getName).
       toList
+  }
 
 }
