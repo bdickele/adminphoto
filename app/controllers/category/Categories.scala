@@ -3,6 +3,11 @@ package controllers.category
 import play.api.mvc.{Action, Controller}
 import models.category.{Category, CategoryRW}
 import play.api.Logger
+import play.api.cache.Cache
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
+import play.api.Play.current
 
 /**
  * User: bdickele
@@ -10,9 +15,25 @@ import play.api.Logger
  */
 object Categories extends Controller {
 
+  val CacheCategory = "CacheCategory"
+
+
   def view() = Action {
-    Ok(views.html.category.category(CategoryRW.findAll))
+    val categories: List[Category] = Cache.getOrElse[List[Category]](CacheCategory){findAll()}
+    Ok(views.html.category.category(categories))
   }
+
+  // Is it a good practice ? I don't know to this day, but I need that as that list of categories
+  // is required in many places of the application
+  def findAll(): List[Category] =
+    Await.result(CategoryRW.findAll, Duration(5, TimeUnit.SECONDS))
+
+  /** Clear cache from categories */
+  def clearCache() =
+    Cache.getAs[List[Category]](CacheCategory) match {
+      case Some(list) => Cache.remove(CacheCategory)
+      case None => // Nothing to do
+    }
 
   /**
    * A category has to "go up" in the hierarchy of categories
@@ -20,7 +41,7 @@ object Categories extends Controller {
    * @return
    */
   def up(categoryId: Int) = Action {
-    val categories: List[Category] = CategoryRW.findAll
+    val categories: List[Category] = findAll()
 
     // Let's retrieve our category
     categories.find(_.categoryId == categoryId) match {
@@ -35,7 +56,7 @@ object Categories extends Controller {
             val newCategoryUp = category.copy(rank = categoryRank + 1)
             val newCategoryDown = otherCategory.copy(rank = categoryRank)
 
-            //TODO Demander la mise a jour des categories
+            //TODO Mise a jour des categories
           }
         }
 
@@ -47,7 +68,5 @@ object Categories extends Controller {
         BadRequest(message)
       }
     }
-
-
   }
 }

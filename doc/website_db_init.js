@@ -1,4 +1,4 @@
-use website
+//use website
 
 // ********************************************************************************
 // Remove existing collections
@@ -47,12 +47,10 @@ db.gallery.insert({
         {
             thumbnail: "2004/0406_misc/small/small_0406_Adrien.jpg",
             web: "2004/0406_misc/web/0406_Adrien.jpg",
-            print: "",
             description: ""},
         {
             thumbnail: "2004/0406_misc/small/small_0406_Bastille.jpg",
             web: "2004/0406_misc/web/0406_Bastille.jpg",
-            print: "",
             description: ""}]
 })
 

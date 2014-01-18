@@ -1,7 +1,7 @@
 package app.models.gallery
 
 import org.specs2.mutable.Specification
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import app.models.TestApplication
@@ -17,8 +17,8 @@ class GalleryBasicRWSpec extends Specification {
 
   "Total list of galleries (basic)" should {
 
-    lazy val listFuture: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(1)
-    lazy val list: List[GalleryBasic] = Await.result(listFuture, Duration(5, TimeUnit.SECONDS))
+    val future = GalleryBasicRW.findAll(1)
+    lazy val list: List[GalleryBasic] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     "contain all galleries of category 2004" in new TestApplication {
       list.foreach(c => println("> Found " + c.toString))

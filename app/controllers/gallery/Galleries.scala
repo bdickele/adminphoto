@@ -2,10 +2,11 @@ package controllers.gallery
 
 import play.api.mvc.{Action, Controller}
 import scala.concurrent.Future
-import models.category.{Category, CategoryRW}
+import models.category.Category
 import models.gallery.{GalleryBasic, GalleryBasicRW}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.Logger
+import controllers.category.Categories
 
 /**
  * User: bdickele
@@ -14,7 +15,7 @@ import play.api.Logger
 object Galleries extends Controller {
 
   def view(passedCategoryId: Int = -1) = Action.async {
-    val categories: List[Category] = CategoryRW.findAll
+    val categories: List[Category] = Categories.findAll
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
     val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(categoryId)
