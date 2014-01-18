@@ -10,6 +10,6 @@ import models.category.CategoryRW
 object Categories extends Controller {
 
   def view = Action {
-    Ok(views.html.category.category(CategoryRW.loadAll))
+    Ok(views.html.category.category(CategoryRW.findAll))
   }
 }

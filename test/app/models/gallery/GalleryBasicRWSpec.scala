@@ -6,6 +6,7 @@ import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import app.models.TestApplication
 import models.gallery.{GalleryBasicRW, GalleryBasic}
+import org.joda.time.YearMonth
 
 /**
  * User: bdickele
@@ -24,12 +25,11 @@ class GalleryBasicRWSpec extends Specification {
       list.size must equalTo(1)
     }
 
-    "contain 2004 as last category" in new TestApplication {
+    "contain 'Summer 2004' as first gallery" in new TestApplication {
       val g = list.head
       g.categoryId must equalTo(1)
       g.galleryId must equalTo(1)
-      //TODO test sur la date
-
+      g.date must equalTo(new YearMonth(2004, 6))
       g.title must equalTo("Eté 2004: divers")
       g.online must beTrue
       g.nbPictures must equalTo(2)

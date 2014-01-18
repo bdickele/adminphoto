@@ -62,8 +62,6 @@ object Picture {
       map(_.getName).
       toList
 
-  //TODO Mettre les images en cache avec possibilite de vider le cache
-
   /**
    * @param mainFolder Main folder
    * @param subFolder Section folder

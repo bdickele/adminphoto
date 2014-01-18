@@ -16,8 +16,6 @@ import play.api.Play.current
  */
 object CategoryRW extends Controller with MongoController {
 
-  //TODO Gestion du cache
-
   def collection = db.collection[BSONCollection]("category")
 
   val findAllQuery = BSONDocument()
@@ -25,22 +23,13 @@ object CategoryRW extends Controller with MongoController {
   val CacheCategory = "CacheCategory"
 
 
-  /** @return All categories, from the most recent to the older */
-  /*
-  def loadAll: Future[List[Category]] =
-    collection.
-      find(findAllQuery).
-      sort(BSONDocument("categoryId" -> -1)).
-      cursor[Category].
-      collect[List]()
-    */
-
-  def loadAll: List[Category] =
+  /** @return Complete list of categories, from the cache or from DB */
+  def findAll: List[Category] =
     Cache.getOrElse[List[Category]](CacheCategory) {
       findCategories
     }
 
-  /** @return complete list of main folders */
+  /** @return complete list of categories from DB */
   def findCategories: List[Category] = {
     val future: Future[List[Category]] = collection.
       find(findAllQuery).
@@ -53,6 +42,7 @@ object CategoryRW extends Controller with MongoController {
     Await.result(future, Duration(5, TimeUnit.SECONDS))
   }
 
+  /** Clear cache from categories */
   def clearCache() =
     Cache.getAs[List[Category]](CacheCategory) match {
       case Some(list) => Cache.remove(CacheCategory)

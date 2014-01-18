@@ -34,13 +34,14 @@
     </div>
 
     <div class="panel-body">
+        @*
         <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm">
                 <i class="glyphicon glyphicon-refresh"></i> Refresh list of pictures
             </button>
         </div>
         <br><br>
-
+        *@
         @for(subList <- pictures.sliding(4, 4)) {
         <div class="row">
             @for(picture <- subList) {

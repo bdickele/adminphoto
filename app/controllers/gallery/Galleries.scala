@@ -13,10 +13,9 @@ import play.api.libs.concurrent.Execution.Implicits._
 object Galleries extends Controller {
 
   def view(passedCategoryId: Int = -1) = Action.async {
-    val categories: List[Category] = CategoryRW.loadAll
+    val categories: List[Category] = CategoryRW.findAll
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
-    println("categoryId = " + categoryId)
     val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(categoryId)
 
     future.map {
