@@ -8,6 +8,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import play.api.Play.current
+import reactivemongo.bson.BSONDocument
 
 /**
  * User: bdickele
@@ -19,7 +20,9 @@ object Categories extends Controller {
 
 
   def view() = Action {
-    val categories: List[Category] = Cache.getOrElse[List[Category]](CacheCategory){findAll()}
+    val categories: List[Category] = Cache.getOrElse[List[Category]](CacheCategory) {
+      findAll()
+    }
     Ok(views.html.category.category(categories))
   }
 
@@ -37,7 +40,7 @@ object Categories extends Controller {
 
   /**
    * A category has to "go up" in the hierarchy of categories
-   * @param categoryId
+   * @param categoryId ID of category to promote
    * @return
    */
   def up(categoryId: Int) = Action {
@@ -53,10 +56,14 @@ object Categories extends Controller {
         categories.find(_.rank > categoryRank) match {
           case None => // nothing to do then
           case Some(otherCategory) => {
-            val newCategoryUp = category.copy(rank = categoryRank + 1)
-            val newCategoryDown = otherCategory.copy(rank = categoryRank)
 
-            //TODO Mise a jour des categories
+            CategoryRW.update(categoryId,
+              BSONDocument("$set" -> BSONDocument("rank" -> (categoryRank + 1))))
+            CategoryRW.update(otherCategory.categoryId,
+              BSONDocument("$set" -> BSONDocument("rank" -> categoryRank)))
+
+            // Let's clear cache !
+            clearCache()
           }
         }
 
