@@ -1,7 +1,7 @@
 play -Dconfig.file=conf/application_test.conf "run 9100"
 play -Dconfig.file=conf/application_dev.conf "run 9100"
 
-load("website_db_init.js")
+Dans le shell mongo, après un use XXX : load("db_init.js")
 
 Questions :
 - Liens dans les fichiers javascript/coffeescript : peut-on éviter les liens en dur ?

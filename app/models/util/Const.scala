@@ -7,7 +7,7 @@ import play.api.Play
  */
 object Const {
 
-  val LocalRoot = Play.current.configuration.getString("local.photostock.root").get
+  lazy val LocalRoot = Play.current.configuration.getString("local.photostock.root").get
   val WebRoot = "http://www.dickele.com/photostock/"
 
 }

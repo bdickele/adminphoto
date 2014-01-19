@@ -8,8 +8,8 @@ import play.api.test.{FakeApplication, WithApplication}
  * Date: 1/12/14
  */
 abstract class TestApplication extends WithApplication(
-  FakeApplication(additionalConfiguration =
-    Map(
+  FakeApplication(
+    additionalConfiguration = Map(
       "mongodb.servers" -> List("localhost:27017"),
       "mongodb.db" -> "websitetest"))) {
 

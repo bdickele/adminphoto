@@ -2,6 +2,7 @@ package models.gallery
 
 import org.joda.time.YearMonth
 import models.util.Access
+import reactivemongo.bson.BSONObjectID
 
 /**
  * User: bdickele
@@ -13,7 +14,8 @@ case class GalleryPicture(thumbnail: String,
                           print: Option[String],
                           description: Option[String])
 
-case class Gallery(categoryId: Int,
+case class Gallery(id: Option[BSONObjectID],
+                   categoryId: Int,
                    galleryId: String,
                    rank: Int,
                    date: YearMonth,

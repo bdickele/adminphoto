@@ -15,6 +15,21 @@ import java.util.concurrent.TimeUnit
  */
 class CategoryRWSpec extends Specification {
 
+  "Seach of a single category" should {
+
+    lazy val future = CategoryRW.find(1)
+    lazy val category = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+
+    "return 2004 when categoryID is 1" in new TestApplication {
+      category.categoryId must equalTo(1)
+      category.title must equalTo("2004")
+      category.description must equalTo("Année 2004")
+      category.online must beTrue
+      category.access must equalTo(Access.Guest)
+    }
+
+  }
+
   "Total list of categories" should {
 
     lazy val future = CategoryRW.findAll

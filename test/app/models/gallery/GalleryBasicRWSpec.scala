@@ -14,10 +14,9 @@ import org.joda.time.YearMonth
  */
 class GalleryBasicRWSpec extends Specification {
 
-
   "Total list of galleries (basic)" should {
 
-    val future = GalleryBasicRW.findAll(1)
+    lazy val future = GalleryBasicRW.findAll(1)
     lazy val list: List[GalleryBasic] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     "contain all galleries of category 2004" in new TestApplication {
