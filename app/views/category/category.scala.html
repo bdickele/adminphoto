@@ -14,6 +14,11 @@
             <button type="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-plus"></span> Add
             </button>
+            <a href="@controllers.category.routes.Categories.refresh()">
+                <button type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-refresh"></span> Refresh
+                </button>
+            </a>
         </div>
         <br><br>
         <table class="table table-striped">
@@ -26,20 +31,31 @@
             </tr>
             </thead>
             <tbody>
-            @for(category <- categories){
+            @for((category, index) <- categories.zipWithIndex){
             <tr>
                 <td>@category.title</td>
-                <td style="text-align:center;"><label><input type="checkbox" @if(category.online){checked}></label></td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm"
-                            onclick="self.location='/category/up/@category.categoryId'">
-                        <span class="glyphicon glyphicon-chevron-up"></span>
-                    </button>
+                    <input type="checkbox"
+                           onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
+                           @if(category.online){checked}>
                 </td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-chevron-down"></span>
-                    </button>
+                    @if(index != 0){
+                    <a href="@controllers.category.routes.Categories.up(category.categoryId)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-up"></span>
+                        </button>
+                    </a>
+                    }
+                </td>
+                <td style="text-align:center;">
+                    @if(index < (categories.size-1)){
+                    <a href="@controllers.category.routes.Categories.down(category.categoryId)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                    </a>
+                    }
                 </td>
             </tr>
             }

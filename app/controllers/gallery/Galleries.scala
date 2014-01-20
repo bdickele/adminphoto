@@ -15,7 +15,7 @@ import controllers.category.Categories
 object Galleries extends Controller {
 
   def view(passedCategoryId: Int = -1) = Action.async {
-    val categories: List[Category] = Categories.findAll
+    val categories: List[Category] = Categories.findAllFromCacheOrDB()
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
     val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(categoryId)

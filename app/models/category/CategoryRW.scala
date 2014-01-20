@@ -4,7 +4,7 @@ import play.api.mvc.Controller
 import scala.concurrent.Future
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSON, BSONDocument}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
 
@@ -32,7 +32,7 @@ object CategoryRW extends Controller with MongoController {
       find(BSONDocument("categoryId" -> categoryId)).
       one[Category]
 
-  def update(categoryId: Int, doc: BSONDocument): Future[LastError] =
-    collection.update(BSONDocument("categoryId" -> categoryId), doc)
+  def update(category: Category): Future[LastError] =
+    collection.update(BSONDocument("_id" -> category.id), BSON.writeDocument(category))
 
 }

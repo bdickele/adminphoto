@@ -33,6 +33,15 @@ db.category.insert({
 	access: "G"
 })
 
+db.category.insert({
+	categoryId: NumberInt(3),
+	rank: NumberInt(2),
+	title: "2006",
+	description: "Année 2006",
+	online: true,
+	access: "G"
+})
+
 db.gallery.insert({
 	categoryId: NumberInt(1),
 	rank: NumberInt(0),
