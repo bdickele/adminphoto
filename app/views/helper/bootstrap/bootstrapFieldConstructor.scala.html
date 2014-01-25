@@ -1,0 +1,18 @@
+@(elements: views.html.helper.FieldElements)
+
+@import play.api.i18n._
+@import views.html.helper._
+
+<div @if(elements.hasErrors){class="form-group has-error"} else{class="form-group"}>
+    <label for="@elements.id" class="col-sm-2 control-label">@elements.label</label>
+    <div class="col-sm-10">
+        @elements.input
+            <span class="help-inline">
+            @if(elements.errors(elements.lang).nonEmpty) {
+                @elements.errors(elements.lang).mkString(", ")
+            } else {
+                @elements.infos(elements.lang).mkString(", ")
+            }
+            </span>
+    </div>
+</div>

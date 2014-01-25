@@ -4,10 +4,10 @@ import play.api.mvc.{SimpleResult, Action, Controller}
 import models.category.{Category, CategoryRW}
 import play.api.Logger
 import play.api.cache.Cache
+import play.api.Play.current
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import play.api.Play.current
 
 /**
  * User: bdickele

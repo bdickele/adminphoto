@@ -1,0 +1,45 @@
+@(title: String, categoryForm: Form[models.category.CategoryForm])
+
+@import views.html.helper.bootstrap._
+
+@main(title)(){
+
+@menu.topmenu(views.menu.TopMenuElement.Category)
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        @title
+    </div>
+    <div class="panel-body">
+        @helper.form(action=controllers.category.routes.CategoriesForm.update, args =
+            'class -> "form-horizontal",
+            'role -> "form") {
+
+            @helper.inputText(categoryForm("title"),
+                'class -> "form-control",
+                '_label -> "Title",
+                '_help -> "50 characters max",
+                'maxlength -> 50)
+
+            @helper.textarea(categoryForm("description"),
+                'class -> "form-control",
+                '_label -> "Description",
+                '_help -> "100 characters max",
+                'maxlength -> 101)
+
+            @helper.checkbox(categoryForm("online"),
+                'class -> "form-control",
+                '_label -> "On-line",
+                '_showConstraints -> false)
+
+            <input type="hidden" name="categoryId" value='@categoryForm.apply("categoryId").value'>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+}

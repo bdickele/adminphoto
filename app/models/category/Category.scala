@@ -12,8 +12,8 @@ case class Category(id: Option[BSONObjectID],
                     rank: Int,
                     title: String,
                     description: String,
-                    online: Boolean,
-                    access: Access.Value)
+                    online: Boolean = true,
+                    access: Access.Value = Access.Guest)
 
 object Category {
 

@@ -33,7 +33,7 @@
             <tbody>
             @for((category, index) <- categories.zipWithIndex){
             <tr>
-                <td>@category.title</td>
+                <td><a href="@controllers.category.routes.CategoriesForm.edit(category.categoryId)">@category.title</a></td>
                 <td style="text-align:center;">
                     <input type="checkbox"
                            onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
