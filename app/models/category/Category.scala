@@ -11,7 +11,7 @@ case class Category(id: Option[BSONObjectID],
                     categoryId: Int,
                     rank: Int,
                     title: String,
-                    description: String,
+                    description: Option[String],
                     online: Boolean = true,
                     access: Access.Value = Access.Guest)
 
@@ -25,18 +25,29 @@ object Category {
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("rank").get.value,
         doc.getAs[BSONString]("title").get.value,
-        doc.getAs[BSONString]("description").get.value,
+        doc.getAs[BSONString]("description") match {
+          case None => None
+          case Some(bsonString) => Some(bsonString.value)
+        },
         doc.getAs[BSONBoolean]("online").get.value,
         doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
 
-    def write(c: Category) =
-      BSONDocument(
+    def write(c: Category): BSONDocument = {
+      var doc = BSONDocument(
         "_id" -> c.id.getOrElse(BSONObjectID.generate),
         "categoryId" -> BSONInteger(c.categoryId),
         "rank" -> BSONInteger(c.rank),
         "title" -> BSONString(c.title),
-        "description" -> BSONString(c.description),
         "online" -> BSONBoolean(c.online),
         "access" -> BSONString(c.access.asInstanceOf[Access.AccessVal].dbId))
+
+      c.description match {
+        case None => // Nothing to do
+        case Some(s) => doc = doc ++ BSONDocument("description" -> BSONString(s))
+      }
+
+      doc
+    }
   }
+
 }

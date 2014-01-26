@@ -14,6 +14,14 @@ case class CategoryForm(categoryId: Int,
 
 object CategoryForm {
 
+  val newOne = CategoryForm(-1, "", "", true)
+
   def apply(category: Category): CategoryForm =
-    CategoryForm(category.categoryId, category.title, category.description, category.online)
+    CategoryForm(category.categoryId,
+      category.title,
+      category.description match {
+        case None => ""
+        case Some(s) => s
+      },
+      category.online)
 }

@@ -11,14 +11,13 @@
     <div class="panel-body">
 
         <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm">
+            <a href="@controllers.category.routes.CategoriesForm.create()" role="button" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-plus"></span> Add
-            </button>
-            <a href="@controllers.category.routes.Categories.refresh()">
-                <button type="button" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-refresh"></span> Refresh
-                </button>
             </a>
+            <a href="@controllers.category.routes.Categories.refresh()" role="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-refresh"></span> Refresh
+            </a>
+
         </div>
         <br><br>
         <table class="table table-striped">
@@ -33,11 +32,12 @@
             <tbody>
             @for((category, index) <- categories.zipWithIndex){
             <tr>
-                <td><a href="@controllers.category.routes.CategoriesForm.edit(category.categoryId)">@category.title</a></td>
+                <td><a href="@controllers.category.routes.CategoriesForm.edit(category.categoryId)">@category.title</a>
+                </td>
                 <td style="text-align:center;">
                     <input type="checkbox"
                            onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
-                           @if(category.online){checked}>
+                    @if(category.online){checked}>
                 </td>
                 <td style="text-align:center;">
                     @if(index != 0){
