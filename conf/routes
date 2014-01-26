@@ -6,7 +6,11 @@
 GET     /                                   controllers.Application.index
 
 GET     /gallery                            controllers.gallery.Galleries.view(categoryId: Int = -1)
+GET     /gallery/create                     controllers.gallery.GalleriesForm.create
 GET     /gallery/:categoryId                controllers.gallery.Galleries.view(categoryId: Int)
+GET     /gallery/refresh/:categoryId        controllers.gallery.Galleries.refresh(categoryId: Int)
+
+POST    /gallery/save                       controllers.gallery.GalleriesForm.save
 
 GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
 GET     /picture/refresh                    controllers.picture.Pictures.refresh
@@ -14,9 +18,9 @@ GET     /picture/:mainFolder                controllers.picture.Pictures.view(ma
 GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
 
 GET     /category                           controllers.category.Categories.view
-GET     /category/create                    controllers.category.CategoriesForm.create
-GET     /category/edit/:categoryId          controllers.category.CategoriesForm.edit(categoryId: Int)
 GET     /category/refresh                   controllers.category.Categories.refresh
+GET     /category/create/                   controllers.category.CategoriesForm.create
+GET     /category/edit/:categoryId          controllers.category.CategoriesForm.edit(categoryId: Int)
 GET     /category/up/:categoryId            controllers.category.Categories.up(categoryId: Int)
 GET     /category/down/:categoryId          controllers.category.Categories.down(categoryId: Int)
 GET     /category/onOffline/:categoryId     controllers.category.Categories.onOffLine(categoryId: Int)

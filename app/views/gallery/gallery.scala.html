@@ -17,12 +17,14 @@
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm">
+            <a href="@controllers.gallery.routes.GalleriesForm.create()" role="button" class="btn btn-default btn-sm"
+               title="Create a new gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add
-            </button>
-            <button type="button" class="btn btn-default btn-sm">
+            </a>
+            <a href="@controllers.gallery.routes.Galleries.refresh(selectedGalleryId)" role="button" class="btn btn-default btn-sm"
+               title="Refresh list of galleries">
                 <span class="glyphicon glyphicon-refresh"></span> Refresh
-            </button>
+            </a>
         </div>
         <br><br>
         <table class="table table-striped">

@@ -29,4 +29,8 @@ object Galleries extends Controller {
     }
   }
 
+  def refresh(categoryId: Int) = Action {
+    Redirect(routes.Galleries.view(categoryId))
+  }
+
 }

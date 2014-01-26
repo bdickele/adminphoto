@@ -18,12 +18,13 @@ object CategoriesForm extends Controller {
   // ---------------------------------------------------------------
   val categoryFormMapping = mapping(
     "categoryId" -> number,
-    "title" -> nonEmptyText.verifying("Title cannot exceed 50 characters", _.length <= 50),
-    "description" -> text.verifying("Description cannot exceed 100 characters", _.length <= 100),
+    "title" -> nonEmptyText.
+      verifying("Title cannot exceed 50 characters", _.length <= 50),
+    "description" -> text.
+      verifying("Description cannot exceed 100 characters", _.length <= 100),
     "online" -> boolean)(CategoryForm.apply)(CategoryForm.unapply).
 
     // Title is to be unique
-    //TODO tester que l'erreur s'affiche correctement dans le formulaire
     verifying("Another category with same title exists",
       category => findByTitle(category.title) match {
         case None => true
@@ -43,10 +44,8 @@ object CategoriesForm extends Controller {
 
   def edit(categoryId: Int) = Action {
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => {
-        Ok(views.html.category.categoryForm("Category edition",
-          categoryForm.fill(CategoryForm(category))))
-      }
+      case Some(category) => Ok(views.html.category.categoryForm("Category edition",
+        categoryForm.fill(CategoryForm(category))))
       case None => Categories.couldNotFindCategory(categoryId)
     }
   }
@@ -65,12 +64,11 @@ object CategoriesForm extends Controller {
           Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
 
             // Edition of an existing category
-            case Some(category) => {
-              CategoryRW.update(category.copy(
+            case Some(category) => CategoryRW.update(
+              category.copy(
                 title = categoryForm.title,
                 description = if (categoryForm.description.isEmpty) None else Some(categoryForm.description),
                 online = categoryForm.online))
-            }
 
             // New category
             case None => CategoryRW.create(categoryForm.title, categoryForm.description, categoryForm.online)

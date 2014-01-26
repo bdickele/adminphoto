@@ -16,14 +16,14 @@ case class GalleryPicture(thumbnail: String,
 
 case class Gallery(id: Option[BSONObjectID],
                    categoryId: Int,
-                   galleryId: String,
+                   galleryId: Int,
                    rank: Int,
                    date: YearMonth,
                    title: String,
-                   description: String,
+                   description: Option[String],
                    thumbnail: String,
-                   online: Boolean,
-                   access: Access.Value,
+                   online: Boolean = true,
+                   access: Access.Value = Access.Guest,
                    pictures: List[GalleryPicture])
 
 object Gallery {
