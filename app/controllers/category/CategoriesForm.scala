@@ -58,20 +58,20 @@ object CategoriesForm extends Controller {
         formWithErrors => Ok(views.html.category.categoryForm("Incorrect data for category", formWithErrors)),
 
         // Validation OK
-        categoryForm => {
-          val categoryId = categoryForm.categoryId
+        form => {
+          val categoryId = form.categoryId
 
           Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
 
             // Edition of an existing category
             case Some(category) => CategoryRW.update(
               category.copy(
-                title = categoryForm.title,
-                description = if (categoryForm.description.isEmpty) None else Some(categoryForm.description),
-                online = categoryForm.online))
+                title = form.title,
+                description = if (form.description.isEmpty) None else Some(form.description),
+                online = form.online))
 
             // New category
-            case None => CategoryRW.create(categoryForm.title, categoryForm.description, categoryForm.online)
+            case None => CategoryRW.create(form.title, form.description, form.online)
           }
 
           Categories.clearCache()

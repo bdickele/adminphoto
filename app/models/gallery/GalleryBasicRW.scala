@@ -22,6 +22,16 @@ object GalleryBasicRW extends Controller with MongoController {
       cursor[GalleryBasic].
       collect[List]()
 
+  /**
+   * As title has to be unique, we need that method
+   * @param title
+   * @return
+   */
+  def findByTitle(title: String): Future[Option[GalleryBasic]] =
+    collection.
+      find(BSONDocument("title" -> title)).
+      one[GalleryBasic]
+
 
   /*
     val command = Aggregate("category", Seq(
@@ -30,14 +40,14 @@ object GalleryBasicRW extends Controller with MongoController {
 
     val result = db.command(command)
     */
-    //result.map(s => )
-    //val future: Future[List[GalleryBasic]] = result.map(r => r.toList.map(doc => GalleryBasic.readGallery(doc)))
-    //Await.result(future, Duration(1, TimeUnit.SECONDS))
+  //result.map(s => )
+  //val future: Future[List[GalleryBasic]] = result.map(r => r.toList.map(doc => GalleryBasic.readGallery(doc)))
+  //Await.result(future, Duration(1, TimeUnit.SECONDS))
 
-    //Await.result(result, Duration(1, TimeUnit.SECONDS))
-    //val list: List[BSONDocument] = result.value.get.get.toList
+  //Await.result(result, Duration(1, TimeUnit.SECONDS))
+  //val list: List[BSONDocument] = result.value.get.get.toList
 
-    //list.map(doc => GalleryBasic.readGallery(doc))
+  //list.map(doc => GalleryBasic.readGallery(doc))
 
 
 }
