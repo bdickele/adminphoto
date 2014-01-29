@@ -25,7 +25,7 @@ object GalleryBasic {
 
   implicit object GalleryBasicBSONHandler extends BSONDocumentReader[GalleryBasic] {
 
-    def read(doc: BSONDocument): GalleryBasic = {
+    def read(doc: BSONDocument): GalleryBasic =
       GalleryBasic(
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("rank").get.value,
@@ -36,7 +36,6 @@ object GalleryBasic {
         doc.getAs[BSONArray]("pictures").get.length,
         doc.getAs[BSONBoolean]("online").get.value,
         doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
-    }
   }
 
 }

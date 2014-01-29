@@ -31,23 +31,4 @@ object GalleryBasicRW extends Controller with MongoController {
     collection.
       find(BSONDocument("title" -> title)).
       one[GalleryBasic]
-
-
-  /*
-    val command = Aggregate("category", Seq(
-      Match(BSONDocument("categoryId" -> categoryId)),
-      Unwind("galleries")))
-
-    val result = db.command(command)
-    */
-  //result.map(s => )
-  //val future: Future[List[GalleryBasic]] = result.map(r => r.toList.map(doc => GalleryBasic.readGallery(doc)))
-  //Await.result(future, Duration(1, TimeUnit.SECONDS))
-
-  //Await.result(result, Duration(1, TimeUnit.SECONDS))
-  //val list: List[BSONDocument] = result.value.get.get.toList
-
-  //list.map(doc => GalleryBasic.readGallery(doc))
-
-
 }

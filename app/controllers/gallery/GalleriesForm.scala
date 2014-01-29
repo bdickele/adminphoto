@@ -23,7 +23,7 @@ object GalleriesForm extends Controller {
       verifying("Unknown category",
         categoryId => Categories.findAllFromCacheOrDB().find(c => c.categoryId == categoryId) match {
           case None => false
-          case Some => true
+          case Some(_) => true
         }),
     "galleryId" -> number,
     "title" -> nonEmptyText.
@@ -47,6 +47,7 @@ object GalleriesForm extends Controller {
 
   val galleryForm: Form[GalleryForm] = Form(galleryFormMapping)
 
+
   def create() = Action {
     // Let's retrieve ID of last category
     val categoryId = Categories.findAllFromCacheOrDB().maxBy(_.categoryId).categoryId
@@ -56,12 +57,23 @@ object GalleriesForm extends Controller {
       galleryForm.fill(GalleryForm.newOne(categoryId))))
   }
 
+  /*
+  def edit(gallerryId: Int) = Action {
+    Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
+      case Some(category) => Ok(views.html.gallery.galleryForm("Gallery edition",
+        categoryForm.fill(CategoryForm(category))))
+      case None => Categories.couldNotFindCategory(categoryId)
+    }
+  }
+  */
+
   def save() = Action {
     implicit request =>
       galleryForm.bindFromRequest.fold(
 
         // Validation error
-        formWithErrors => Ok(views.html.gallery.galleryForm("Incorrect data for gallery", formWithErrors)),
+        formWithErrors => Ok(views.html.gallery.galleryForm("Incorrect data for gallery",
+          Categories.findAllFromCacheOrDB(), formWithErrors)),
 
         // Validation OK
         form => {
