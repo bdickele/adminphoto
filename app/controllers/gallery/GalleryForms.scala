@@ -3,18 +3,18 @@ package controllers.gallery
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
-import models.gallery._
 import controllers.category.Categories
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import scala.Some
+import models.gallery.{Gallery, GalleryRW, GalleryForm}
 
 /**
  * User: bdickele
  * Date: 1/26/14
  */
-object GalleriesForm extends Controller {
+object GalleryForms extends Controller {
 
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]
@@ -105,6 +105,6 @@ object GalleriesForm extends Controller {
   }
 
   // Required by form's validation
-  def findByTitle(title: String): Option[GalleryBasic] =
-    Await.result(GalleryBasicRW.findByTitle(title), Duration(5, TimeUnit.SECONDS))
+  def findByTitle(title: String): Option[Gallery] =
+    Await.result(GalleryRW.findByTitle(title), Duration(5, TimeUnit.SECONDS))
 }

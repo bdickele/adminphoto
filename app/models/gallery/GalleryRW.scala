@@ -4,7 +4,7 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
 import scala.concurrent.{Await, Future}
-import reactivemongo.bson.{BSONInteger, BSON, BSONDocument}
+import reactivemongo.bson.{BSONValue, BSONInteger, BSON, BSONDocument}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
 import scala.concurrent.duration.Duration
@@ -18,64 +18,27 @@ object GalleryRW extends Controller with MongoController {
 
   def collection = db.collection[BSONCollection]("gallery")
 
+  // --------------------------------------------------------------
+  // FIND
+  // --------------------------------------------------------------
 
-  /**
-   *
-   * @param galleryId
-   * @return
-   */
+  def findAll(categoryId: Int): Future[List[Gallery]] =
+    collection.
+      find(BSONDocument("categoryId" -> categoryId)).
+      sort(BSONDocument("rank" -> -1)).
+      cursor[Gallery].
+      collect[List]()
+
   def findById(galleryId: Int): Future[Option[Gallery]] =
     collection.
       find(BSONDocument("galleryId" -> galleryId)).
       one[Gallery]
 
-  // Create a gallery (without thumbnail or picture)
-  def create(categoryId: Int,
-             title: String,
-             year: Int,
-             month: Int,
-             description: String,
-             online: Boolean): Future[LastError] = {
-    val galleryId = findMaxGalleryId + 1
-    val rank = findMaxRankForCategory(categoryId) + 1
-
-    val gallery = Gallery(None,
-      categoryId,
-      galleryId,
-      rank,
-      new YearMonth(year, month),
-      title,
-      if (description == "") None else Some(description),
-      "",
-      online)
-
-    collection.insert(BSON.writeDocument(gallery))
-  }
-
-  /** In that method we update everything that is not related to pictures */
-  def update(galleryId: Int,
-             categoryId: Int,
-             title: String,
-             year: Int,
-             month: Int,
-             description: Option[String],
-             online: Boolean): Future[LastError] = {
-    val selector = BSONDocument("galleryId" -> galleryId)
-
-    val modifier = BSONDocument(
-      "$set" -> BSONDocument(
-        "categoryId" -> categoryId,
-        "title" -> title,
-        "date" -> (year + "/" + month),
-        "online" -> online),
-      description match {
-        case None => "$unset" -> BSONDocument("description" -> 1)
-        case Some(d) => "$set" -> BSONDocument("description" -> d)
-      })
-
-    // get a future update
-    collection.update(selector, modifier)
-  }
+  /** As title has to be unique, we need that method */
+  def findByTitle(title: String): Future[Option[Gallery]] =
+    collection.
+      find(BSONDocument("title" -> title)).
+      one[Gallery]
 
   def findMaxGalleryId: Int = {
     val future: Future[Option[BSONDocument]] =
@@ -98,4 +61,64 @@ object GalleryRW extends Controller with MongoController {
       case Some(doc) => doc.getAs[BSONInteger]("rank").get.value
     }
   }
+
+  // --------------------------------------------------------------
+  // CREATE
+  // --------------------------------------------------------------
+
+  /** Create a gallery (without thumbnail or picture) */
+  def create(categoryId: Int,
+             title: String,
+             year: Int,
+             month: Int,
+             description: String,
+             online: Boolean): Future[LastError] = {
+    val galleryId = findMaxGalleryId + 1
+    val rank = findMaxRankForCategory(categoryId) + 1
+
+    val gallery = Gallery(None,
+      categoryId,
+      galleryId,
+      rank,
+      new YearMonth(year, month),
+      title,
+      if (description == "") None else Some(description),
+      "",
+      0,
+      online)
+
+    collection.insert(BSON.writeDocument(gallery))
+  }
+
+  // --------------------------------------------------------------
+  // UPDATE
+  // --------------------------------------------------------------
+
+  /** In that method we update everything that is not related to pictures */
+  def update(galleryId: Int,
+             categoryId: Int,
+             title: String,
+             year: Int,
+             month: Int,
+             description: Option[String],
+             online: Boolean): Future[LastError] = {
+    val selector = BSONDocument("galleryId" -> galleryId)
+
+    val modifier = BSONDocument(
+      "$set" -> BSONDocument(
+        "categoryId" -> categoryId,
+        "title" -> title,
+        "date" -> (year + "/" + month),
+        "online" -> online),
+      description match {
+        case None => "$unset" -> BSONDocument("description" -> 1)
+        case Some(d) => "$set" -> BSONDocument("description" -> d)
+      })
+
+    collection.update(selector, modifier)
+  }
+
+  def updateField(galleryId: Int, field: String, value: BSONValue): Future[LastError] =
+    collection.update(BSONDocument("galleryId" -> galleryId),
+      BSONDocument("$set" -> BSONDocument(field -> value)))
 }

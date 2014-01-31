@@ -1,4 +1,4 @@
-@(selectedGalleryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.GalleryBasic])
+@(selectedGalleryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.Gallery])
 
 @main("Galleries"){
 <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
@@ -18,7 +18,7 @@
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <a href="@controllers.gallery.routes.GalleriesForm.create()" role="button" class="btn btn-default btn-sm"
+            <a href="@controllers.gallery.routes.GalleryForms.create()" role="button" class="btn btn-default btn-sm"
                title="Create a new gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add
             </a>
@@ -45,7 +45,7 @@
             @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
                 <td><img src='@gallery.thumbnail'></td>
-                <td><a href="@controllers.gallery.routes.GalleriesForm.edit(gallery.galleryId)">@gallery.title</a></td>
+                <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;">
                     <button type="button" class="btn btn-default btn-sm">

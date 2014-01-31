@@ -20,6 +20,10 @@ object CategoryRW extends Controller with MongoController {
   val findAllQuery = BSONDocument()
 
 
+  // --------------------------------------------------------------
+  // FIND
+  // --------------------------------------------------------------
+
   def find(categoryId: Int): Future[Option[Category]] =
     collection.
       find(BSONDocument("categoryId" -> categoryId)).
@@ -33,6 +37,10 @@ object CategoryRW extends Controller with MongoController {
       sort(BSONDocument("rank" -> -1)).
       cursor[Category].
       collect[List]()
+
+  // --------------------------------------------------------------
+  // CREATE
+  // --------------------------------------------------------------
 
   def create(title: String, description: String, online: Boolean): Future[LastError] = {
     val categories = Await.result(findAll, Duration(10, TimeUnit.SECONDS))
@@ -49,6 +57,10 @@ object CategoryRW extends Controller with MongoController {
 
     collection.insert(BSON.writeDocument(category))
   }
+
+  // --------------------------------------------------------------
+  // UPDATE
+  // --------------------------------------------------------------
 
   def update(category: Category): Future[LastError] =
     collection.update(BSONDocument("_id" -> category.id), BSON.writeDocument(category))

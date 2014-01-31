@@ -11,7 +11,7 @@ import play.api.data.Form
  * Date: 25/01/14
  */
 
-object CategoriesForm extends Controller {
+object CategoryForms extends Controller {
 
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]

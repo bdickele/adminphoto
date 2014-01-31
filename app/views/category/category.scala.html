@@ -10,7 +10,7 @@
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <a href="@controllers.category.routes.CategoriesForm.create()" role="button" class="btn btn-default btn-sm"
+            <a href="@controllers.category.routes.CategoryForms.create()" role="button" class="btn btn-default btn-sm"
                title="Create a new category">
                 <span class="glyphicon glyphicon-plus"></span> Add
             </a>
@@ -32,7 +32,7 @@
             <tbody>
             @for((category, index) <- categories.zipWithIndex){
             <tr>
-                <td><a href="@controllers.category.routes.CategoriesForm.edit(category.categoryId)">@category.title</a>
+                <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.title</a>
                 </td>
                 <td style="text-align:center;">
                     <input type="checkbox"

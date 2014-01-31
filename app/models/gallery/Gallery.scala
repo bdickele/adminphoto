@@ -16,6 +16,7 @@ case class Gallery(id: Option[BSONObjectID],
                    title: String,
                    description: Option[String],
                    thumbnail: String,
+                   nbPictures: Int,
                    online: Boolean = true,
                    access: Access.Value = Access.Guest)
 
@@ -36,6 +37,10 @@ object Gallery {
           case Some(bsonString) => Some(bsonString.value)
         },
         Const.WebRoot + doc.getAs[BSONString]("thumbnail").get.value,
+        doc.getAs[BSONArray]("pictures") match {
+          case None => 0
+          case Some(array) => array.length
+        },
         doc.getAs[BSONBoolean]("online").get.value,
         doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
 

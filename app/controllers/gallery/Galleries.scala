@@ -3,7 +3,7 @@ package controllers.gallery
 import play.api.mvc.{SimpleResult, Action, Controller}
 import scala.concurrent.{Await, Future}
 import models.category.Category
-import models.gallery.{GalleryBasic, GalleryBasicRW}
+import models.gallery.{Gallery, GalleryRW}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.Logger
 import controllers.category.Categories
@@ -21,7 +21,7 @@ object Galleries extends Controller {
     val categories: List[Category] = Categories.findAllFromCacheOrDB()
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
-    val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(categoryId)
+    val future: Future[List[Gallery]] = GalleryRW.findAll(categoryId)
 
     future.map {
       galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
@@ -49,8 +49,8 @@ object Galleries extends Controller {
         galleries.reverse.find(_.rank > galleryRank) match {
           case None => // nothing to do then
           case Some(otherGallery) => {
-            GalleryBasicRW.updateField(galleryId, "rank", BSONInteger(galleryRank + 1))
-            GalleryBasicRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
+            GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank + 1))
+            GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
           }
         }
 
@@ -73,8 +73,8 @@ object Galleries extends Controller {
         galleries.find(_.rank < galleryRank) match {
           case None => // nothing to do then
           case Some(otherGallery) => {
-            GalleryBasicRW.updateField(galleryId, "rank", BSONInteger(galleryRank - 1))
-            GalleryBasicRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
+            GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank - 1))
+            GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
           }
         }
 
@@ -85,19 +85,19 @@ object Galleries extends Controller {
   }
 
   def onOffLine(categoryId: Int, galleryId: Int) = Action {
-    val option = Await.result(GalleryBasicRW.findById(galleryId), Duration(5, TimeUnit.SECONDS))
+    val option = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS))
 
     option match {
       case Some(gallery) => {
-        GalleryBasicRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
+        GalleryRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
         Redirect(routes.Galleries.view(categoryId))
       }
       case None => couldNotFindGallery(galleryId)
     }
   }
 
-  def findAll(categoryId: Int): List[GalleryBasic] =
-    Await.result(GalleryBasicRW.findAll(categoryId), Duration(5, TimeUnit.SECONDS))
+  def findAll(categoryId: Int): List[Gallery] =
+    Await.result(GalleryRW.findAll(categoryId), Duration(5, TimeUnit.SECONDS))
 
   def couldNotFindGallery(galleryId: Int): SimpleResult = {
     val message = "Could not find gallery with ID " + galleryId

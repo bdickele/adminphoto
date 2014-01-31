@@ -5,6 +5,23 @@ import play.api.cache.Cache
 import java.io.File
 import models.util.Const
 
+
+/**
+ * <p>Paths for a picture : complete and short versions (without root of photo stock).<br>
+ * Complete paths are there so that picture can be displayed in the admin web site.<br>
+ * Short ones are stored in the DB</p>
+ * @param thumbnailComplete Complete path to thumbnail (mandatory)
+ * @param webComplete Complete path to web version (mandatory)
+ * @param thumbnailShort Short path to thumbnail (mandatory)
+ * @param webShort Short path to web version (mandatory)
+ * @param printShort Short path to print version (optional)
+ */
+case class Picture(thumbnailComplete: String,
+                   webComplete: String,
+                   thumbnailShort: String,
+                   webShort: String,
+                   printShort: Option[String])
+
 object Picture {
 
   val FolderWeb = "web/"
@@ -67,7 +84,7 @@ object Picture {
    * @param subFolder Section folder
    * @return Complete list of picture of a gallery
    */
-  def pictures(mainFolder: String, subFolder: String): List[PicturePath] = {
+  def pictures(mainFolder: String, subFolder: String): List[Picture] = {
     val galleryLocal = Const.LocalRoot + mainFolder + "/" + subFolder + "/"
     val galleryUrl = Const.WebRoot + mainFolder + "/" + subFolder + "/"
 
@@ -83,7 +100,7 @@ object Picture {
 
     def findThumbnail(webName: String) = thumbnails.find(_.indexOf(webName) > -1).getOrElse("")
 
-    webs.map(w => PicturePath(
+    webs.map(w => Picture(
       pathThumbnailUrl + findThumbnail(w), pathWebUrl + w,
       findThumbnail(w), w,
       prints.find(_.indexOf(w) > -1))).toList

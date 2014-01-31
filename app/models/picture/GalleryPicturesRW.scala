@@ -16,6 +16,10 @@ object GalleryPicturesRW extends Controller with MongoController {
   def collection = db.collection[BSONCollection]("gallery")
 
 
+  // --------------------------------------------------------------
+  // FIND
+  // --------------------------------------------------------------
+
   /**
    * @param galleryId
    * @return Pictures of a gallery
@@ -24,5 +28,14 @@ object GalleryPicturesRW extends Controller with MongoController {
     collection.
       find(BSONDocument("galleryId" -> galleryId)).
       one[GalleryPictures]
+
+  // --------------------------------------------------------------
+  // CREATE
+  // --------------------------------------------------------------
+
+
+  // --------------------------------------------------------------
+  // UPDATE
+  // --------------------------------------------------------------
 }
 

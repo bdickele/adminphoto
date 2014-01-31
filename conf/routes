@@ -6,15 +6,15 @@
 GET     /                                           controllers.Application.index
 
 GET     /gallery                                    controllers.gallery.Galleries.view(categoryId: Int = -1)
-GET     /gallery/create                             controllers.gallery.GalleriesForm.create
-GET     /gallery/edit/:galleryId                    controllers.gallery.GalleriesForm.edit(galleryId: Int)
+GET     /gallery/create                             controllers.gallery.GalleryForms.create
+GET     /gallery/edit/:galleryId                    controllers.gallery.GalleryForms.edit(galleryId: Int)
 GET     /gallery/:categoryId                        controllers.gallery.Galleries.view(categoryId: Int)
 GET     /gallery/refresh/:categoryId                controllers.gallery.Galleries.refresh(categoryId: Int)
 GET     /gallery/up/:categoryId/:galleryId          controllers.gallery.Galleries.up(categoryId: Int, galleryId: Int)
 GET     /gallery/down/:categoryId/:galleryId        controllers.gallery.Galleries.down(categoryId: Int, galleryId: Int)
 GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Galleries.onOffLine(categoryId: Int, galleryId: Int)
 
-POST    /gallery/save                       controllers.gallery.GalleriesForm.save
+POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
 GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
 GET     /picture/refresh                    controllers.picture.Pictures.refresh
@@ -23,13 +23,13 @@ GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(ma
 
 GET     /category                           controllers.category.Categories.view
 GET     /category/refresh                   controllers.category.Categories.refresh
-GET     /category/create/                   controllers.category.CategoriesForm.create
-GET     /category/edit/:categoryId          controllers.category.CategoriesForm.edit(categoryId: Int)
+GET     /category/create/                   controllers.category.CategoryForms.create
+GET     /category/edit/:categoryId          controllers.category.CategoryForms.edit(categoryId: Int)
 GET     /category/up/:categoryId            controllers.category.Categories.up(categoryId: Int)
 GET     /category/down/:categoryId          controllers.category.Categories.down(categoryId: Int)
 GET     /category/onOffline/:categoryId     controllers.category.Categories.onOffLine(categoryId: Int)
 
-POST    /category/save                      controllers.category.CategoriesForm.save
+POST    /category/save                      controllers.category.CategoryForms.save
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)
