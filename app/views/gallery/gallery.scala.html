@@ -1,7 +1,7 @@
 @(selectedGalleryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.GalleryBasic])
 
 @main("Galleries"){
-    <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
+<script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
 } {
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
@@ -10,9 +10,10 @@
     <div class="panel-heading">
         Category :
         <select name="category" id="category" class="input-sm">
-        @for(category <- categories){
-            <option value="@category.categoryId" @if(category.categoryId==selectedGalleryId){selected}>@category.title</option>
-        }
+            @for(category <- categories){
+            <option value="@category.categoryId"
+            @if(category.categoryId==selectedGalleryId){selected}>@category.title</option>
+            }
         </select>
     </div>
     <div class="panel-body">
@@ -21,7 +22,8 @@
                title="Create a new gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add
             </a>
-            <a href="@controllers.gallery.routes.Galleries.refresh(selectedGalleryId)" role="button" class="btn btn-default btn-sm"
+            <a href="@controllers.gallery.routes.Galleries.refresh(selectedGalleryId)" role="button"
+               class="btn btn-default btn-sm"
                title="Refresh list of galleries">
                 <span class="glyphicon glyphicon-refresh"></span> Refresh
             </a>
@@ -40,26 +42,38 @@
             </tr>
             </thead>
             <tbody>
-            @for(gallery <- galleries){
+            @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
                 <td><img src='@gallery.thumbnail'></td>
-                <td>@gallery.title</td>
+                <td><a href="@controllers.gallery.routes.GalleriesForm.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;">
                     <button type="button" class="btn btn-default btn-sm">
                         <span class="glyphicon glyphicon-picture"></span>
                     </button>
                 </td>
-                <td style="text-align:center;"><label><input type="checkbox" @if(gallery.online){checked}></label></td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-chevron-up"></span>
-                    </button>
+                    <label><input type="checkbox"
+                                  onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.categoryId, gallery.galleryId)'"
+                        @if(gallery.online){checked}></label>
                 </td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-chevron-down"></span>
-                    </button>
+                    @if(index != 0){
+                    <a href="@controllers.gallery.routes.Galleries.up(gallery.categoryId, gallery.galleryId)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-up"></span>
+                        </button>
+                    </a>
+                    }
+                </td>
+                <td style="text-align:center;">
+                    @if(index < (galleries.size-1)){
+                    <a href="@controllers.gallery.routes.Galleries.down(gallery.categoryId, gallery.galleryId)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                    </a>
+                    }
                 </td>
             </tr>
             }

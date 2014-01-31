@@ -8,6 +8,7 @@ import play.api.Play.current
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import reactivemongo.bson.{BSONInteger, BSONBoolean}
 
 /**
  * User: bdickele
@@ -59,8 +60,8 @@ object Categories extends Controller {
           case None => // nothing to do then
           case Some(otherCategory) => {
             clearCache()
-            CategoryRW.update(category.copy(rank = (categoryRank + 1)))
-            CategoryRW.update(otherCategory.copy(rank = categoryRank))
+            CategoryRW.updateField(category.id, "rank", BSONInteger(categoryRank + 1))
+            CategoryRW.updateField(otherCategory.id, "rank", BSONInteger(categoryRank))
           }
         }
 
@@ -88,8 +89,8 @@ object Categories extends Controller {
           case None => // nothing to do then
           case Some(otherCategory) => {
             clearCache()
-            CategoryRW.update(category.copy(rank = (categoryRank - 1)))
-            CategoryRW.update(otherCategory.copy(rank = categoryRank))
+            CategoryRW.updateField(category.id, "rank", BSONInteger(categoryRank - 1))
+            CategoryRW.updateField(otherCategory.id, "rank", BSONInteger(categoryRank))
           }
         }
 
@@ -103,7 +104,7 @@ object Categories extends Controller {
     findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
       case Some(category) => {
         clearCache()
-        CategoryRW.update(category.copy(online = !category.online))
+        CategoryRW.updateField(category.id, "online", BSONBoolean(!category.online))
         Redirect(routes.Categories.view())
       }
       case None => couldNotFindCategory(categoryId)

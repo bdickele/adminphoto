@@ -22,7 +22,7 @@ object GalleryForm {
     GalleryForm(categoryId, -1, "", today.getYear, today.getMonthOfYear, "", true)
   }
 
-  def build(gallery: Gallery): GalleryForm =
+  def apply(gallery: Gallery): GalleryForm =
     GalleryForm(gallery.categoryId,
       gallery.galleryId,
       gallery.title,

@@ -34,4 +34,20 @@ class GalleryBasicRWSpec extends Specification {
       g.nbPictures must equalTo(2)
     }
   }
+
+  "Method findByTitle" should {
+
+    "return a gallery when title exists" in new TestApplication {
+      val future = GalleryBasicRW.findByTitle("Eté 2004: divers")
+      val gallery: GalleryBasic = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+      gallery.galleryId must equalTo(1)
+      gallery.title must equalTo("Eté 2004: divers")
+    }
+
+    "return nothing when title doesn't exist" in new TestApplication {
+      val future = GalleryBasicRW.findByTitle("blablabla")
+      val gallery: Option[GalleryBasic] = Await.result(future, Duration(5, TimeUnit.SECONDS))
+      gallery must equalTo(None)
+    }
+  }
 }

@@ -4,7 +4,7 @@ import play.api.mvc.Controller
 import scala.concurrent.{Await, Future}
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
-import reactivemongo.bson.{BSON, BSONDocument}
+import reactivemongo.bson.{BSONObjectID, BSONValue, BSON, BSONDocument}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
 import scala.concurrent.duration.Duration
@@ -52,4 +52,8 @@ object CategoryRW extends Controller with MongoController {
 
   def update(category: Category): Future[LastError] =
     collection.update(BSONDocument("_id" -> category.id), BSON.writeDocument(category))
+
+  def updateField(id: Option[BSONObjectID], field: String, value: BSONValue): Future[LastError] =
+    collection.update(BSONDocument("_id" -> id.get),
+      BSONDocument("$set" -> BSONDocument(field -> value)))
 }

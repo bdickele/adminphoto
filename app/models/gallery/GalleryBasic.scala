@@ -31,9 +31,12 @@ object GalleryBasic {
         doc.getAs[BSONInteger]("rank").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
         doc.getAs[BSONString]("title").get.value,
-        Gallery.buildDate(doc.getAs[BSONString]("date").get.value),
+        Gallery.buildYearMonth(doc.getAs[BSONString]("date").get.value),
         Const.WebRoot + doc.getAs[BSONString]("thumbnail").get.value,
-        doc.getAs[BSONArray]("pictures").get.length,
+        doc.getAs[BSONArray]("pictures") match {
+          case None => 0
+          case Some(array) => array.length
+        },
         doc.getAs[BSONBoolean]("online").get.value,
         doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
   }

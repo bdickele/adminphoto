@@ -3,11 +3,12 @@ package controllers.gallery
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
-import models.gallery.{GalleryBasic, GalleryBasicRW, GalleryForm}
+import models.gallery._
 import controllers.category.Categories
-import scala.concurrent.Await
+import scala.concurrent.{Future, Await}
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import scala.Some
 
 /**
  * User: bdickele
@@ -37,7 +38,6 @@ object GalleriesForm extends Controller {
     "online" -> boolean)(GalleryForm.apply)(GalleryForm.unapply).
 
     // Title is to be unique
-    //TODO tester que l'erreur s'affiche correctement dans le formulaire
     verifying("Another gallery with same title exists",
       gallery => findByTitle(gallery.title) match {
         case None => true
@@ -57,15 +57,14 @@ object GalleriesForm extends Controller {
       galleryForm.fill(GalleryForm.newOne(categoryId))))
   }
 
-  /*
-  def edit(gallerryId: Int) = Action {
-    Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => Ok(views.html.gallery.galleryForm("Gallery edition",
-        categoryForm.fill(CategoryForm(category))))
-      case None => Categories.couldNotFindCategory(categoryId)
+  def edit(galleryId: Int) = Action {
+    Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)) match {
+      case Some(gallery) => Ok(views.html.gallery.galleryForm("Gallery edition",
+        Categories.findAllFromCacheOrDB(),
+        galleryForm.fill(GalleryForm(gallery))))
+      case None => Galleries.couldNotFindGallery(galleryId)
     }
   }
-  */
 
   def save() = Action {
     implicit request =>
@@ -78,34 +77,34 @@ object GalleriesForm extends Controller {
         // Validation OK
         form => {
           val galleryId = form.galleryId
+          val future: Future[Option[Gallery]] = GalleryRW.findById(galleryId)
+          val option: Option[Gallery] = Await.result(future, Duration(10, TimeUnit.SECONDS))
 
-          //TODO Faire un GalleryRW avec un findById(categoryId: Int)
-
-          /*
-          val future: Future[List[GalleryBasic]] = GalleryBasicRW.findAll(form.categoryId)
-          val galleries: List[GalleryBasic] = Await.result(future, Duration(10, TimeUnit.SECONDS))
-
-          galleries.find(_.galleryId == galleryId) match {
+          option match {
 
             // Edition of an existing gallery
-            case Some(gallery) => GalleryRW.update(
-              category.copy(
-                title = categoryForm.title,
-                description = if (categoryForm.description.isEmpty) None else Some(categoryForm.description),
-                online = categoryForm.online))
+            case Some(gallery) => //
+              GalleryRW.update(
+                form.galleryId,
+                form.categoryId,
+                form.title,
+                form.year,
+                form.month,
+                if (form.description.isEmpty) None else Some(form.description),
+                form.online)
 
-            // New category
-            case None => CategoryRW.create(categoryForm.title, categoryForm.description, categoryForm.online)
+            // New gallery
+            case None => GalleryRW.create(form.categoryId, form.title, form.year, form.month,
+              form.description, form.online)
           }
-          */
 
+          //TODO En creation on passe a la page des photos, en edition on revient a la liste des galleries
           Redirect(routes.Galleries.view(form.categoryId))
         }
       )
   }
 
-  // Required for form's validation
-
+  // Required by form's validation
   def findByTitle(title: String): Option[GalleryBasic] =
     Await.result(GalleryBasicRW.findByTitle(title), Duration(5, TimeUnit.SECONDS))
 }
