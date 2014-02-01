@@ -36,7 +36,6 @@
                 <th style="text-align:center; width:130px">&nbsp;</th>
                 <th style="text-align:center;">Titre</th>
                 <th style="text-align:center; width:30">Pictures</th>
-                <th style="text-align:center; width:30">Edit pictures</th>
                 <th style="text-align:center; width:30">Online</th>
                 <th style="text-align:center;">Up</th>
                 <th style="text-align:center;">Down</th>
@@ -45,17 +44,10 @@
             <tbody>
             @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
-                <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)"><img
-                        src='@gallery.thumbnail'></a></td>
+                <td><a href="@controllers.gallery.routes.GalleryPicList.view(gallery.galleryId)">
+                    <img src='@gallery.thumbnail'></a></td>
                 <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
-                <td style="text-align:center;">
-                    <a href="@controllers.gallery.routes.GalleryPicList.view(gallery.galleryId)">
-                        <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-picture"></span>
-                        </button>
-                    </a>
-                </td>
                 <td style="text-align:center;">
                     <label><input type="checkbox"
                                   onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.categoryId, gallery.galleryId)'"

@@ -8,11 +8,11 @@
 </script>
 }{
 
-@menu.topmenu(views.menu.TopMenuElement.Gallery)
+<br>
 
 <div @if(form.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
 <div class="panel-heading">
-    @title
+    <h4><span @if(form.hasErrors){class="label label-danger"} else {class="label label-primary"}">@title</span></h4>
 </div>
 <div class="panel-body">
     @helper.form(action=controllers.gallery.routes.GalleryForms.save, args =

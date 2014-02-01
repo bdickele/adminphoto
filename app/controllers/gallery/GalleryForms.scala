@@ -49,14 +49,14 @@ object GalleryForms extends Controller {
 
 
   def create(categoryId: Int) = Action {
-    Ok(views.html.gallery.galleryForm("Add a gallery",
+    Ok(views.html.gallery.galleryForm("New gallery",
       Categories.findAllFromCacheOrDB(),
       galleryForm.fill(GalleryForm.newOne(categoryId))))
   }
 
   def edit(galleryId: Int) = Action {
     Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)) match {
-      case Some(gallery) => Ok(views.html.gallery.galleryForm("Gallery edition",
+      case Some(gallery) => Ok(views.html.gallery.galleryForm("Gallery \"" + gallery.title + "\"",
         Categories.findAllFromCacheOrDB(),
         galleryForm.fill(GalleryForm(gallery))))
       case None => Galleries.couldNotFindGallery(galleryId)

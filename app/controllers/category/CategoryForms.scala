@@ -42,13 +42,13 @@ object CategoryForms extends Controller {
     Categories.findAllFromCacheOrDB().find(_.title == title)
 
   def create() = Action {
-    Ok(views.html.category.categoryForm("Add a category",
+    Ok(views.html.category.categoryForm("New category",
       categoryForm.fill(Category(-1, -1, "", None, true))))
   }
 
   def edit(categoryId: Int) = Action {
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => Ok(views.html.category.categoryForm("Category edition",
+      case Some(category) => Ok(views.html.category.categoryForm("Gallery \"" + category.title + "\"",
         categoryForm.fill(category)))
       case None => Categories.couldNotFindCategory(categoryId)
     }
