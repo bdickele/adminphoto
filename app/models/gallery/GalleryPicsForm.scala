@@ -18,7 +18,7 @@ case class GalleryPicForm(thumbnail: String,
 
 object GalleryPicsForm {
 
-  def apply(galleryPics: GalleryPics): GalleryPicsForm =
+  def build(galleryPics: GalleryPics): GalleryPicsForm =
     GalleryPicsForm(
       galleryPics.galleryId,
       galleryPics.galleryTitle,

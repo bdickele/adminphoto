@@ -2,7 +2,7 @@ package controllers.category
 
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
-import models.category.{Category, CategoryRW, CategoryForm}
+import models.category.{Category, CategoryRW}
 import play.api.data.Form
 
 /**
@@ -16,13 +16,17 @@ object CategoryForms extends Controller {
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]
   // ---------------------------------------------------------------
-  val categoryFormMapping = mapping(
+  val categoryMapping = mapping(
     "categoryId" -> number,
+    "rank" -> ignored(-1),
     "title" -> nonEmptyText.
       verifying("Title cannot exceed 50 characters", _.length <= 50),
-    "description" -> text.
-      verifying("Description cannot exceed 100 characters", _.length <= 100),
-    "online" -> boolean)(CategoryForm.apply)(CategoryForm.unapply).
+    "description" -> optional(text).
+      verifying("Description cannot exceed 100 characters", _ match {
+      case None => true
+      case Some(d) => d.length <= 100
+    }),
+    "online" -> boolean)(Category.apply)(Category.unapply).
 
     // Title is to be unique
     verifying("Another category with same title exists",
@@ -31,7 +35,7 @@ object CategoryForms extends Controller {
         case Some(c) => c.categoryId == category.categoryId
       })
 
-  val categoryForm: Form[CategoryForm] = Form(categoryFormMapping)
+  val categoryForm: Form[Category] = Form(categoryMapping)
 
 
   def findByTitle(title: String): Option[Category] =
@@ -39,13 +43,13 @@ object CategoryForms extends Controller {
 
   def create() = Action {
     Ok(views.html.category.categoryForm("Add a category",
-      categoryForm.fill(CategoryForm.newOne)))
+      categoryForm.fill(Category(-1, -1, "", None, true))))
   }
 
   def edit(categoryId: Int) = Action {
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
       case Some(category) => Ok(views.html.category.categoryForm("Category edition",
-        categoryForm.fill(CategoryForm(category))))
+        categoryForm.fill(category)))
       case None => Categories.couldNotFindCategory(categoryId)
     }
   }
@@ -67,7 +71,7 @@ object CategoryForms extends Controller {
             case Some(category) => CategoryRW.update(
               category.copy(
                 title = form.title,
-                description = if (form.description.isEmpty) None else Some(form.description),
+                description = form.description,
                 online = form.online))
 
             // New category

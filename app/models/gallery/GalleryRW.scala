@@ -68,12 +68,12 @@ object GalleryRW extends Controller with MongoController {
 
   /** Create a gallery (without thumbnail or picture) */
   def create(categoryId: Int,
+             galleryId: Int,
              title: String,
              year: Int,
              month: Int,
              description: String,
              online: Boolean): Future[LastError] = {
-    val galleryId = findMaxGalleryId + 1
     val rank = findMaxRankForCategory(categoryId) + 1
 
     val gallery = Gallery(None,

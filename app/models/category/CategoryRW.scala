@@ -42,17 +42,17 @@ object CategoryRW extends Controller with MongoController {
   // CREATE
   // --------------------------------------------------------------
 
-  def create(title: String, description: String, online: Boolean): Future[LastError] = {
+  def create(title: String, description: Option[String], online: Boolean): Future[LastError] = {
     val categories = Await.result(findAll, Duration(10, TimeUnit.SECONDS))
 
     val maxCategoryId = categories.maxBy(_.categoryId).categoryId
     val maxRank = categories.maxBy(_.rank).rank
 
-    val category = Category(None,
+    val category = Category(
       maxCategoryId + 1,
       maxRank + 1,
       title,
-      if (description == "") None else Some(description),
+      description,
       online)
 
     collection.insert(BSON.writeDocument(category))
@@ -63,9 +63,9 @@ object CategoryRW extends Controller with MongoController {
   // --------------------------------------------------------------
 
   def update(category: Category): Future[LastError] =
-    collection.update(BSONDocument("_id" -> category.id), BSON.writeDocument(category))
+    collection.update(BSONDocument("categoryId" -> category.categoryId), BSON.writeDocument(category))
 
-  def updateField(id: Option[BSONObjectID], field: String, value: BSONValue): Future[LastError] =
-    collection.update(BSONDocument("_id" -> id.get),
+  def updateField(categoryId: Int, field: String, value: BSONValue): Future[LastError] =
+    collection.update(BSONDocument("categoryId" -> categoryId),
       BSONDocument("$set" -> BSONDocument(field -> value)))
 }

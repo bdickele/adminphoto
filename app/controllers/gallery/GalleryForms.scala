@@ -9,6 +9,7 @@ import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import scala.Some
 import models.gallery.{Gallery, GalleryRW, GalleryForm}
+import scala.util.{Success, Failure}
 
 /**
  * User: bdickele
@@ -19,7 +20,7 @@ object GalleryForms extends Controller {
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]
   // ---------------------------------------------------------------
-  val galleryFormMapping = mapping(
+  val formMapping = mapping(
     "categoryId" -> number.
       verifying("Unknown category",
         categoryId => Categories.findAllFromCacheOrDB().find(c => c.categoryId == categoryId) match {
@@ -45,7 +46,7 @@ object GalleryForms extends Controller {
       })
 
 
-  val galleryForm: Form[GalleryForm] = Form(galleryFormMapping)
+  val galleryForm: Form[GalleryForm] = Form(formMapping)
 
 
   def create(categoryId: Int) = Action {
@@ -94,9 +95,10 @@ object GalleryForms extends Controller {
 
             // New gallery
             case None => {
-              GalleryRW.create(form.categoryId, form.title, form.year, form.month,
+              val galleryId = GalleryRW.findMaxGalleryId + 1
+              val future = GalleryRW.create(galleryId, form.categoryId, form.title, form.year, form.month,
                 form.description, form.online)
-              Redirect(routes.GalleryPicsForms.edit(form.galleryId))
+              Redirect(routes.GalleryPicsForms.edit(galleryId))
             }
           }
         }

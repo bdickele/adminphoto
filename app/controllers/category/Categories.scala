@@ -60,8 +60,8 @@ object Categories extends Controller {
           case None => // nothing to do then
           case Some(otherCategory) => {
             clearCache()
-            CategoryRW.updateField(category.id, "rank", BSONInteger(categoryRank + 1))
-            CategoryRW.updateField(otherCategory.id, "rank", BSONInteger(categoryRank))
+            CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank + 1))
+            CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
           }
         }
 
@@ -89,8 +89,8 @@ object Categories extends Controller {
           case None => // nothing to do then
           case Some(otherCategory) => {
             clearCache()
-            CategoryRW.updateField(category.id, "rank", BSONInteger(categoryRank - 1))
-            CategoryRW.updateField(otherCategory.id, "rank", BSONInteger(categoryRank))
+            CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank - 1))
+            CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
           }
         }
 
@@ -104,7 +104,7 @@ object Categories extends Controller {
     findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
       case Some(category) => {
         clearCache()
-        CategoryRW.updateField(category.id, "online", BSONBoolean(!category.online))
+        CategoryRW.updateField(category.categoryId, "online", BSONBoolean(!category.online))
         Redirect(routes.Categories.view())
       }
       case None => couldNotFindCategory(categoryId)
