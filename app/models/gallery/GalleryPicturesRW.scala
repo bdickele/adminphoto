@@ -4,8 +4,9 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
 import scala.concurrent.Future
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONArray, BSONDocument}
 import play.api.libs.concurrent.Execution.Implicits._
+import reactivemongo.core.commands.LastError
 
 
 /**
@@ -29,13 +30,14 @@ object GalleryPicturesRW extends Controller with MongoController {
       find(BSONDocument("galleryId" -> galleryId)).
       one[GalleryPics]
 
-  // --------------------------------------------------------------
-  // CREATE
-  // --------------------------------------------------------------
-
 
   // --------------------------------------------------------------
   // UPDATE
   // --------------------------------------------------------------
+
+  def updatePictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
+    val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write(_)))
+    GalleryRW.updateField(galleryId, "pictures", array)
+  }
 }
 

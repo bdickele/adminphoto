@@ -1,7 +1,6 @@
 package models.category
 
 import reactivemongo.bson._
-import models.util.Access
 
 /**
  * Class standing for a category
@@ -13,7 +12,10 @@ case class Category(categoryId: Int,
                     title: String,
                     description: Option[String],
                     online: Boolean = true)
-                    //access: Access.Value = Access.Guest)
+
+//access: Access.Value = Access.Guest)
+//doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
+//"access" -> BSONString(c.access.asInstanceOf[Access.AccessVal].dbId))
 
 object Category {
 
@@ -29,23 +31,17 @@ object Category {
           case Some(bsonString) => Some(bsonString.value)
         },
         doc.getAs[BSONBoolean]("online").get.value)
-        //doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
 
-    def write(c: Category): BSONDocument = {
-      var doc = BSONDocument(
+    def write(c: Category): BSONDocument =
+      BSONDocument(
         "categoryId" -> BSONInteger(c.categoryId),
         "rank" -> BSONInteger(c.rank),
         "title" -> BSONString(c.title),
-        "online" -> BSONBoolean(c.online))
-        //"access" -> BSONString(c.access.asInstanceOf[Access.AccessVal].dbId))
-
-      c.description match {
-        case None => // Nothing to do
-        case Some(s) => doc = doc ++ BSONDocument("description" -> BSONString(s))
-      }
-
-      doc
-    }
+        "online" -> BSONBoolean(c.online)) ++
+        (c.description match {
+          case None => BSONDocument()
+          case Some(s) => BSONDocument("description" -> BSONString(s))
+        })
   }
 
 }

@@ -18,7 +18,10 @@ case class Gallery(categoryId: Int,
                    thumbnail: String,
                    nbPictures: Int,
                    online: Boolean = true)
-                   //access: Access.Value = Access.Guest)
+
+//access: Access.Value = Access.Guest)
+//doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
+//"access" -> BSONString(g.access.asInstanceOf[Access.AccessVal].dbId))
 
 object Gallery {
 
@@ -41,26 +44,20 @@ object Gallery {
           case Some(array) => array.length
         },
         doc.getAs[BSONBoolean]("online").get.value)
-        //doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
 
-    def write(g: Gallery): BSONDocument = {
-      var doc = BSONDocument(
+    def write(g: Gallery): BSONDocument =
+      BSONDocument(
         "categoryId" -> BSONInteger(g.categoryId),
         "rank" -> BSONInteger(g.rank),
         "galleryId" -> BSONInteger(g.galleryId),
         "date" -> BSONString(g.date.getYear + "/" + g.date.getMonthOfYear),
         "title" -> BSONString(g.title),
         "thumbnail" -> BSONString(g.thumbnail),
-        "online" -> BSONBoolean(g.online))
-        //"access" -> BSONString(g.access.asInstanceOf[Access.AccessVal].dbId))
-
-      g.description match {
-        case None => // Nothing to do
-        case Some(s) => doc = doc ++ BSONDocument("description" -> BSONString(s))
-      }
-
-      doc
-    }
+        "online" -> BSONBoolean(g.online)) ++
+        (g.description match {
+          case None => BSONDocument()
+          case Some(s) => BSONDocument("description" -> BSONString(s))
+        })
   }
 
   def buildYearMonth(s: String): YearMonth = {

@@ -6,6 +6,7 @@ package models.gallery
  * Created by bdickele
  * Date: 01/02/14
  */
+//TODO TO BE REMOVED
 case class GalleryPicsForm(galleryId: Int,
                            galleryTitle: String,
                            thumbnail: String,

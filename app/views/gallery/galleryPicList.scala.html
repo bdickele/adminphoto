@@ -1,0 +1,85 @@
+@(galleryPics: models.gallery.GalleryPics)
+
+@import views.html.helper.bootstrap._
+
+@main("Pictures of gallery " + galleryPics.galleryTitle)(){
+
+@menu.topmenu(views.menu.TopMenuElement.Gallery)
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Add and/or remove pictures
+    </div>
+    <div class="panel-body">
+        <div class="btn-group">
+            <a href="@controllers.gallery.routes.Galleries.view(galleryPics.categoryId)" role="button"
+               class="btn btn-default btn-sm"
+               title="Add pictures to that gallery">
+                <span class="glyphicon glyphicon-home"></span> Back to list
+            </a>
+            <a href="#" role="button"
+               class="btn btn-default btn-sm"
+               title="Add pictures to that gallery">
+                <span class="glyphicon glyphicon-plus"></span> Add picture(s)
+            </a>
+        </div>
+        <br><br>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th style="text-align:center; width:60px">Gallery's thumbnail</th>
+                <th style="text-align:center;">Picture</th>
+                <th style="text-align:center;">Name</th>
+                <th style="text-align:center;">Up</th>
+                <th style="text-align:center;">Down</th>
+                <th style="text-align:center;">Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for((picture, index) <- galleryPics.pictures.zipWithIndex){
+            <tr>
+                <td style="text-align:center; width:60px">
+                    <input type="radio" name="thumbnail" value="@picture.thumbnail"
+                           onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(galleryPics.galleryId, index)'"
+                    @if(picture.thumbnail == galleryPics.thumbnail){checked}>
+                </td>
+                <td style="text-align:center;"><a href="#"><img
+                        src='@picture.thumbnailComplete'></a></td>
+                <td style="text-align:left;">@picture.web.drop(picture.web.lastIndexOf('/')+1)</td>
+                <td style="text-align:center;">
+                    @if(index != 0){
+                    <a href="@controllers.gallery.routes.GalleryPicList.up(galleryPics.galleryId, index)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-up"></span>
+                        </button>
+                    </a>
+                    }
+                </td>
+                <td style="text-align:center;">
+                    @if(index < (galleryPics.pictures.size-1)){
+                    <a href="@controllers.gallery.routes.GalleryPicList.down(galleryPics.galleryId, index)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                    </a>
+                    }
+                </td>
+                <td style="text-align:center;">
+                    <a href="@controllers.gallery.routes.GalleryPicList.remove(galleryPics.galleryId, index)">
+                        <button type="button" class="btn btn-default" style="height:35px"
+                                title="Remove that picture from the gallery">
+                            <span class='glyphicon glyphicon-trash'></span>
+                        </button>
+                    </a>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+
+        <input type="hidden" name="galleryId" value='@galleryPics.galleryId'>
+
+    </div>
+</div>
+}

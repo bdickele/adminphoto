@@ -8,17 +8,35 @@ import reactivemongo.bson.BSONString
  * Created by bdickele
  * Date: 29/01/14
  */
-case class GalleryPics(galleryId: Int,
+case class GalleryPics(categoryId: Int,
+                       galleryId: Int,
                        galleryTitle: String,
                        thumbnail: String,
                        pictures: List[GalleryPic])
 
-case class GalleryPic(thumbnail: String,
+case class GalleryPic(thumbnailComplete: String,
+                      thumbnail: String,
                       web: String,
                       print: Option[String],
                       description: Option[String])
 
 object GalleryPics {
+
+  implicit object GalleryPicBSONHandler extends BSONDocumentWriter[GalleryPic] {
+
+    def write(pic: GalleryPic): BSONDocument =
+      BSONDocument(
+        "thumbnail" -> BSONString(pic.thumbnail),
+        "web" -> BSONString(pic.web)) ++
+        (pic.print match {
+          case None => BSONDocument()
+          case Some(s) => BSONDocument("print" -> BSONString(s))
+        }) ++
+        (pic.description match {
+          case None => BSONDocument()
+          case Some(s) => BSONDocument("description" -> BSONString(s))
+        })
+  }
 
 
   implicit object GalleryPicsBSONHandler extends BSONDocumentReader[GalleryPics] {
@@ -28,26 +46,31 @@ object GalleryPics {
       def readPicture(doc: BSONDocument): GalleryPic =
         GalleryPic(
           Const.WebRoot + doc.getAs[BSONString]("thumbnail").get.value,
-          Const.WebRoot + doc.getAs[BSONString]("web").get.value,
+          doc.getAs[BSONString]("thumbnail").get.value,
+          doc.getAs[BSONString]("web").get.value,
           doc.getAs[BSONString]("print") match {
             case None => None
-            case Some(s) => Some(Const.WebRoot + s.value)
+            case Some(s) => Some(s.value)
           },
           doc.getAs[BSONString]("description") match {
             case None => None
             case Some(s) => Some(s.value)
           })
 
-      def readPictures(array: BSONArray): List[GalleryPic] = {
-        val stream: Stream[BSONValue] = array.values
-        stream.toList.map(value => readPicture(value.asInstanceOf[BSONDocument]))
+      def readPictures(option: Option[BSONArray]): List[GalleryPic] = option match {
+        case None => List()
+        case Some(array) => {
+          val stream: Stream[BSONValue] = array.values
+          stream.toList.map(value => readPicture(value.asInstanceOf[BSONDocument]))
+        }
       }
 
       GalleryPics(
+        doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
         doc.getAs[BSONString]("title").get.value,
         doc.getAs[BSONString]("thumbnail").get.value,
-        readPictures(doc.getAs[BSONArray]("pictures").get))
+        readPictures(doc.getAs[BSONArray]("pictures")))
     }
   }
 

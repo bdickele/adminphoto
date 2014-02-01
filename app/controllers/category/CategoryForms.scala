@@ -64,6 +64,7 @@ object CategoryForms extends Controller {
         // Validation OK
         form => {
           val categoryId = form.categoryId
+          println("categoryId = " + categoryId)
 
           Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
 

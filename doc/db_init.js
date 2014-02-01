@@ -20,8 +20,7 @@ db.category.insert({
 	rank: NumberInt(0),
 	title: "2004", 
 	description: "Année 2004", 
-	online: true, 
-	access: "G"
+	online: true
 })
 
 db.category.insert({
@@ -29,8 +28,7 @@ db.category.insert({
 	rank: NumberInt(1),
 	title: "2005",
 	description: "Année 2005",
-	online: true,
-	access: "G"
+	online: true
 })
 
 db.category.insert({
@@ -38,8 +36,7 @@ db.category.insert({
 	rank: NumberInt(2),
 	title: "2006",
 	description: "Année 2006",
-	online: true,
-	access: "G"
+	online: true
 })
 
 db.gallery.insert({
@@ -49,17 +46,19 @@ db.gallery.insert({
     date : "2004/6",
     title: "Eté 2004: divers",
     description: "Ce ne sont pas nos toutes toutes premières photos, mais en tout cas les premières numérisées.",
-    thumbnail: "2004/0406_misc/thumbnail/small_0406_Versailles_01.jpg",
+    thumbnail: "2004/0406_misc/thumbnail/small_0406_Adrien.jpg",
     online: true,
-    access: "G",
     pictures: [
         {
-            thumbnail: "2004/0406_misc/small/small_0406_Adrien.jpg",
+            thumbnail: "2004/0406_misc/thumbnail/small_0406_Adrien.jpg",
             web: "2004/0406_misc/web/0406_Adrien.jpg",
             description: "Avec mon fréro"},
         {
-            thumbnail: "2004/0406_misc/small/small_0406_Bastille.jpg",
-            web: "2004/0406_misc/web/0406_Bastille.jpg"}]
+            thumbnail: "2004/0406_misc/thumbnail/small_0406_Bastille.jpg",
+            web: "2004/0406_misc/web/0406_Bastille.jpg"},
+        {
+            thumbnail: "2004/0406_misc/thumbnail/small_0406_Beaubourg.jpg",
+            web: "2004/0406_misc/web/0406_Beaubourg.jpg"}]
 })
 
 // ********************************************************************************

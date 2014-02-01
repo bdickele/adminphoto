@@ -5,6 +5,10 @@
 # Home page
 GET     /                                           controllers.Application.index
 
+#
+# GALLERY
+#
+
 GET     /gallery                                    controllers.gallery.Galleries.view(categoryId: Int = -1)
 GET     /gallery/create/:categoryId                 controllers.gallery.GalleryForms.create(categoryId: Int)
 GET     /gallery/edit/:galleryId                    controllers.gallery.GalleryForms.edit(galleryId: Int)
@@ -16,12 +20,24 @@ GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Gallerie
 
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
-GET     /galleryPics/:galleryId                     controllers.gallery.GalleryPicsForms.edit(galleryId: Int)
+GET     /galleryPicList/:galleryId                  controllers.gallery.GalleryPicList.view(galleryId: Int)
+GET     /galleryPicList/up/:galleryId/:index        controllers.gallery.GalleryPicList.up(galleryId: Int, index: Int)
+GET     /galleryPicList/down/:galleryId/:index      controllers.gallery.GalleryPicList.down(galleryId: Int, index: Int)
+GET     /galleryPicList/remove/:galleryId/:index    controllers.gallery.GalleryPicList.remove(galleryId: Int, index: Int)
+GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
+
+#
+# STOCK OF PICTURE
+#
 
 GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
 GET     /picture/refresh                    controllers.picture.Pictures.refresh
 GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
 GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
+
+#
+# CATEGORY
+#
 
 GET     /category                           controllers.category.Categories.view
 GET     /category/refresh                   controllers.category.Categories.refresh

@@ -97,7 +97,7 @@ object GalleryForms extends Controller {
               val galleryId = GalleryRW.findMaxGalleryId + 1
               GalleryRW.create(form.categoryId, galleryId, form.title, form.year, form.month,
                 form.description, form.online)
-              Redirect(routes.GalleryPicsForms.edit(galleryId))
+              Redirect(routes.GalleryPicList.view(galleryId))
             }
           }
         }
