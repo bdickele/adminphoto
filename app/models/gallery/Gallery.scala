@@ -5,7 +5,8 @@ import models.util.{Const, Access}
 import reactivemongo.bson._
 
 /**
- * User: bdickele
+ * Class standing for a gallery, without anything related to pictures, except number of pictures.
+ * Created by bdickele
  * Date: 1/11/14
  */
 case class Gallery(id: Option[BSONObjectID],

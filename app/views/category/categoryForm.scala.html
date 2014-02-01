@@ -1,4 +1,4 @@
-@(title: String, categoryForm: Form[models.category.CategoryForm])
+@(title: String, form: Form[models.category.CategoryForm])
 
 @import views.html.helper.bootstrap._
 
@@ -12,7 +12,7 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Category)
 
-<div @if(categoryForm.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
+<div @if(form.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
 <div class="panel-heading">
     @title
 </div>
@@ -21,32 +21,32 @@
     'class -> "form-horizontal",
     'role -> "form") {
 
-    @categoryForm.globalError.map { error =>
+    @form.globalError.map { error =>
     <div class="form-group has-error">
         <label class="col-sm-2 control-label"></label>
         <label class="col-sm-10">@error.message</label>
     </div>
     }
 
-    @helper.inputText(categoryForm("title"),
+    @helper.inputText(form("title"),
     'class -> "form-control",
     '_label -> "Title",
     '_help -> "50 characters max",
     'maxlength -> 50)
 
 
-    @helper.textarea(categoryForm("description"),
+    @helper.textarea(form("description"),
     'class -> "form-control",
     '_label -> "Description",
     '_help -> "100 characters max",
     'maxlength -> 100)
 
-    @helper.checkbox(categoryForm("online"),
+    @helper.checkbox(form("online"),
     'class -> "form-control",
     '_label -> "On-line",
     '_showConstraints -> false)
 
-    <input type="hidden" name="categoryId" value='@categoryForm.apply("categoryId").value'>
+    <input type="hidden" name="categoryId" value='@form.apply("categoryId").value'>
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">

@@ -1,4 +1,4 @@
-package models.picture
+package models.gallery
 
 import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
@@ -24,10 +24,10 @@ object GalleryPicturesRW extends Controller with MongoController {
    * @param galleryId
    * @return Pictures of a gallery
    */
-  def findByGalleryId(galleryId: Int): Future[Option[GalleryPictures]] =
+  def findByGalleryId(galleryId: Int): Future[Option[GalleryPics]] =
     collection.
       find(BSONDocument("galleryId" -> galleryId)).
-      one[GalleryPictures]
+      one[GalleryPics]
 
   // --------------------------------------------------------------
   // CREATE

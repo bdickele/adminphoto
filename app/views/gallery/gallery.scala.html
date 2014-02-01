@@ -1,4 +1,4 @@
-@(selectedGalleryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.Gallery])
+@(selectedCategoryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.Gallery])
 
 @main("Galleries"){
 <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
@@ -12,17 +12,18 @@
         <select name="category" id="category" class="input-sm">
             @for(category <- categories){
             <option value="@category.categoryId"
-            @if(category.categoryId==selectedGalleryId){selected}>@category.title</option>
+            @if(category.categoryId==selectedCategoryId){selected}>@category.title</option>
             }
         </select>
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <a href="@controllers.gallery.routes.GalleryForms.create()" role="button" class="btn btn-default btn-sm"
+            <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
+               class="btn btn-default btn-sm"
                title="Create a new gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add
             </a>
-            <a href="@controllers.gallery.routes.Galleries.refresh(selectedGalleryId)" role="button"
+            <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
                class="btn btn-default btn-sm"
                title="Refresh list of galleries">
                 <span class="glyphicon glyphicon-refresh"></span> Refresh
@@ -44,13 +45,16 @@
             <tbody>
             @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
-                <td><img src='@gallery.thumbnail'></td>
+                <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)"><img
+                        src='@gallery.thumbnail'></a></td>
                 <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;">
-                    <button type="button" class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-picture"></span>
-                    </button>
+                    <a href="@controllers.gallery.routes.GalleryPicsForms.edit(gallery.galleryId)">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-picture"></span>
+                        </button>
+                    </a>
                 </td>
                 <td style="text-align:center;">
                     <label><input type="checkbox"

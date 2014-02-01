@@ -1,24 +1,24 @@
-package app.models.picture
+package app.models.gallery
 
 import org.specs2.mutable.Specification
 import app.models.TestApplication
-import models.picture.{GalleryPictures, GalleryPicturesRW}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import models.util.Const
+import models.gallery.{GalleryPicturesRW, GalleryPics}
 
 /**
  * Created by bdickele
  * Date: 29/01/14
  */
 
-class GalleryPicturesRWSpec extends Specification {
+class GalleryPicsRWSpec extends Specification {
 
   "Method findByGalleryId" should {
 
     lazy val future = GalleryPicturesRW.findByGalleryId(1)
-    lazy val galleryPictures: GalleryPictures = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+    lazy val galleryPictures: GalleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
 
     "return pictures of the gallery" in new TestApplication {
       galleryPictures.galleryId must equalTo(1)

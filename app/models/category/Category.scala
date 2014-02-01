@@ -4,7 +4,8 @@ import reactivemongo.bson._
 import models.util.Access
 
 /**
- * User: bdickele
+ * Class standing for a category
+ * Created by bdickele
  * Date: 1/11/14
  */
 case class Category(id: Option[BSONObjectID],

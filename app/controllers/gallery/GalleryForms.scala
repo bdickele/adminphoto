@@ -48,10 +48,7 @@ object GalleryForms extends Controller {
   val galleryForm: Form[GalleryForm] = Form(galleryFormMapping)
 
 
-  def create() = Action {
-    // Let's retrieve ID of last category
-    val categoryId = Categories.findAllFromCacheOrDB().maxBy(_.categoryId).categoryId
-
+  def create(categoryId: Int) = Action {
     Ok(views.html.gallery.galleryForm("Add a gallery",
       Categories.findAllFromCacheOrDB(),
       galleryForm.fill(GalleryForm.newOne(categoryId))))
@@ -83,7 +80,7 @@ object GalleryForms extends Controller {
           option match {
 
             // Edition of an existing gallery
-            case Some(gallery) => //
+            case Some(gallery) => {
               GalleryRW.update(
                 form.galleryId,
                 form.categoryId,
@@ -92,14 +89,16 @@ object GalleryForms extends Controller {
                 form.month,
                 if (form.description.isEmpty) None else Some(form.description),
                 form.online)
+              Redirect(routes.Galleries.view(form.categoryId))
+            }
 
             // New gallery
-            case None => GalleryRW.create(form.categoryId, form.title, form.year, form.month,
-              form.description, form.online)
+            case None => {
+              GalleryRW.create(form.categoryId, form.title, form.year, form.month,
+                form.description, form.online)
+              Redirect(routes.GalleryPicsForms.edit(form.galleryId))
+            }
           }
-
-          //TODO En creation on passe a la page des photos, en edition on revient a la liste des galleries
-          Redirect(routes.Galleries.view(form.categoryId))
         }
       )
   }

@@ -1,4 +1,4 @@
-@(title: String, categories: List[models.category.Category], galleryForm: Form[models.gallery.GalleryForm])
+@(title: String, categories: List[models.category.Category], form: Form[models.gallery.GalleryForm])
 
 @import views.html.helper.bootstrap._
 
@@ -10,7 +10,7 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 
-<div @if(galleryForm.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
+<div @if(form.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
 <div class="panel-heading">
     @title
 </div>
@@ -19,57 +19,57 @@
     'class -> "form-horizontal",
     'role -> "form") {
 
-    @helper.select(galleryForm("categoryId"),
+    @helper.select(form("categoryId"),
     categories.map(c => (c.categoryId.toString, c.title)),
     '_label -> "Category",
     'class -> "input-sm",
     '_showConstraints -> false
     )
 
-    @galleryForm.globalError.map { error =>
+    @form.globalError.map { error =>
     <div class="form-group has-error">
         <label class="col-sm-2 control-label"></label>
         <label class="col-sm-10">@error.message</label>
     </div>
     }
 
-    @helper.inputText(galleryForm("title"),
+    @helper.inputText(form("title"),
     'class -> "form-control",
     '_label -> "Title",
     '_help -> "50 characters max",
     'maxlength -> 50)
 
-    @helper.select(galleryForm("year"),
+    @helper.select(form("year"),
     List(("2004", "2004"), ("2005", "2005"), ("2006", "2006"), ("2007", "2007"), ("2008", "2008"),
     ("2009", "2009"), ("2010", "2010"), ("2011", "2011"), ("2012", "2012"), ("2013", "2013"), ("2014", "2014")).reverse,
     '_label -> "Year",
     'class -> "input-sm",
     '_showConstraints -> false)
 
-    @helper.select(galleryForm("month"),
+    @helper.select(form("month"),
     List(("1", "January"), ("2", "February"), ("3", "March"), ("4", "April"), ("5", "May"), ("6", "June"),
     ("7", "July"), ("8", "August"), ("9", "September"), ("10", "October"), ("11", "November"), ("12", "December")),
     '_label -> "Month",
     'class -> "input-sm",
     '_showConstraints -> false)
 
-    @helper.textarea(galleryForm("description"),
+    @helper.textarea(form("description"),
     'class -> "form-control",
     '_label -> "Description",
     '_help -> "500 characters max",
     'rows -> 10,
     'maxlength -> 500)
 
-    @helper.checkbox(galleryForm("online"),
+    @helper.checkbox(form("online"),
     'class -> "form-control",
     '_label -> "On-line",
     '_showConstraints -> false)
 
-    <input type="hidden" name="galleryId" value='@galleryForm.apply("galleryId").value'>
+    <input type="hidden" name="galleryId" value='@form.apply("galleryId").value'>
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a href="@controllers.gallery.routes.Galleries.view(-1)" role="button" class="btn btn-primary">Cancel</a>
+            <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)' role="button" class="btn btn-primary">Cancel</a>
             &nbsp;&nbsp;
             <button type="submit" class="btn btn-primary">
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save

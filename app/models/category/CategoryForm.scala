@@ -2,11 +2,10 @@ package models.category
 
 
 /**
- * Class use in the form related to creation or edition of a category
+ * Class used for category's form
  * Created by bdickele
  * Date: 25/01/14
  */
-
 case class CategoryForm(categoryId: Int,
                         title: String,
                         description: String,

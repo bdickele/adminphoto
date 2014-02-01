@@ -3,10 +3,10 @@ package models.gallery
 import org.joda.time.YearMonth
 
 /**
+ * Object used for gallery's form (without anything related to pictures)
  * Created by bdickele
  * Date: 1/26/14
  */
-
 case class GalleryForm(categoryId: Int,
                        galleryId: Int,
                        title: String,
