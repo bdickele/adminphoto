@@ -45,7 +45,6 @@ object GalleryForms extends Controller {
         case Some(g) => g.galleryId == gallery.galleryId
       })
 
-
   val galleryForm: Form[GalleryForm] = Form(formMapping)
 
 
@@ -96,7 +95,7 @@ object GalleryForms extends Controller {
             // New gallery
             case None => {
               val galleryId = GalleryRW.findMaxGalleryId + 1
-              val future = GalleryRW.create(galleryId, form.categoryId, form.title, form.year, form.month,
+              GalleryRW.create(form.categoryId, galleryId, form.title, form.year, form.month,
                 form.description, form.online)
               Redirect(routes.GalleryPicsForms.edit(galleryId))
             }

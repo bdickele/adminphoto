@@ -9,8 +9,7 @@ import reactivemongo.bson._
  * Created by bdickele
  * Date: 1/11/14
  */
-case class Gallery(id: Option[BSONObjectID],
-                   categoryId: Int,
+case class Gallery(categoryId: Int,
                    galleryId: Int,
                    rank: Int,
                    date: YearMonth,
@@ -18,8 +17,8 @@ case class Gallery(id: Option[BSONObjectID],
                    description: Option[String],
                    thumbnail: String,
                    nbPictures: Int,
-                   online: Boolean = true,
-                   access: Access.Value = Access.Guest)
+                   online: Boolean = true)
+                   //access: Access.Value = Access.Guest)
 
 object Gallery {
 
@@ -27,7 +26,6 @@ object Gallery {
 
     def read(doc: BSONDocument): Gallery =
       Gallery(
-        doc.getAs[BSONObjectID]("_id"),
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
         doc.getAs[BSONInteger]("rank").get.value,
@@ -42,20 +40,19 @@ object Gallery {
           case None => 0
           case Some(array) => array.length
         },
-        doc.getAs[BSONBoolean]("online").get.value,
-        doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
+        doc.getAs[BSONBoolean]("online").get.value)
+        //doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
 
     def write(g: Gallery): BSONDocument = {
       var doc = BSONDocument(
-        "_id" -> g.id.getOrElse(BSONObjectID.generate),
         "categoryId" -> BSONInteger(g.categoryId),
         "rank" -> BSONInteger(g.rank),
         "galleryId" -> BSONInteger(g.galleryId),
         "date" -> BSONString(g.date.getYear + "/" + g.date.getMonthOfYear),
         "title" -> BSONString(g.title),
         "thumbnail" -> BSONString(g.thumbnail),
-        "online" -> BSONBoolean(g.online),
-        "access" -> BSONString(g.access.asInstanceOf[Access.AccessVal].dbId))
+        "online" -> BSONBoolean(g.online))
+        //"access" -> BSONString(g.access.asInstanceOf[Access.AccessVal].dbId))
 
       g.description match {
         case None => // Nothing to do

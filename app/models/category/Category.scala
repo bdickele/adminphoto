@@ -13,6 +13,7 @@ case class Category(categoryId: Int,
                     title: String,
                     description: Option[String],
                     online: Boolean = true)
+                    //access: Access.Value = Access.Guest)
 
 object Category {
 

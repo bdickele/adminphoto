@@ -10,6 +10,7 @@ import reactivemongo.core.commands.LastError
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import org.joda.time.YearMonth
+import play.api.Logger
 
 /**
  * Created by bdickele on 29/01/14.
@@ -76,7 +77,7 @@ object GalleryRW extends Controller with MongoController {
              online: Boolean): Future[LastError] = {
     val rank = findMaxRankForCategory(categoryId) + 1
 
-    val gallery = Gallery(None,
+    val gallery = Gallery(
       categoryId,
       galleryId,
       rank,
@@ -87,6 +88,7 @@ object GalleryRW extends Controller with MongoController {
       0,
       online)
 
+    Logger.info("Gallery to be created : " + gallery)
     collection.insert(BSON.writeDocument(gallery))
   }
 
