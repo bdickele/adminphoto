@@ -1,14 +1,13 @@
 @(galleryPics: models.gallery.GalleryPics)
 
-@import views.html.helper.bootstrap._
-
 @main("Pictures of gallery " + galleryPics.galleryTitle)(){
 
 <br>
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h4><span class="label label-primary">Gallery "@galleryPics.galleryTitle"</span></h4>And/or remove pictures to gallery
+        <h4><span class="label label-primary">Gallery "@galleryPics.galleryTitle"</span></h4>
+        Order or remove pictures from the gallery
     </div>
     <div class="panel-body">
         <div class="btn-group">
@@ -17,7 +16,7 @@
                title="Add pictures to that gallery">
                 <span class="glyphicon glyphicon-home"></span> Back to list
             </a>
-            <a href="#" role="button"
+            <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryPics.galleryId, "", "")' role="button"
                class="btn btn-default btn-sm"
                title="Add pictures to that gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add picture(s)

@@ -7,7 +7,7 @@ import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import app.models.TestApplication
 import org.joda.time.YearMonth
-import models.util.Access
+import util.Access
 
 /**
  * Created by bdickele

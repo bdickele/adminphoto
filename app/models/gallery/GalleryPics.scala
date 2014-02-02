@@ -1,8 +1,8 @@
 package models.gallery
 
 import reactivemongo.bson._
-import models.util.Const
 import reactivemongo.bson.BSONString
+import util.Const
 
 /**
  * Created by bdickele

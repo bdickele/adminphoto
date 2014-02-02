@@ -1,6 +1,6 @@
 @(mainFolders: List[String], subFolders: List[String],
     selectedMainFolder: String, selectedSubFolder: String,
-    pictures: List[models.picture.Picture])
+    pictures: List[models.picture.PictureVO])
 
 @main("Pictures"){
     @carousel(pictures)
@@ -50,13 +50,13 @@
                     <table style="width:100%; text-align:center">
                         <tbody>
                         <tr>
-                            <td><img src='@picture.thumbnailComplete' onclick="showCarousel('@picture.webShort'); return false"></td>
+                            <td><img src='@picture.thumbnailComplete' onclick="showCarousel('@picture.web'); return false"></td>
                         </tr>
                         <tr>
                             <td style="text-align:center">
                                 <div class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-default" style="height:35px" disabled>10x15
-                                        @{picture.printShort match {
+                                        @{picture.print match {
                                             case None => <span class='glyphicon glyphicon-remove'></span>
                                             case Some(s) => <span class='glyphicon glyphicon-ok'></span>
                                         }}

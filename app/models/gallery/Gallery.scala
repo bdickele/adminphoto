@@ -1,8 +1,8 @@
 package models.gallery
 
 import org.joda.time.YearMonth
-import models.util.{Const, Access}
 import reactivemongo.bson._
+import util.Const
 
 /**
  * Class standing for a gallery, without anything related to pictures, except number of pictures.

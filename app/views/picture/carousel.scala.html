@@ -1,4 +1,4 @@
-@(pictures: List[models.picture.Picture])
+@(pictures: List[models.picture.PictureVO])
 
 <div class="modal fade" id="modalCarousel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -14,7 +14,7 @@
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner" id="carouselInner">
                         @for(picture <- pictures){
-                        <div id="@picture.webShort" class="item">
+                        <div id="@picture.web" class="item">
                             <p style="margin: 0px; text-align:center">
                                 <img src='@picture.webComplete'></p>
                         </div>

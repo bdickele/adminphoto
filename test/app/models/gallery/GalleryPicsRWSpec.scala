@@ -5,8 +5,8 @@ import app.models.TestApplication
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import models.util.Const
 import models.gallery.{GalleryPicturesRW, GalleryPics}
+import util.Const
 
 /**
  * Created by bdickele

@@ -1,8 +1,8 @@
 package app.models.util
 
 import org.specs2.mutable.Specification
-import models.util.Access
 import java.util.NoSuchElementException
+import util.Access
 
 /**
  * User: bdickele

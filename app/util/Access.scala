@@ -1,4 +1,4 @@
-package models.util
+package util
 
 /**
  * User: bdickele

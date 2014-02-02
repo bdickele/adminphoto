@@ -42,7 +42,7 @@ object GalleryPicList extends Controller {
 
   def up(galleryId: Int, picIndex: Int) = Action {
     findGallery(galleryId) match {
-      case None => couldNotFindGallery(galleryId)
+      case None => Galleries.couldNotFindGallery(galleryId)
       case Some(gallery) => {
         val pictures = gallery.pictures
         // First picture can't go higher, that's why we check that index is > 0
@@ -59,7 +59,7 @@ object GalleryPicList extends Controller {
 
   def down(galleryId: Int, picIndex: Int) = Action {
     findGallery(galleryId) match {
-      case None => couldNotFindGallery(galleryId)
+      case None => Galleries.couldNotFindGallery(galleryId)
       case Some(gallery) => {
         val pictures = gallery.pictures
         // Last picture can't go lower, that's why we check that index is < pictures.length - 1
@@ -78,7 +78,7 @@ object GalleryPicList extends Controller {
 
   def changeThumbnail(galleryId: Int, picIndex: Int) = Action {
     findGallery(galleryId) match {
-      case None => couldNotFindGallery(galleryId)
+      case None => Galleries.couldNotFindGallery(galleryId)
       case Some(gallery) => {
         val pictures = gallery.pictures
         if (picIndex > -1 && picIndex < pictures.length) {
@@ -91,12 +91,6 @@ object GalleryPicList extends Controller {
 
   def findGallery(galleryId: Int): Option[GalleryPics] =
     Await.result(GalleryPicturesRW.findByGalleryId(galleryId), Duration(5, TimeUnit.SECONDS))
-
-  def couldNotFindGallery(galleryId: Int): SimpleResult = {
-    val message = "Could not find gallery with ID " + galleryId
-    Logger.error(message)
-    BadRequest(message)
-  }
 
   def incorrectIndex(galleryId: Int, index: Int): SimpleResult = {
     val message = "Incorrect index " + index + " for gallery ID " + galleryId

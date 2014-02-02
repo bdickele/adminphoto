@@ -3,10 +3,10 @@ package app.models.category
 import org.specs2.mutable.Specification
 import models.category.{CategoryRW, Category}
 import app.models.TestApplication
-import models.util.Access
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import util.Access
 
 
 /**

@@ -1,7 +1,7 @@
 package controllers.picture
 
 import play.api.mvc.{Action, Controller}
-import models.picture.Picture
+import models.picture.{Folder, PictureVO}
 
 /**
  * User: bdickele
@@ -10,19 +10,19 @@ import models.picture.Picture
 object Pictures extends Controller {
 
   def refresh() = Action {
-    Picture.clearCache()
+    Folder.clearCache()
     Redirect(routes.Pictures.view("", ""))
   }
 
   def view(mainFolder: String = "", subFolder: String = "") = Action {
-    val mainFolders = Picture.mainFolders
+    val mainFolders = Folder.mainFolders
     val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-    val subFolders = Picture.subFolders(mainFolderName)
+    val subFolders = Folder.subFolders(mainFolderName)
     val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
     Ok(views.html.picture.picture(mainFolders, subFolders, mainFolderName, subFolderName,
-      Picture.pictures(mainFolderName, subFolderName)))
+      PictureVO.pictures(mainFolderName, subFolderName)))
   }
 
 }

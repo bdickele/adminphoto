@@ -1,4 +1,4 @@
-package models.util
+package util
 
 import play.api.Play
 
@@ -9,5 +9,9 @@ object Const {
 
   lazy val LocalRoot = Play.current.configuration.getString("local.photostock.root").get
   val WebRoot = "http://www.dickele.com/photostock/"
+
+  val FolderWeb = "web/"
+  val FolderThumbnail = "thumbnail/"
+  val FolderPrint = "print/"
 
 }
