@@ -21,8 +21,8 @@ object CategoryForms extends Controller {
     "rank" -> ignored(-1),
     "title" -> nonEmptyText.
       verifying("Title cannot exceed 50 characters", _.length <= 50),
-    "description" -> optional(text).
-      verifying("Description cannot exceed 100 characters", _ match {
+    "comment" -> optional(text).
+      verifying("Comment cannot exceed 100 characters", _ match {
       case None => true
       case Some(d) => d.length <= 100
     }),
@@ -72,11 +72,11 @@ object CategoryForms extends Controller {
             case Some(category) => CategoryRW.update(
               category.copy(
                 title = form.title,
-                description = form.description,
+                comment = form.comment,
                 online = form.online))
 
             // New category
-            case None => CategoryRW.create(form.title, form.description, form.online)
+            case None => CategoryRW.create(form.title, form.comment, form.online)
           }
 
           Categories.clearCache()

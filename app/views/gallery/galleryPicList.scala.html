@@ -1,22 +1,21 @@
-@(galleryPics: models.gallery.GalleryPics)
+@(form: models.gallery.GalleryPics)
 
-@main("Pictures of gallery " + galleryPics.galleryTitle)(){
+@main("Order / remove pictures")(){
 
 <br>
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h4><span class="label label-primary">Gallery "@galleryPics.galleryTitle"</span></h4>
-        Order or remove pictures from the gallery
+        <h4><span class="label label-primary">Order / remove pictures</span></h4>
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <a href="@controllers.gallery.routes.Galleries.view(galleryPics.categoryId)" role="button"
+            <a href="@controllers.gallery.routes.Galleries.view(form.categoryId)" role="button"
                class="btn btn-default btn-sm"
                title="Add pictures to that gallery">
                 <span class="glyphicon glyphicon-home"></span> Back to list
             </a>
-            <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryPics.galleryId, "", "")' role="button"
+            <a href='@controllers.gallery.routes.GalleryPicSelection.view(form.galleryId, "", "")' role="button"
                class="btn btn-default btn-sm"
                title="Add pictures to that gallery">
                 <span class="glyphicon glyphicon-plus"></span> Add picture(s)
@@ -36,19 +35,19 @@
             </tr>
             </thead>
             <tbody>
-            @for((picture, index) <- galleryPics.pictures.zipWithIndex){
+            @for((picture, index) <- form.pictures.zipWithIndex){
             <tr>
                 <td style="text-align:center; width:60px">
                     <input type="radio" name="thumbnail" value="@picture.thumbnail"
-                           onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(galleryPics.galleryId, index)'"
-                    @if(picture.thumbnail == galleryPics.thumbnail){checked}>
+                           onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(form.galleryId, index)'"
+                    @if(picture.thumbnail == form.thumbnail){checked}>
                 </td>
-                <td style="text-align:center;"><a href="#"><img
+                <td style="text-align:center;"><a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"><img
                         src='@picture.thumbnailComplete'></a></td>
                 <td style="text-align:left;">@picture.web.drop(picture.web.lastIndexOf('/')+1)</td>
                 <td style="text-align:center;">
                     @if(index != 0){
-                    <a href="@controllers.gallery.routes.GalleryPicList.up(galleryPics.galleryId, index)">
+                    <a href="@controllers.gallery.routes.GalleryPicList.up(form.galleryId, index)">
                         <button type="button" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-chevron-up"></span>
                         </button>
@@ -56,8 +55,8 @@
                     }
                 </td>
                 <td style="text-align:center;">
-                    @if(index < (galleryPics.pictures.size-1)){
-                    <a href="@controllers.gallery.routes.GalleryPicList.down(galleryPics.galleryId, index)">
+                    @if(index < (form.pictures.size-1)){
+                    <a href="@controllers.gallery.routes.GalleryPicList.down(form.galleryId, index)">
                         <button type="button" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </button>
@@ -65,7 +64,7 @@
                     }
                 </td>
                 <td style="text-align:center;">
-                    <a href="@controllers.gallery.routes.GalleryPicList.remove(galleryPics.galleryId, index)">
+                    <a href="@controllers.gallery.routes.GalleryPicList.remove(form.galleryId, index)">
                         <button type="button" class="btn btn-default" style="height:35px"
                                 title="Remove that picture from the gallery">
                             <span class='glyphicon glyphicon-trash'></span>
@@ -77,7 +76,7 @@
             </tbody>
         </table>
 
-        <input type="hidden" name="galleryId" value='@galleryPics.galleryId'>
+        <input type="hidden" name="galleryId" value='@form.galleryId'>
 
     </div>
 </div>

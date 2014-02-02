@@ -33,9 +33,9 @@
     'maxlength -> 50)
 
 
-    @helper.textarea(form("description"),
+    @helper.textarea(form("comment"),
     'class -> "form-control",
-    '_label -> "Description",
+    '_label -> "Comment",
     '_help -> "100 characters max",
     'maxlength -> 100)
 
@@ -44,7 +44,7 @@
     '_label -> "On-line",
     '_showConstraints -> false)
 
-    <input type="hidden" name="categoryId" value='@form.apply("categoryId").value'>
+    <input type="hidden" name="categoryId" value="@form.get.categoryId">
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">

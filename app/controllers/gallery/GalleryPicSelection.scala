@@ -5,6 +5,7 @@ import models.picture.{Picture, Folder}
 import play.api.data.Forms._
 import play.api.data.Form
 import util.Const._
+import models.gallery.{GalleryPicturesRW, GalleryPic}
 
 /**
  * Created by bdickele
@@ -12,6 +13,7 @@ import util.Const._
  */
 
 case class SelectedPics(galleryId: Int,
+                        folder: String,
                         pictures: List[String])
 
 case class SelectablePic(folder: String,
@@ -26,6 +28,7 @@ object GalleryPicSelection extends Controller {
   // ---------------------------------------------------------------
   val formMapping = mapping(
     "galleryId" -> number,
+    "folder" -> text,
     "pictures" -> list(text))(SelectedPics.apply)(SelectedPics.unapply)
 
   val form: Form[SelectedPics] = Form(formMapping)
@@ -48,7 +51,7 @@ object GalleryPicSelection extends Controller {
         WebRoot + folder + FolderWeb + p.web,
         p.web))
 
-    Ok(views.html.gallery.galleryPicSelection(SelectedPics(galleryId, List()),
+    Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
       galleryId, mainFolders, subFolders, mainFolderName, subFolderName,
       selectablePics))
   }
@@ -60,14 +63,29 @@ object GalleryPicSelection extends Controller {
         // Validation error
         formWithErrors => BadRequest("But that's what not supposed to happen !"),
 
-        //TODO
+        /*
+        So now we have a list of String looking like "pictureName.jpg" that
+        stand for pictures to add.
+        First : let's use these Strings to build the values to add in the DB
+        Then: Update the DB
+         */
         form => {
-          println("---- FORM ----")
-          println(form.galleryId)
-          println(form.pictures)
-          form.pictures.map(
-            println(_)
-          )
+          val folder = form.folder
+          val picturesRaw = form.pictures
+
+          val availablePics = Picture.picturesFromFolder(folder)
+          val filteredPictures: List[Picture] = availablePics.filter(p => picturesRaw.contains(p.web))
+
+          val galleryPics: List[GalleryPic] = filteredPictures.map(pic =>
+            GalleryPic("", // We don't care about the complete path to thumbnail here
+              folder + FolderThumbnail+ pic.thumbnail,
+              folder + FolderWeb + pic.web,
+              pic.print match {
+                case None => None
+                case Some(p) => Some(folder + FolderPrint + p)
+              },
+              None))
+          GalleryPicturesRW.addPictures(form.galleryId, galleryPics)
           Redirect(routes.GalleryPicList.view(form.galleryId))
         })
   }

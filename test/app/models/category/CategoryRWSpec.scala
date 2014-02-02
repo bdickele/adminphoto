@@ -23,7 +23,7 @@ class CategoryRWSpec extends Specification {
     "return 2004 when categoryID is 1" in new TestApplication {
       category.categoryId must equalTo(1)
       category.title must equalTo("2004")
-      category.description must equalTo("Année 2004")
+      category.comment must equalTo("Année 2004")
       category.online must beTrue
       //category.access must equalTo(Access.Guest)
     }
@@ -44,7 +44,7 @@ class CategoryRWSpec extends Specification {
       val c = list.last
       c.categoryId must equalTo(1)
       c.title must equalTo("2004")
-      c.description must equalTo("Année 2004")
+      c.comment must equalTo("Année 2004")
       c.online must beTrue
       //c.access must equalTo(Access.Guest)
     }

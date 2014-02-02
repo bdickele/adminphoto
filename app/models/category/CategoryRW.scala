@@ -42,7 +42,7 @@ object CategoryRW extends Controller with MongoController {
   // CREATE
   // --------------------------------------------------------------
 
-  def create(title: String, description: Option[String], online: Boolean): Future[LastError] = {
+  def create(title: String, comment: Option[String], online: Boolean): Future[LastError] = {
     val categories = Await.result(findAll, Duration(10, TimeUnit.SECONDS))
 
     val maxCategoryId = categories.maxBy(_.categoryId).categoryId
@@ -52,7 +52,7 @@ object CategoryRW extends Controller with MongoController {
       maxCategoryId + 1,
       maxRank + 1,
       title,
-      description,
+      comment,
       online)
 
     collection.insert(BSON.writeDocument(category))

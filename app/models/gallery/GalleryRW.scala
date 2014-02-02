@@ -73,7 +73,7 @@ object GalleryRW extends Controller with MongoController {
              title: String,
              year: Int,
              month: Int,
-             description: String,
+             comment: String,
              online: Boolean): Future[LastError] = {
     val rank = findMaxRankForCategory(categoryId) + 1
 
@@ -83,7 +83,7 @@ object GalleryRW extends Controller with MongoController {
       rank,
       new YearMonth(year, month),
       title,
-      if (description == "") None else Some(description),
+      if (comment == "") None else Some(comment),
       "",
       0,
       online)
@@ -102,7 +102,7 @@ object GalleryRW extends Controller with MongoController {
              title: String,
              year: Int,
              month: Int,
-             description: Option[String],
+             comment: Option[String],
              online: Boolean): Future[LastError] = {
     val selector = BSONDocument("galleryId" -> galleryId)
 
@@ -112,9 +112,9 @@ object GalleryRW extends Controller with MongoController {
         "title" -> title,
         "date" -> (year + "/" + month),
         "online" -> online),
-      description match {
-        case None => "$unset" -> BSONDocument("description" -> 1)
-        case Some(d) => "$set" -> BSONDocument("description" -> d)
+      comment match {
+        case None => "$unset" -> BSONDocument("comment" -> 1)
+        case Some(d) => "$set" -> BSONDocument("comment" -> d)
       })
 
     collection.update(selector, modifier)

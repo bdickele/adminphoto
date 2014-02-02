@@ -1,8 +1,6 @@
 package controllers.gallery
 
 import play.api.mvc.{SimpleResult, Action, Controller}
-import play.api.data.Forms._
-import play.api.data.Form
 import models.gallery._
 import scala.concurrent.Await
 import java.util.concurrent.TimeUnit
@@ -15,29 +13,11 @@ import reactivemongo.bson.BSONString
  */
 object GalleryPicList extends Controller {
 
-  /*
-  val formMapping = mapping(
-    "categoryId" -> number,
-    "galleryId" -> number,
-    "galleryTitle" -> text,
-    "thumbnail" -> nonEmptyText,
-    "pictures" -> list(
-      // Picture mapping
-      mapping(
-        "thumbnailComplete" -> ignored(""),
-        "thumbnail" -> text,
-        "web" -> text,
-        "print" -> optional(text),
-        "description" -> optional(text))(GalleryPic.apply)(GalleryPic.unapply)
-    ))(GalleryPics.apply)(GalleryPics.unapply)
-
-  val picturesForm: Form[GalleryPics] = Form(formMapping)
-  */
-
   def view(galleryId: Int) = Action {
     val future = GalleryPicturesRW.findByGalleryId(galleryId)
-    val pictures: GalleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-    Ok(views.html.gallery.galleryPicList(pictures))
+    val galleryPics: GalleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+
+    Ok(views.html.gallery.galleryPicList(galleryPics))
   }
 
   def up(galleryId: Int, picIndex: Int) = Action {
@@ -50,7 +30,7 @@ object GalleryPicList extends Controller {
           val (topHead, topTail) = pictures splitAt (picIndex - 1)
           val (bottomHead, bottomTail) = pictures splitAt (picIndex + 1)
           val newList = topHead ::: bottomHead.last :: topTail.head :: bottomTail
-          GalleryPicturesRW.updatePictures(galleryId, newList)
+          GalleryPicturesRW.setPictures(galleryId, newList)
         }
         Redirect(routes.GalleryPicList.view(galleryId))
       }
@@ -67,14 +47,17 @@ object GalleryPicList extends Controller {
           val (topHead, topTail) = pictures splitAt picIndex
           val (bottomHead, bottomTail) = pictures splitAt (picIndex + 2)
           val newList = topHead ::: bottomHead.last :: topTail.head :: bottomTail
-          GalleryPicturesRW.updatePictures(galleryId, newList)
+          GalleryPicturesRW.setPictures(galleryId, newList)
         }
         Redirect(routes.GalleryPicList.view(galleryId))
       }
     }
   }
 
-  def remove(galleryId: Int, picIndex: Int) = TODO
+  def remove(galleryId: Int, picIndex: Int) = Action {
+    GalleryPicturesRW.removePicture(galleryId, picIndex)
+    Redirect(routes.GalleryPicList.view(galleryId))
+  }
 
   def changeThumbnail(galleryId: Int, picIndex: Int) = Action {
     findGallery(galleryId) match {

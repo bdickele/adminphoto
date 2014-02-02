@@ -18,7 +18,7 @@ import scala.util.{Success, Failure}
 object GalleryForms extends Controller {
 
   // ---------------------------------------------------------------
-  // Mapping with all rules to check + Form[Mapping[CategoryForm]]
+  // Mapping with all rules to check + Form[Mapping[GalleryForm]]
   // ---------------------------------------------------------------
   val formMapping = mapping(
     "categoryId" -> number.
@@ -34,7 +34,7 @@ object GalleryForms extends Controller {
       verifying("Incorrect value for year (has to be > 1970)", _ > 1970),
     "month" -> number.
       verifying("Incorrect value for month", m => m > 0 && m < 13),
-    "description" -> text.
+    "comment" -> text.
       verifying("Description cannot exceed 500 characters", _.length <= 500),
     "online" -> boolean)(GalleryForm.apply)(GalleryForm.unapply).
 
@@ -87,7 +87,7 @@ object GalleryForms extends Controller {
                 form.title,
                 form.year,
                 form.month,
-                if (form.description.isEmpty) None else Some(form.description),
+                if (form.comment.isEmpty) None else Some(form.comment),
                 form.online)
               Redirect(routes.Galleries.view(form.categoryId))
             }
@@ -96,8 +96,8 @@ object GalleryForms extends Controller {
             case None => {
               val galleryId = GalleryRW.findMaxGalleryId + 1
               GalleryRW.create(form.categoryId, galleryId, form.title, form.year, form.month,
-                form.description, form.online)
-              Redirect(routes.GalleryPicList.view(galleryId))
+                form.comment, form.online)
+              Redirect(routes.GalleryPicSelection.view(galleryId, "", ""))
             }
           }
         }

@@ -10,7 +10,7 @@ import reactivemongo.bson._
 case class Category(categoryId: Int,
                     rank: Int,
                     title: String,
-                    description: Option[String],
+                    comment: Option[String],
                     online: Boolean = true)
 
 //access: Access.Value = Access.Guest)
@@ -26,7 +26,7 @@ object Category {
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("rank").get.value,
         doc.getAs[BSONString]("title").get.value,
-        doc.getAs[BSONString]("description") match {
+        doc.getAs[BSONString]("comment") match {
           case None => None
           case Some(bsonString) => Some(bsonString.value)
         },
@@ -38,9 +38,9 @@ object Category {
         "rank" -> BSONInteger(c.rank),
         "title" -> BSONString(c.title),
         "online" -> BSONBoolean(c.online)) ++
-        (c.description match {
+        (c.comment match {
           case None => BSONDocument()
-          case Some(s) => BSONDocument("description" -> BSONString(s))
+          case Some(s) => BSONDocument("comment" -> BSONString(s))
         })
   }
 

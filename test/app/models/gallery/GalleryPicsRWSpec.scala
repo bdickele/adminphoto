@@ -30,13 +30,13 @@ class GalleryPicsRWSpec extends Specification {
       first.thumbnail must equalTo(Const.WebRoot + "2004/0406_misc/small/small_0406_Adrien.jpg")
       first.web must equalTo(Const.WebRoot + "2004/0406_misc/web/0406_Adrien.jpg")
       first.print must equalTo(None)
-      first.description must equalTo(Some("Avec mon fréro"))
+      first.comment must equalTo(Some("Avec mon fréro"))
 
       val second = pictures.tail.head
       second.thumbnail must equalTo(Const.WebRoot + "2004/0406_misc/small/small_0406_Bastille.jpg")
       second.web must equalTo(Const.WebRoot + "2004/0406_misc/web/0406_Bastille.jpg")
       second.print must equalTo(None)
-      second.description must equalTo(None)
+      second.comment must equalTo(None)
     }
   }
 }

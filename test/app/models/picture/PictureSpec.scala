@@ -2,7 +2,7 @@ package app.models.picture
 
 import org.specs2.mutable._
 
-import models.picture.{Folder, PictureVO}
+import models.picture.{Picture, Folder}
 import app.models.TestApplication
 
 /**
@@ -31,30 +31,21 @@ class PictureSpec extends Specification {
 
   "The list of picture for 2004/0406_misc" should {
     "contain 11 elements" in new TestApplication {
-      val pictures = PictureVO.pictures("2004", "0406_misc")
+      val pictures = Picture.picturesFromFolder("2004/0406_misc/")
       pictures.size must equalTo(11)
     }
   }
 
   "First picture of gallery 2004/0406_misc" should {
-    lazy val pictures = PictureVO.pictures("2004", "0406_misc")
+    lazy val pictures = Picture.picturesFromFolder("2004/0406_misc/")
     lazy val first = pictures.head
 
-    "have a thumbnail short path equal to small_0406_Adrien.jpg" in new TestApplication {
+    "have a thumbnail name equal to small_0406_Adrien.jpg" in new TestApplication {
       first.thumbnail must equalTo("small_0406_Adrien.jpg")
     }
 
-
-    "have a thumbnail long path equal to URL/.../small_0406_Adrien.jpg" in {
-      first.thumbnailComplete must equalTo(Url + "2004/0406_misc/thumbnail/small_0406_Adrien.jpg")
-    }
-
-    "have a web short path equal to 0406_Adrien.jpg" in {
+    "have a web name equal to 0406_Adrien.jpg" in {
       first.web must equalTo("0406_Adrien.jpg")
-    }
-
-    "have a web complete path equal to URL/.../0406_Adrien.jpg" in {
-      first.webComplete must equalTo(Url + "2004/0406_misc/web/0406_Adrien.jpg")
     }
 
     "have no print version" in {
@@ -63,23 +54,15 @@ class PictureSpec extends Specification {
   }
 
   "First picture of gallery 2013/1312_1" should {
-    lazy val pictures = PictureVO.pictures("2013", "1312_1")
+    lazy val pictures = Picture.picturesFromFolder("2013/1312_1/")
     lazy val first = pictures.head
 
-    "have a thumbnail short path equal to 201312_bdi_mumbai_002.jpg" in new TestApplication {
+    "have a thumbnail name equal to 201312_bdi_mumbai_002.jpg" in new TestApplication {
       first.thumbnail must equalTo("201312_bdi_mumbai_002.jpg")
     }
 
-    "have a thumbnail long path equal to URL/.../201312_bdi_mumbai_002.jpg" in {
-      first.thumbnailComplete must equalTo(Url + "2013/1312_1/thumbnail/201312_bdi_mumbai_002.jpg")
-    }
-
-    "have a web short path equal to 201312_bdi_mumbai_002.jpg" in {
+    "have a web name equal to 201312_bdi_mumbai_002.jpg" in {
       first.web must equalTo("201312_bdi_mumbai_002.jpg")
-    }
-
-    "have a web complete path equal to URL/.../201312_bdi_mumbai_002.jpg" in {
-      first.webComplete must equalTo(Url + "2013/1312_1/web/201312_bdi_mumbai_002.jpg")
     }
 
     "have a print version equal to 201312_bdi_mumbai_002.jpg" in {

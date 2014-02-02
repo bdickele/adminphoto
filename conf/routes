@@ -26,6 +26,9 @@ GET     /galleryPicList/down/:galleryId/:index      controllers.gallery.GalleryP
 GET     /galleryPicList/remove/:galleryId/:index    controllers.gallery.GalleryPicList.remove(galleryId: Int, index: Int)
 GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
 
+GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComment.view(galleryId: Int, index: Int)
+POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComment.save
+
 GET     /galleryPicSelection/:galleryId                         controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String = "", subFolder: String = "")
 GET     /galleryPicSelection/:galleryId/:mainFolder             controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String, subFolder: String = "")
 GET     /galleryPicSelection/:galleryId/:mainFolder/:subFolder  controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String, subFolder: String)

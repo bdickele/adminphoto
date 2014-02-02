@@ -1,4 +1,4 @@
-@(form: controllers.gallery.SelectedPics,
+@(form: Form[controllers.gallery.SelectedPics],
     galleryId: Int, mainFolders: List[String], subFolders: List[String],
     selectedMainFolder: String, selectedSubFolder: String,
     pictures: List[controllers.gallery.SelectablePic])
@@ -7,7 +7,9 @@
 <script>
             var galleryId = @galleryId;
 
-
+            function selectAll() {
+                alert('prout');
+            }
 </script>
 <script src='@routes.Assets.at("javascripts/gallery/picture.js")'></script>
 }{
@@ -37,9 +39,9 @@
     <div class="panel-body">
         @helper.form(action=controllers.gallery.routes.GalleryPicSelection.save) {
 
-        @for(subList <- pictures.sliding(4, 4)) {
+        @for(subList <- pictures.zipWithIndex.sliding(4, 4)) {
         <div class="row">
-            @for(picture <- subList) {
+            @for((picture, index) <- subList) {
             <div class="col-xs-6 col-md-3">
                 <div class="thumbnail">
                     <table style="width:100%; text-align:center">
@@ -50,8 +52,7 @@
                         <tr>
                             <td style="text-align:center">
                                 <div class="btn-group btn-group-sm">
-                                    <input name="pictures[]" type="checkbox"
-                                           value="@{picture.folder + "#" + picture.web}">
+                                    <input name="pictures[@index]" type="checkbox" value="@picture.web">
                                 </div>
                             </td>
                         </tr>
@@ -64,6 +65,7 @@
         }
 
         <input type="hidden" name="galleryId" value='@galleryId'>
+        <input type="hidden" name="folder" value="@form.get.folder">
 
         <br>
         <div align="center">

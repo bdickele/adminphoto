@@ -10,7 +10,6 @@ import util.Const
  */
 case class GalleryPics(categoryId: Int,
                        galleryId: Int,
-                       galleryTitle: String,
                        thumbnail: String,
                        pictures: List[GalleryPic])
 
@@ -18,7 +17,7 @@ case class GalleryPic(thumbnailComplete: String,
                       thumbnail: String,
                       web: String,
                       print: Option[String],
-                      description: Option[String])
+                      comment: Option[String])
 
 object GalleryPics {
 
@@ -32,9 +31,9 @@ object GalleryPics {
           case None => BSONDocument()
           case Some(s) => BSONDocument("print" -> BSONString(s))
         }) ++
-        (pic.description match {
+        (pic.comment match {
           case None => BSONDocument()
-          case Some(s) => BSONDocument("description" -> BSONString(s))
+          case Some(s) => BSONDocument("comment" -> BSONString(s))
         })
   }
 
@@ -52,7 +51,7 @@ object GalleryPics {
             case None => None
             case Some(s) => Some(s.value)
           },
-          doc.getAs[BSONString]("description") match {
+          doc.getAs[BSONString]("comment") match {
             case None => None
             case Some(s) => Some(s.value)
           })
@@ -68,7 +67,6 @@ object GalleryPics {
       GalleryPics(
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
-        doc.getAs[BSONString]("title").get.value,
         doc.getAs[BSONString]("thumbnail").get.value,
         readPictures(doc.getAs[BSONArray]("pictures")))
     }

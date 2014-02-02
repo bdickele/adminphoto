@@ -14,7 +14,7 @@ case class Gallery(categoryId: Int,
                    rank: Int,
                    date: YearMonth,
                    title: String,
-                   description: Option[String],
+                   comment: Option[String],
                    thumbnail: String,
                    nbPictures: Int,
                    online: Boolean = true)
@@ -34,7 +34,7 @@ object Gallery {
         doc.getAs[BSONInteger]("rank").get.value,
         Gallery.buildYearMonth(doc.getAs[BSONString]("date").get.value),
         doc.getAs[BSONString]("title").get.value,
-        doc.getAs[BSONString]("description") match {
+        doc.getAs[BSONString]("comment") match {
           case None => None
           case Some(bsonString) => Some(bsonString.value)
         },
@@ -54,9 +54,9 @@ object Gallery {
         "title" -> BSONString(g.title),
         "thumbnail" -> BSONString(g.thumbnail),
         "online" -> BSONBoolean(g.online)) ++
-        (g.description match {
+        (g.comment match {
           case None => BSONDocument()
-          case Some(s) => BSONDocument("description" -> BSONString(s))
+          case Some(s) => BSONDocument("comment" -> BSONString(s))
         })
   }
 

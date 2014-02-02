@@ -4,7 +4,7 @@
 
 @main(title){
 <script>
-        onLoad = title.focus();
+        title.focus();
 </script>
 }{
 
@@ -53,9 +53,9 @@
     'class -> "input-sm",
     '_showConstraints -> false)
 
-    @helper.textarea(form("description"),
+    @helper.textarea(form("comment"),
     'class -> "form-control",
-    '_label -> "Description",
+    '_label -> "Comment",
     '_help -> "500 characters max",
     'rows -> 10,
     'maxlength -> 500)
@@ -65,11 +65,11 @@
     '_label -> "On-line",
     '_showConstraints -> false)
 
-    <input type="hidden" name="galleryId" value='@form.apply("galleryId").value'>
+    <input type="hidden" name="galleryId" value='@form.get.galleryId'>
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)' role="button" class="btn btn-primary">Cancel</a>
+            <a href="@controllers.gallery.routes.Galleries.view(form.get.categoryId)" role="button" class="btn btn-primary">Cancel</a>
             &nbsp;&nbsp;
             <button type="submit" class="btn btn-primary">
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save

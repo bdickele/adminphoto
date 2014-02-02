@@ -12,7 +12,7 @@ case class GalleryForm(categoryId: Int,
                        title: String,
                        year: Int,
                        month: Int,
-                       description: String,
+                       comment: String,
                        online: Boolean)
 
 object GalleryForm {
@@ -28,7 +28,7 @@ object GalleryForm {
       gallery.title,
       gallery.date.getYear,
       gallery.date.getMonthOfYear,
-      gallery.description match {
+      gallery.comment match {
         case None => ""
         case Some(s) => s
       },
