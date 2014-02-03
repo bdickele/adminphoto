@@ -37,12 +37,15 @@ object GalleryPicComment extends Controller {
   def view(galleryId: Int, index: Int) = Action {
     val future = GalleryPicturesRW.findByGalleryId(galleryId)
     val galleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-    val galleryPic = galleryPics.pictures.apply(index)
+
+    val realIndex = if (index < 0 || index > (galleryPics.pictures.length - 1)) 0 else index
+
+    val galleryPic = galleryPics.pictures.apply(realIndex)
 
     Ok(views.html.gallery.galleryPicComment(
       picForm.fill(GalleryPicComment(
         galleryId,
-        index,
+        realIndex,
         Const.WebRoot + galleryPic.web,
         galleryPic.comment))))
   }
@@ -57,9 +60,8 @@ object GalleryPicComment extends Controller {
         // Validation OK
         form => {
           GalleryPicturesRW.updateComment(form.galleryId, form.index, form.comment)
-
-          //TODO Passer à l'image suivante
-          Redirect(routes.GalleryPicList.view(form.galleryId))
+          // Once comment is saved we moved to next picture
+          Redirect(routes.GalleryPicComment.view(form.galleryId, form.index + 1))
         }
       )
   }

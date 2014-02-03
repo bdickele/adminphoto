@@ -21,11 +21,10 @@
             <img src='@form.get.webComplete'>
         </div>
 
-        @helper.textarea(form("comment"),
+        @helper.inputText(form("comment"),
         'class -> "form-control",
         '_label -> "Comment",
-        'maxlength -> 200,
-        'cols -> 20)
+        'maxlength -> 200)
 
         <br>
 

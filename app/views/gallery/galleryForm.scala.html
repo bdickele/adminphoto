@@ -65,11 +65,12 @@
     '_label -> "On-line",
     '_showConstraints -> false)
 
-    <input type="hidden" name="galleryId" value='@form.get.galleryId'>
+    <input type="hidden" name="galleryId" value='@form.apply("galleryId").value'>
 
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-            <a href="@controllers.gallery.routes.Galleries.view(form.get.categoryId)" role="button" class="btn btn-primary">Cancel</a>
+            <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)'
+               role="button" class="btn btn-primary">Cancel</a>
             &nbsp;&nbsp;
             <button type="submit" class="btn btn-primary">
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save

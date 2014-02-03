@@ -59,28 +59,39 @@ object GalleryPicturesRW extends Controller with MongoController {
     GalleryRW.updateField(galleryId, "pictures", array)
   }
 
+  /**
+   * To update comment of a picture.
+   * Je ne suis pas convaincu par ce que j'ai fait : est-ce qu'il y a un moyen de mettre à jour
+   * un élémen précis du tableau ?
+   * @param galleryId
+   * @param index
+   * @param comment
+   * @return
+   */
   def updateComment(galleryId: Int, index: Int, comment: Option[String]): Future[LastError] = {
+
+    def copyDocExceptComment(pairs: List[(String, BSONValue)], docAcc: BSONDocument): BSONDocument = pairs match {
+      case Nil => docAcc
+      case head :: tail => head match {
+        case ("comment", value) => copyDocExceptComment(tail, docAcc)
+        case (key, value) => copyDocExceptComment(tail, BSONDocument(key -> value) ++ docAcc)
+      }
+    }
+
     val future: Future[Option[BSONDocument]] = collection.
       find(BSONDocument("galleryId" -> galleryId)).
       one[BSONDocument]
     val doc: BSONDocument = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
 
-    val list: List[BSONValue] = doc.getAs[BSONArray]("pictures").get.values.toList
+    val picturesRaw: List[BSONValue] = doc.getAs[BSONArray]("pictures").get.values.toList
+    val picDoc: BSONDocument = picturesRaw.apply(index).asInstanceOf[BSONDocument]
 
-    val picDoc: BSONDocument = list.apply(index).asInstanceOf[BSONDocument]
+    val newDoc = copyDocExceptComment(picDoc.elements.toList, BSONDocument()) ++ (comment match {
+      case None => BSONDocument()
+      case Some(c) => BSONDocument("comment" -> c)
+    })
 
-    var newDoc: BSONDocument = BSONDocument()
-    for ((key, value) <- picDoc.elements.toList) {
-         if (key != "comment")
-           newDoc = newDoc ++ BSONDocument(key -> value)
-    }
-
-    comment match {
-      case None => // Nothing to do
-      case Some(c) => newDoc = newDoc ++ BSONDocument("comment" -> c)
-    }
-
-    val listNew = list.take(index) ::: newDoc :: list.drop(index + 1)
+    val listNew = picturesRaw.take(index) ::: newDoc :: picturesRaw.drop(index + 1)
     GalleryRW.updateField(galleryId, "pictures", BSONArray(listNew))
   }
 }
