@@ -14,7 +14,8 @@ import controllers.category.Categories
  * Created by bdickele
  * Date: 2/2/14
  */
-case class GalleryPicComment(galleryId: Int,
+case class GalleryPicComment(categoryId: Int,
+                             galleryId: Int,
                              index: Int,
                              webComplete: String,
                              comment: Option[String])
@@ -22,6 +23,7 @@ case class GalleryPicComment(galleryId: Int,
 object GalleryPicComment extends Controller {
 
   val formMapping = mapping(
+    "categoryId" -> number,
     "galleryId" -> number,
     "index" -> number,
     "webComplete" -> ignored(""),
@@ -44,6 +46,7 @@ object GalleryPicComment extends Controller {
 
     Ok(views.html.gallery.galleryPicComment(
       picForm.fill(GalleryPicComment(
+        galleryPics.categoryId,
         galleryId,
         realIndex,
         Const.WebRoot + galleryPic.web,

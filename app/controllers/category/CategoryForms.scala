@@ -48,7 +48,7 @@ object CategoryForms extends Controller {
 
   def edit(categoryId: Int) = Action {
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => Ok(views.html.category.categoryForm("Gallery \"" + category.title + "\"",
+      case Some(category) => Ok(views.html.category.categoryForm("Category \"" + category.title + "\"",
         categoryForm.fill(category)))
       case None => Categories.couldNotFindCategory(categoryId)
     }

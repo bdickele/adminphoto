@@ -4,17 +4,30 @@
 
 @main(title){
 <script>
-        title.focus();
-</script>
+            (function () {
+                title.focus();
+            })();
+        </script>
 }{
 
-<br>
+@menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
 
 <div @if(form.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
 <div class="panel-heading">
-    <h4><span @if(form.hasErrors){class="label label-danger"} else {class="label label-primary"}">@title</span></h4>
+    @if(form.hasErrors){<h4><span class="label label-danger">@title</span></h4>} else {@title}
 </div>
 <div class="panel-body">
+    @if(form.apply("galleryId").value.get.toInt > 0) {
+    <div class="btn-group">
+        <a href='@controllers.gallery.routes.GalleryPicList.view(form.apply("galleryId").value.get.toInt)' role="button"
+           class="btn btn-default btn-sm"
+           title="Manage pictures of gallery">
+            <span class="glyphicon glyphicon-picture"></span> Gallery's pictures
+        </a>
+    </div>
+    <br><br>
+    }
+
     @helper.form(action=controllers.gallery.routes.GalleryForms.save, args =
     'class -> "form-horizontal",
     'role -> "form") {

@@ -1,27 +1,37 @@
 @(form: models.gallery.GalleryPics)
 
-@main("Order / remove pictures")(){
+@main("Order / remove pictures"){
+<script>
+            (function () {
+                var firstPic = document.getElementById("picture[0]");
+                if (firstPic) {
+                    firstPic.focus();
+                }
+            })();
+</script>
+}{
 
-<br>
+@menu.topmenu(views.menu.TopMenuElement.Gallery, form.categoryId)
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h4><span class="label label-primary">Order / remove pictures</span></h4>
+        Order / remove pictures
     </div>
     <div class="panel-body">
         <div class="btn-group">
-            <a href="@controllers.gallery.routes.Galleries.view(form.categoryId)" role="button"
+            <a href="@controllers.gallery.routes.GalleryForms.edit(form.galleryId)" role="button"
                class="btn btn-default btn-sm"
-               title="Add pictures to that gallery">
-                <span class="glyphicon glyphicon-home"></span> Back to list
+               title="Gallery's info (title, description...)">
+                <span class="glyphicon glyphicon-list-alt"></span> Gallery's info
             </a>
             <a href='@controllers.gallery.routes.GalleryPicSelection.view(form.galleryId, "", "")' role="button"
                class="btn btn-default btn-sm"
-               title="Add pictures to that gallery">
+               title="Add pictures to that gallery"
+               id="addPictures">
                 <span class="glyphicon glyphicon-plus"></span> Add picture(s)
             </a>
         </div>
-        <br><br>
+        <br>
 
         <table class="table table-striped">
             <thead>
@@ -42,9 +52,12 @@
                            onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(form.galleryId, index)'"
                     @if(picture.thumbnail == form.thumbnail){checked}>
                 </td>
-                <td style="text-align:center;"><a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"><img
-                        src='@picture.thumbnailComplete'></a></td>
-                <td style="text-align:left;">@picture.web.drop(picture.web.lastIndexOf('/')+1)</td>
+                <td style="text-align:center;"><a
+                        href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"
+                        id="picture[@index]">
+                    <img src="@picture.thumbnailComplete" title='@picture.comment.getOrElse("")'></a></td>
+                <td style="text-align:left;"><a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)">
+                    @picture.comment.getOrElse("")</a></td>
                 <td style="text-align:center;">
                     @if(index != 0){
                     <a href="@controllers.gallery.routes.GalleryPicList.up(form.galleryId, index)">

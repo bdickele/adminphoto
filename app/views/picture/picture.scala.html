@@ -4,6 +4,12 @@
 
 @main("Pictures"){
     @carousel(pictures)
+
+    <script>
+            (function () {
+                document.getElementById("folder1").focus();
+            })();
+    </script>
     <script src='@routes.Assets.at("javascripts/picture/picture.js")'></script>
 } {
 
@@ -11,6 +17,10 @@
 
 <div class="panel panel-info">
     <div class="panel-heading">
+        Available pictures
+    </div>
+
+    <div class="panel-body">
         Folder :
         <select name="folder1" id="folder1" class="input-sm">
             @for(mainFolder <- mainFolders) {
@@ -23,7 +33,6 @@
             @for(subFolder <- subFolders) {
             <option value="@subFolder" @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
             }
-
         </select>
 
         &nbsp;&nbsp;
@@ -31,9 +40,7 @@
                 onclick="self.location='@controllers.picture.routes.Pictures.refresh()'">
             <i class="glyphicon glyphicon-refresh"></i> Refresh list of folders
         </button>
-    </div>
-
-    <div class="panel-body">
+        <br><br>
         @*
         <div class="btn-group">
             <button type="button" class="btn btn-default btn-sm">

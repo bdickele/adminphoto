@@ -1,10 +1,15 @@
 @(selectedCategoryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.Gallery])
 
 @main("Galleries"){
+        <script>
+            (function () {
+                document.getElementById("category").focus();
+            })();
+        </script>
 <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
 } {
 
-@menu.topmenu(views.menu.TopMenuElement.Gallery)
+@menu.topmenu(views.menu.TopMenuElement.Gallery, selectedCategoryId)
 
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -29,7 +34,8 @@
                 <span class="glyphicon glyphicon-refresh"></span> Refresh
             </a>
         </div>
-        <br><br>
+        <br>
+
         <table class="table table-striped">
             <thead>
             <tr>

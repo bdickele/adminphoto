@@ -7,15 +7,37 @@ pictures: List[controllers.gallery.SelectablePic])
 <script>
             // Required for comboBoxes of folders
             var galleryId = @galleryId;
+            var selectedSubFolder = "@selectedSubFolder";
+
+            (function () {
+                var focusComponentId = "folder1";
+                if (selectedSubFolder != "") {
+                    focusComponeentId = "folder2";
+                }
+                //alert(focusComponeentId);
+                document.getElementById(focusComponentId).focus();
+            })();
 </script>
 <script src='@routes.Assets.at("javascripts/gallery/galleryPicSelection.js")'></script>
 }{
 
-<br>
+@menu.topmenu(views.menu.TopMenuElement.Gallery)
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h4><span class="label label-primary">Add pictures to the gallery</span></h4>
+        Add pictures to the gallery
+    </div>
+
+    <div class="panel-body">
+        <div class="btn-group">
+            <a href="@controllers.gallery.routes.GalleryPicList.view(form.get.galleryId)" role="button"
+               class="btn btn-default btn-sm"
+               title="Manage pictures of gallery">
+                <span class="glyphicon glyphicon-picture"></span> Gallery's pictures
+            </a>
+        </div>
+        <br><br>
+
         Folder :
         <select name="folder1" id="folder1" class="input-sm">
             @for(mainFolder <- mainFolders) {
@@ -31,17 +53,16 @@ pictures: List[controllers.gallery.SelectablePic])
             @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
             }
         </select>
-    </div>
 
-    <div class="panel-body">
-        <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm" onclick="toggleCheckBoxes(true);">
-                <span class="glyphicon glyphicon-ok-circle"></span> Select all
-            </button>
-            <button type="button" class="btn btn-default btn-sm" onclick="toggleCheckBoxes(false);">
-                <span class="glyphicon glyphicon-remove-circle"></span> Unselect all
-            </button>
-        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+
+        <button type="button" class="btn btn-default btn-sm" onclick="toggleCheckBoxes(true);">
+            <span class="glyphicon glyphicon-ok-circle"></span> Select all
+        </button>
+        <button type="button" class="btn btn-default btn-sm" onclick="toggleCheckBoxes(false);">
+            <span class="glyphicon glyphicon-remove-circle"></span> Unselect all
+        </button>
+
         <br><br>
 
         @helper.form(action=controllers.gallery.routes.GalleryPicSelection.save,

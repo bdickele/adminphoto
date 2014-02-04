@@ -6,7 +6,7 @@
 </script>
 }{
 
-<br>
+@menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
 
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -29,7 +29,7 @@
         <br>
 
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div align="center">
                 <a href='@controllers.gallery.routes.GalleryPicList.view(form.get.galleryId)' role="button"
                    class="btn btn-primary">Cancel</a>
                 &nbsp;&nbsp;
@@ -41,6 +41,7 @@
 
         <input type="hidden" name="index" value='@form.get.index'>
         <input type="hidden" name="galleryId" value='@form.get.galleryId'>
+        <input type="hidden" name="categoryId" value='@form.get.categoryId'>
         }
     </div>
 </div>

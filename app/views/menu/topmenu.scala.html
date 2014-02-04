@@ -1,11 +1,13 @@
-@(index: views.menu.TopMenuElement.Value)
+@(index: views.menu.TopMenuElement.Value, categoryId: Int = -1)
 
 @import views.menu.TopMenuElement
 
-<br>
-<ul class="nav nav-pills nav-justified">
-    <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.gallery.routes.Galleries.view(-1)">Galleries</a></li>
-    <li @if(index==TopMenuElement.Picture){class="active"}><a href='@controllers.picture.routes.Pictures.view("", "")'>Pictures</a></li>
-    <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.category.routes.Categories.view()">Categories</a></li>
-</ul>
-<br>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <ul class="nav navbar-nav">
+            <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.gallery.routes.Galleries.view(categoryId)">Galleries</a></li>
+            <li @if(index==TopMenuElement.Picture){class="active"}><a href='@controllers.picture.routes.Pictures.view("", "")'>Pictures</a></li>
+            <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.category.routes.Categories.view()">Categories</a></li>
+        </ul>
+    </div>
+</nav>
