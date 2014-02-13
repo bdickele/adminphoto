@@ -11,7 +11,7 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, selectedCategoryId)
 
-<div class="panel panel-info">
+<div class="panel panel-default">
     <div class="panel-heading">
         Category :
         <select name="category" id="category" class="input-sm">
@@ -22,21 +22,19 @@
         </select>
     </div>
     <div class="panel-body">
-        <div class="btn-group">
-            <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
-               class="btn btn-default btn-sm"
-               title="Create a new gallery">
-                <span class="glyphicon glyphicon-plus"></span> Add
-            </a>
-            <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
-               class="btn btn-default btn-sm"
-               title="Refresh list of galleries">
-                <span class="glyphicon glyphicon-refresh"></span> Refresh
-            </a>
-        </div>
+        <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Create a new gallery">
+            <span class="glyphicon glyphicon-plus"></span> Add
+        </a>
+        <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Refresh list of galleries">
+            <span class="glyphicon glyphicon-refresh"></span> Refresh
+        </a>
         <br>
 
-        <table class="table table-striped">
+        <table class="table table-condensed table-striped">
             <thead>
             <tr>
                 <th style="text-align:center; width:130px">&nbsp;</th>
@@ -62,7 +60,7 @@
                 <td style="text-align:center;">
                     @if(index != 0){
                     <a href="@controllers.gallery.routes.Galleries.up(gallery.categoryId, gallery.galleryId)">
-                        <button type="button" class="btn btn-default btn-sm">
+                        <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-up"></span>
                         </button>
                     </a>
@@ -71,7 +69,7 @@
                 <td style="text-align:center;">
                     @if(index < (galleries.size-1)){
                     <a href="@controllers.gallery.routes.Galleries.down(gallery.categoryId, gallery.galleryId)">
-                        <button type="button" class="btn btn-default btn-sm">
+                        <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </button>
                     </a>

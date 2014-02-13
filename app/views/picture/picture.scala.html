@@ -15,12 +15,9 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Picture)
 
-<div class="panel panel-info">
+<div class="panel panel-default">
     <div class="panel-heading">
-        Available pictures
-    </div>
 
-    <div class="panel-body">
         Folder :
         <select name="folder1" id="folder1" class="input-sm">
             @for(mainFolder <- mainFolders) {
@@ -36,19 +33,12 @@
         </select>
 
         &nbsp;&nbsp;
-        <button type="button" class="btn btn-default btn-sm" id="rescanFolders"
+        <button type="button" class="btn btn-primary btn-sm" id="rescanFolders"
                 onclick="self.location='@controllers.picture.routes.Pictures.refresh()'">
             <i class="glyphicon glyphicon-refresh"></i> Refresh list of folders
         </button>
-        <br><br>
-        @*
-        <div class="btn-group">
-            <button type="button" class="btn btn-default btn-sm">
-                <i class="glyphicon glyphicon-refresh"></i> Refresh list of pictures
-            </button>
-        </div>
-        <br><br>
-        *@
+    </div>
+    <div class="panel-body">
         @for(subList <- pictures.sliding(4, 4)) {
         <div class="row">
             @for(picture <- subList) {
@@ -62,11 +52,11 @@
                         <tr>
                             <td style="text-align:center">
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-default" style="height:35px" disabled>10x15
-                                        @{picture.print match {
-                                            case None => <span class='glyphicon glyphicon-remove'></span>
-                                            case Some(s) => <span class='glyphicon glyphicon-ok'></span>
-                                        }}
+                                    10x15
+                                    @{picture.print match {
+                                        case None => <span class='glyphicon glyphicon-remove'></span>
+                                        case Some(s) => <span class='glyphicon glyphicon-ok'></span>
+                                    }}
                                 </div>
                             </td>
                         </tr>

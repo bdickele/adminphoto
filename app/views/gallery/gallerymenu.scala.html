@@ -1,0 +1,19 @@
+@(index: views.gallery.GalleryMenuElement.Value, galleryId: Int)
+
+@import views.gallery.GalleryMenuElement
+
+<ul class="nav nav-tabs" style="margin-bottom: 10px">
+
+    @if(galleryId > 0) {
+        <li @if(index==GalleryMenuElement.GalleryForm){class="active"}>
+            <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
+        <li @if(index==GalleryMenuElement.PicList){class="active"}>
+            <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
+        <li @if(index==GalleryMenuElement.PicSelection){class="active"}>
+            <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
+    } else {
+        <li class="active"><a href="#">Gallery's description</a></li>
+        <li class="disabled"><a href="#">Gallery's pictures</a></li>
+        <li class="disabled"><a href="#">Add pictures</a></li>
+    }
+</ul>

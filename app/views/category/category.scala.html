@@ -10,23 +10,19 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Category)
 
-<div class="panel panel-info">
+<div class="panel panel-default">
     <div class="panel-heading">
-        Category management
+        <a href="@controllers.category.routes.CategoryForms.create()" role="button" class="btn btn-primary btn-sm"
+           title="Create a new category" id="addPictures">
+            <span class="glyphicon glyphicon-plus"></span> Add
+        </a>
+        <a href="@controllers.category.routes.Categories.refresh()" role="button" class="btn btn-primary btn-sm"
+           title="Refresh list of categories">
+            <span class="glyphicon glyphicon-refresh"></span> Refresh
+        </a>
     </div>
     <div class="panel-body">
-        <div class="btn-group">
-            <a href="@controllers.category.routes.CategoryForms.create()" role="button" class="btn btn-default btn-sm"
-               title="Create a new category" id="addPictures">
-                <span class="glyphicon glyphicon-plus"></span> Add
-            </a>
-            <a href="@controllers.category.routes.Categories.refresh()" role="button" class="btn btn-default btn-sm"
-               title="Refresh list of categories">
-                <span class="glyphicon glyphicon-refresh"></span> Refresh
-            </a>
-        </div>
-        <br><br>
-        <table class="table table-striped">
+        <table class="table table-condensed table-striped table-hover">
             <thead>
             <tr>
                 <th style="text-align:center;">Nom</th>
@@ -48,7 +44,7 @@
                 <td style="text-align:center;">
                     @if(index != 0){
                     <a href="@controllers.category.routes.Categories.up(category.categoryId)">
-                        <button type="button" class="btn btn-default btn-sm">
+                        <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-up"></span>
                         </button>
                     </a>
@@ -57,7 +53,7 @@
                 <td style="text-align:center;">
                     @if(index < (categories.size-1)){
                     <a href="@controllers.category.routes.Categories.down(category.categoryId)">
-                        <button type="button" class="btn btn-default btn-sm">
+                        <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </button>
                     </a>

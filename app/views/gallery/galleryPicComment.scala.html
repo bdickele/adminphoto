@@ -6,43 +6,34 @@
 </script>
 }{
 
-@menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
+<div class="well">
+    @helper.form(action=controllers.gallery.routes.GalleryPicComment.save, args =
+    'class -> "form-horizontal",
+    'role -> "form") {
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h4><span class="label label-primary">Comment picture</span></h4>
+    <div align="center">
+        <img src='@form.get.webComplete'>
     </div>
-    <div class="panel-body">
-        @helper.form(action=controllers.gallery.routes.GalleryPicComment.save, args =
-        'class -> "form-horizontal",
-        'role -> "form") {
 
+    @helper.inputText(form("comment"),
+    'class -> "form-control",
+    '_label -> "Comment",
+    'maxlength -> 200)
+
+    <div class="form-group">
         <div align="center">
-            <img src='@form.get.webComplete'>
+            <a href='@controllers.gallery.routes.GalleryPicList.view(form.get.galleryId)' role="button"
+               class="btn btn-primary btn-sm">Cancel</a>
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
+            </button>
         </div>
-
-        @helper.inputText(form("comment"),
-        'class -> "form-control",
-        '_label -> "Comment",
-        'maxlength -> 200)
-
-        <br>
-
-        <div class="form-group">
-            <div align="center">
-                <a href='@controllers.gallery.routes.GalleryPicList.view(form.get.galleryId)' role="button"
-                   class="btn btn-primary">Cancel</a>
-                &nbsp;&nbsp;
-                <button type="submit" class="btn btn-primary">
-                    <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
-                </button>
-            </div>
-        </div>
-
-        <input type="hidden" name="index" value='@form.get.index'>
-        <input type="hidden" name="galleryId" value='@form.get.galleryId'>
-        <input type="hidden" name="categoryId" value='@form.get.categoryId'>
-        }
     </div>
+
+    <input type="hidden" name="index" value='@form.get.index'>
+    <input type="hidden" name="galleryId" value='@form.get.galleryId'>
+    <input type="hidden" name="categoryId" value='@form.get.categoryId'>
+    }
 </div>
 }

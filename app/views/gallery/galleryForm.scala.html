@@ -12,37 +12,18 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
 
-<div @if(form.hasErrors){class="panel panel-danger"} else {class="panel panel-info"}>
-<div class="panel-heading">
-    @if(form.hasErrors){<h4><span class="label label-danger">@title</span></h4>} else {@title}
-</div>
-<div class="panel-body">
-    @if(form.apply("galleryId").value.get.toInt > 0) {
-    <div class="btn-group">
-        <a href='@controllers.gallery.routes.GalleryPicList.view(form.apply("galleryId").value.get.toInt)' role="button"
-           class="btn btn-default btn-sm"
-           title="Manage pictures of gallery">
-            <span class="glyphicon glyphicon-picture"></span> Gallery's pictures
-        </a>
-    </div>
-    <br><br>
-    }
+@gallerymenu(views.gallery.GalleryMenuElement.GalleryForm, form.apply("galleryId").value.get.toInt)
+
+    <br>
 
     @helper.form(action=controllers.gallery.routes.GalleryForms.save, args =
     'class -> "form-horizontal",
     'role -> "form") {
 
-    @helper.select(form("categoryId"),
-    categories.map(c => (c.categoryId.toString, c.title)),
-    '_label -> "Category",
-    'class -> "input-sm",
-    '_showConstraints -> false
-    )
-
     @form.globalError.map { error =>
-    <div class="form-group has-error">
-        <label class="col-sm-2 control-label"></label>
-        <label class="col-sm-10">@error.message</label>
+    <div class="alert alert-dismissable alert-danger">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>@error.message</strong>
     </div>
     }
 
@@ -66,6 +47,13 @@
     'class -> "input-sm",
     '_showConstraints -> false)
 
+    @helper.select(form("categoryId"),
+    categories.map(c => (c.categoryId.toString, c.title)),
+    '_label -> "Category",
+    'class -> "input-sm",
+    '_showConstraints -> false
+    )
+
     @helper.textarea(form("comment"),
     'class -> "form-control",
     '_label -> "Comment",
@@ -83,14 +71,12 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)'
-               role="button" class="btn btn-primary">Cancel</a>
+               role="button" class="btn btn-primary btn-sm">Cancel</a>
             &nbsp;&nbsp;
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
             </button>
         </div>
     </div>
     }
-</div>
-</div>
 }

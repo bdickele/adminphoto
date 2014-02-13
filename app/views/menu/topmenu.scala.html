@@ -2,12 +2,16 @@
 
 @import views.menu.TopMenuElement
 
-<nav class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container">
+<div class="navbar navbar-inverse">
+    <div class="navbar-collapse collapse navbar-inverse-collapse">
         <ul class="nav navbar-nav">
-            <li @if(index==TopMenuElement.Gallery){class="active"}><a href="@controllers.gallery.routes.Galleries.view(categoryId)">Galleries</a></li>
-            <li @if(index==TopMenuElement.Picture){class="active"}><a href='@controllers.picture.routes.Pictures.view("", "")'>Pictures</a></li>
-            <li @if(index==TopMenuElement.Category){class="active"}><a href="@controllers.category.routes.Categories.view()">Categories</a></li>
+            <li @if(index==TopMenuElement.Gallery){class="active"}>
+                <a href="@controllers.gallery.routes.Galleries.view(categoryId)">Galleries</a></li>
+            <li @if(index==TopMenuElement.Category){class="active"}>
+                <a href="@controllers.category.routes.Categories.view()">Categories</a></li>
+            <li @if(index==TopMenuElement.Picture){class="active"}>
+                <a href='@controllers.picture.routes.Pictures.view("", "")'>Stock of pictures</a></li>
         </ul>
+
     </div>
-</nav>
+</div>
