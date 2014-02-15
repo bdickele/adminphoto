@@ -5,13 +5,15 @@
 # Home page
 GET     /                                           controllers.Application.index
 
-#
+# #########################################################
 # GALLERY
-#
+# #########################################################
 
 GET     /gallery                                    controllers.gallery.Galleries.view(categoryId: Int = -1)
 GET     /gallery/create/:categoryId                 controllers.gallery.GalleryForms.create(categoryId: Int)
 GET     /gallery/edit/:galleryId                    controllers.gallery.GalleryForms.edit(galleryId: Int)
+GET     /gallery/previous/:galleryId                controllers.gallery.GalleryForms.previousGallery(galleryId: Int)
+GET     /gallery/next/:galleryId                    controllers.gallery.GalleryForms.nextGallery(galleryId: Int)
 GET     /gallery/:categoryId                        controllers.gallery.Galleries.view(categoryId: Int)
 GET     /gallery/refresh/:categoryId                controllers.gallery.Galleries.refresh(categoryId: Int)
 GET     /gallery/up/:categoryId/:galleryId          controllers.gallery.Galleries.up(categoryId: Int, galleryId: Int)
@@ -35,18 +37,9 @@ GET     /galleryPicSelection/:galleryId/:mainFolder/:subFolder  controllers.gall
 
 POST    /galleryPicSelection/save                   controllers.gallery.GalleryPicSelection.save
 
-#
-# STOCK OF PICTURE
-#
-
-GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
-GET     /picture/refresh                    controllers.picture.Pictures.refresh
-GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
-GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
-
-#
+# #########################################################
 # CATEGORY
-#
+# #########################################################
 
 GET     /category                           controllers.category.Categories.view
 GET     /category/refresh                   controllers.category.Categories.refresh
@@ -57,6 +50,16 @@ GET     /category/down/:categoryId          controllers.category.Categories.down
 GET     /category/onOffline/:categoryId     controllers.category.Categories.onOffLine(categoryId: Int)
 
 POST    /category/save                      controllers.category.CategoryForms.save
+
+# #########################################################
+# STOCK OF PICTURE
+# #########################################################
+
+GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
+GET     /picture/refresh                    controllers.picture.Pictures.refresh
+GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
+GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                       controllers.Assets.at(path="/public", file)

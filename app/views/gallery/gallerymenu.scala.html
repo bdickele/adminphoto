@@ -1,15 +1,27 @@
-@(index: views.gallery.GalleryMenuElement.Value, galleryId: Int)
+@(menuIndex: views.gallery.GalleryMenuElement.Value, galleryId: Int, galleryTitle: String)
 
 @import views.gallery.GalleryMenuElement
+
+@if(galleryId > 0) {
+<ul class="pager">
+    <li class="previous"><a href="@controllers.gallery.routes.GalleryForms.previousGallery(galleryId)" title="Previous gallery">
+        <span class="glyphicon glyphicon-chevron-left"></span></a>
+    </li>
+    <li>@galleryTitle</li>
+    <li class="next"><a href="@controllers.gallery.routes.GalleryForms.nextGallery(galleryId)" title="Next gallery">
+        <span class="glyphicon glyphicon-chevron-right"></span></a>
+    </li>
+</ul>
+}
 
 <ul class="nav nav-tabs" style="margin-bottom: 10px">
 
     @if(galleryId > 0) {
-        <li @if(index==GalleryMenuElement.GalleryForm){class="active"}>
+        <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
             <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
-        <li @if(index==GalleryMenuElement.PicList){class="active"}>
+        <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
             <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
-        <li @if(index==GalleryMenuElement.PicSelection){class="active"}>
+        <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
             <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
     } else {
         <li class="active"><a href="#">Gallery's description</a></li>

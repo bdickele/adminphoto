@@ -43,7 +43,9 @@ object GalleryRW extends Controller with MongoController {
 
   def findMaxGalleryId: Int = {
     val future: Future[Option[BSONDocument]] =
-      collection.find(BSONDocument()).sort(BSONDocument("galleryId" -> -1)).one[BSONDocument]
+      collection.find(BSONDocument()).
+        sort(BSONDocument("galleryId" -> -1)).
+        one[BSONDocument]
     val option: Option[BSONDocument] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     option match {
@@ -54,7 +56,9 @@ object GalleryRW extends Controller with MongoController {
 
   def findMaxRankForCategory(categoryId: Int): Int = {
     val future: Future[Option[BSONDocument]] =
-      collection.find(BSONDocument("categoryId" -> categoryId)).sort(BSONDocument("rank" -> -1)).one[BSONDocument]
+      collection.find(BSONDocument("categoryId" -> categoryId)).
+        sort(BSONDocument("rank" -> -1)).
+        one[BSONDocument]
     val option: Option[BSONDocument] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     option match {

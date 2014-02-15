@@ -10,6 +10,7 @@ import util.Const
  */
 case class GalleryPics(categoryId: Int,
                        galleryId: Int,
+                       galleryTitle: String,
                        thumbnail: String,
                        pictures: List[GalleryPic])
 
@@ -67,6 +68,7 @@ object GalleryPics {
       GalleryPics(
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
+        doc.getAs[BSONString]("title").get.value,
         doc.getAs[BSONString]("thumbnail").get.value,
         readPictures(doc.getAs[BSONArray]("pictures")))
     }

@@ -1,5 +1,6 @@
 @(form: Form[controllers.gallery.SelectedPics],
-galleryId: Int, mainFolders: List[String], subFolders: List[String],
+galleryId: Int, galleryTitle: String,
+mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
 pictures: List[controllers.gallery.SelectablePic])
 
@@ -23,7 +24,9 @@ pictures: List[controllers.gallery.SelectablePic])
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 
-@gallerymenu(views.gallery.GalleryMenuElement.PicSelection, form.apply("galleryId").value.get.toInt)
+@gallerymenu(views.gallery.GalleryMenuElement.PicSelection,
+    form.apply("galleryId").value.get.toInt,
+    galleryTitle)
 
 <br>
 

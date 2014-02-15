@@ -5,7 +5,10 @@ import models.picture.{Picture, Folder}
 import play.api.data.Forms._
 import play.api.data.Form
 import util.Const._
-import models.gallery.{GalleryPicturesRW, GalleryPic}
+import models.gallery.{Gallery, GalleryRW, GalleryPicturesRW, GalleryPic}
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
+import scala.concurrent.Await
 
 /**
  * Created by bdickele
@@ -51,8 +54,11 @@ object GalleryPicSelection extends Controller {
         WebRoot + folder + FolderWeb + p.web,
         p.web))
 
+    val future = GalleryRW.findById(galleryId)
+    val gallery: Gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+
     Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
-      galleryId, mainFolders, subFolders, mainFolderName, subFolderName,
+      galleryId, gallery.title, mainFolders, subFolders, mainFolderName, subFolderName,
       selectablePics))
   }
 
@@ -78,7 +84,7 @@ object GalleryPicSelection extends Controller {
 
           val galleryPics: List[GalleryPic] = filteredPictures.map(pic =>
             GalleryPic("", // We don't care about the complete path to thumbnail here
-              folder + FolderThumbnail+ pic.thumbnail,
+              folder + FolderThumbnail + pic.thumbnail,
               folder + FolderWeb + pic.web,
               pic.print match {
                 case None => None

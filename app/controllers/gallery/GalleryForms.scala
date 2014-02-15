@@ -1,6 +1,6 @@
 package controllers.gallery
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{SimpleResult, Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
 import controllers.category.Categories
@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit
 import scala.Some
 import models.gallery.{Gallery, GalleryRW, GalleryForm}
 import scala.util.{Success, Failure}
+import reactivemongo.bson.BSONInteger
+import models.category.Category
 
 /**
  * User: bdickele
@@ -107,4 +109,116 @@ object GalleryForms extends Controller {
   // Required by form's validation
   def findByTitle(title: String): Option[Gallery] =
     Await.result(GalleryRW.findByTitle(title), Duration(5, TimeUnit.SECONDS))
+
+  /**
+   * Redirect to previous gallery of passed gallery ID
+   * @param galleryId
+   * @return
+   */
+  def previousGallery(galleryId: Int) = Action {
+    val future = GalleryRW.findById(galleryId)
+    val gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+
+    val previousGalleryId: Int = gallery.rank match {
+      // First gallery of the category : let's pick up the last gallery of the previous category
+      case 0 => lastGalleryIdOfPreviousCategory(gallery.categoryId)
+
+      case _ => {
+        val galleries = Galleries.findAll(gallery.categoryId)
+
+        // Let's retrieve our category
+        galleries.find(_.galleryId == galleryId) match {
+          case Some(gallery) => {
+            val galleryRank = gallery.rank
+
+            // List is sorted by rank, thus we pick up the first gallery whose rank is < gallery's rank
+            galleries.find(_.rank < galleryRank) match {
+              case None => lastGalleryIdOfPreviousCategory(gallery.categoryId)
+              case Some(otherGallery) => otherGallery.galleryId
+            }
+          }
+          case None => -1
+        }
+      }
+    }
+
+    Redirect(routes.GalleryPicList.view(previousGalleryId))
+  }
+
+  /**
+   * Retrieves ID of last gallery of category before category of passed categoryId.
+   * If categoryId stands for first category, then last category (the most recent) is selected
+   * @param categoryId
+   */
+  def lastGalleryIdOfPreviousCategory(categoryId: Int): Int = {
+    // Categories are sorted by rank, what means the most recent one is the first
+    val categories: List[Category] = Categories.findAllFromCacheOrDB()
+
+    val category = categories.find(_.categoryId == categoryId).get
+    val rank = category.rank
+
+    val newCategoryId: Int = rank match {
+      case 0 => categories.head.categoryId
+      case n => categories.find(_.rank < category.rank).get.categoryId
+    }
+
+    val future = GalleryRW.findAll(newCategoryId)
+    val galleries = Await.result(future, Duration(5, TimeUnit.SECONDS))
+
+    // In case category doesn't contain any gallery
+    galleries match {
+      case Nil => lastGalleryIdOfPreviousCategory(newCategoryId)
+      case _ => galleries.head.galleryId
+    }
+  }
+
+  /**
+   * Redirect to next gallery of passed gallery ID
+   * @param galleryId
+   * @return
+   */
+  def nextGallery(galleryId: Int) =  Action {
+    val future = GalleryRW.findById(galleryId)
+    val gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+
+    // We need to sort the galleries from the oldest to the most recent => we have to reverse it
+    val galleries = Galleries.findAll(gallery.categoryId).reverse
+    val lastIndex = galleries.length - 1
+    val galleryIndex = galleries.indexWhere(_.galleryId == galleryId)
+
+    val nextGalleryId: Int = galleryIndex match {
+      // Last gallery of the category : let's pick up the first gallery of the next category
+      case `lastIndex` => firstGalleryIdOfNextCategory(gallery.categoryId)
+      case _ => galleries.apply(galleryIndex + 1).galleryId
+    }
+
+    Redirect(routes.GalleryPicList.view(nextGalleryId))
+  }
+
+  /**
+   * Retrieves ID of first gallery of category after category of passed categoryId.
+   * If categoryId stands for last category, then first category (the oldest) is selected
+   * @param categoryId
+   */
+  def firstGalleryIdOfNextCategory(categoryId: Int): Int = {
+    // Categories are sorted by rank, what means the most recent one is the first: let's reverse it
+    val categories: List[Category] = Categories.findAllFromCacheOrDB().reverse
+
+    val categoryIndex = categories.indexWhere(_.categoryId == categoryId)
+    val lastIndex = categories.length - 1
+
+    val newCategoryId: Int = categoryIndex match {
+      case `lastIndex` => categories.head.categoryId
+      case n => categories.apply(categoryIndex + 1).categoryId
+    }
+
+    val future = GalleryRW.findAll(newCategoryId)
+    val galleries = Await.result(future, Duration(5, TimeUnit.SECONDS))
+
+    // In case category doesn't contain any gallery
+    galleries match {
+      case Nil => firstGalleryIdOfNextCategory(newCategoryId)
+      case _ => galleries.last.galleryId
+    }
+  }
 }
