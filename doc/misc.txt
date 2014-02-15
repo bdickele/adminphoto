@@ -1,6 +1,11 @@
 play -Dconfig.file=conf/application_test.conf "run 9100"
 play -Dconfig.file=conf/application_dev.conf "run 9100"
 
+mongoexport --db website -collection category --out category.json
+mongoexport --db website -collection gallery --out gallery.json
+mongoimport --db websitetest --collection category --file category.json
+
+
 Dans le shell mongo, après un use XXX : load("db_init.js")
 
 Questions :

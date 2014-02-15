@@ -89,7 +89,7 @@ object GalleryForms extends Controller {
                 form.month,
                 if (form.comment.isEmpty) None else Some(form.comment),
                 form.online)
-              Redirect(routes.Galleries.view(form.categoryId))
+              Redirect(routes.GalleryPicList.view(form.galleryId))
             }
 
             // New gallery
