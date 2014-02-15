@@ -1,0 +1,5 @@
+{ "_id" : { "$oid" : "52e4d94bfe8b1b1fdcf650fd" }, "categoryId" : 1, "description" : "Année 2004", "online" : true, "rank" : 0, "title" : "2004" }
+{ "_id" : { "$oid" : "52e4d94bfe8b1b1fdcf650fe" }, "categoryId" : 2, "description" : "Année 2005", "online" : true, "rank" : 1, "title" : "2005" }
+{ "_id" : { "$oid" : "52e4d94bfe8b1b1fdcf650ff" }, "categoryId" : 3, "description" : "Année 2006", "online" : true, "rank" : 2, "title" : "2006" }
+{ "_id" : { "$oid" : "52e52e411b15001b15b48bf8" }, "categoryId" : 4, "description" : "Année 2007", "online" : true, "rank" : 3, "title" : "2007" }
+{ "_id" : { "$oid" : "52e52e551b15002a15b48bf9" }, "categoryId" : 5, "online" : true, "rank" : 4, "title" : "2008" }
