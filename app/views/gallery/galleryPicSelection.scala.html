@@ -1,10 +1,10 @@
 @(form: Form[controllers.gallery.SelectedPics],
-galleryId: Int, galleryTitle: String,
+categoryId: Int, galleryId: Int, title: String,
 mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
 pictures: List[controllers.gallery.SelectablePic])
 
-@main("Add pictures to gallery"){
+@main(title){
 <script>
             // Required for comboBoxes of folders
             var galleryId = @galleryId;
@@ -25,8 +25,9 @@ pictures: List[controllers.gallery.SelectablePic])
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 
 @gallerymenu(views.gallery.GalleryMenuElement.PicSelection,
-    form.apply("galleryId").value.get.toInt,
-    galleryTitle)
+    categoryId,
+    galleryId,
+    title)
 
 <br>
 

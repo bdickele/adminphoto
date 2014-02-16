@@ -12,8 +12,10 @@
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
 
-@gallerymenu(views.gallery.GalleryMenuElement.GalleryForm, form.apply("galleryId").value.get.toInt,
-    form.apply("title").value.get)
+@gallerymenu(views.gallery.GalleryMenuElement.GalleryForm,
+    form.apply("categoryId").value.get.toInt,
+    form.apply("galleryId").value.get.toInt,
+    title)
 
     <br>
 

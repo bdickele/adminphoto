@@ -58,7 +58,8 @@ object GalleryPicSelection extends Controller {
     val gallery: Gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
 
     Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
-      galleryId, gallery.title, mainFolders, subFolders, mainFolderName, subFolderName,
+      gallery.categoryId, galleryId, gallery.extendedTitle,
+      mainFolders, subFolders, mainFolderName, subFolderName,
       selectablePics))
   }
 

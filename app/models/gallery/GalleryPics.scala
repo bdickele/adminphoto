@@ -3,6 +3,7 @@ package models.gallery
 import reactivemongo.bson._
 import reactivemongo.bson.BSONString
 import util.Const
+import org.joda.time.YearMonth
 
 /**
  * Created by bdickele
@@ -10,9 +11,13 @@ import util.Const
  */
 case class GalleryPics(categoryId: Int,
                        galleryId: Int,
-                       galleryTitle: String,
+                       title: String,
+                       date: YearMonth,
                        thumbnail: String,
-                       pictures: List[GalleryPic])
+                       pictures: List[GalleryPic]) {
+
+  def extendedTitle = Gallery.extendedTitle(title, date)
+}
 
 case class GalleryPic(thumbnailComplete: String,
                       thumbnail: String,
@@ -69,6 +74,7 @@ object GalleryPics {
         doc.getAs[BSONInteger]("categoryId").get.value,
         doc.getAs[BSONInteger]("galleryId").get.value,
         doc.getAs[BSONString]("title").get.value,
+        Gallery.buildYearMonth(doc.getAs[BSONString]("date").get.value),
         doc.getAs[BSONString]("thumbnail").get.value,
         readPictures(doc.getAs[BSONArray]("pictures")))
     }

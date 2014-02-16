@@ -58,7 +58,8 @@ object GalleryForms extends Controller {
 
   def edit(galleryId: Int) = Action {
     Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)) match {
-      case Some(gallery) => Ok(views.html.gallery.galleryForm("Gallery \"" + gallery.title + "\"",
+      case Some(gallery) => Ok(views.html.gallery.galleryForm(
+        gallery.extendedTitle,
         Categories.findAllFromCacheOrDB(),
         galleryForm.fill(GalleryForm(gallery))))
       case None => Galleries.couldNotFindGallery(galleryId)

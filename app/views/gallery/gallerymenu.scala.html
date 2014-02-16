@@ -1,31 +1,45 @@
-@(menuIndex: views.gallery.GalleryMenuElement.Value, galleryId: Int, galleryTitle: String)
+@(menuIndex: views.gallery.GalleryMenuElement.Value, categoryId: Int, galleryId: Int, title: String)
 
 @import views.gallery.GalleryMenuElement
 
 @if(galleryId > 0) {
-<ul class="pager">
-    <li class="previous"><a href="@controllers.gallery.routes.GalleryForms.previousGallery(galleryId)" title="Previous gallery">
-        <span class="glyphicon glyphicon-chevron-left"></span></a>
-    </li>
-    <li>@galleryTitle</li>
-    <li class="next"><a href="@controllers.gallery.routes.GalleryForms.nextGallery(galleryId)" title="Next gallery">
-        <span class="glyphicon glyphicon-chevron-right"></span></a>
-    </li>
-</ul>
+<div class="row">
+    <div class="col-md-8">
+        <h4>@title</h4>
+    </div>
+    <div class="col-md-4" align="right">
+        <a href="@controllers.gallery.routes.GalleryForms.previousGallery(galleryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Previous gallery">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a href="@controllers.gallery.routes.GalleryForms.nextGallery(galleryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Next gallery">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        <a href="@controllers.gallery.routes.GalleryForms.create(categoryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Create a new gallery">
+            <span class="glyphicon glyphicon-plus"></span>
+        </a>
+    </div>
+</div>
+        <br>
 }
 
 <ul class="nav nav-tabs" style="margin-bottom: 10px">
 
     @if(galleryId > 0) {
-        <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
-            <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
-        <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
-            <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
-        <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
-            <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
+    <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
+    <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
+    <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
+    <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
+    <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
+    <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
     } else {
-        <li class="active"><a href="#">Gallery's description</a></li>
-        <li class="disabled"><a href="#">Gallery's pictures</a></li>
-        <li class="disabled"><a href="#">Add pictures</a></li>
+    <li class="active"><a href="#">Gallery's description</a></li>
+    <li class="disabled"><a href="#">Gallery's pictures</a></li>
+    <li class="disabled"><a href="#">Add pictures</a></li>
     }
 </ul>

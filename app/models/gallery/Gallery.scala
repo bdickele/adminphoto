@@ -17,7 +17,10 @@ case class Gallery(categoryId: Int,
                    comment: Option[String],
                    thumbnail: String,
                    nbPictures: Int,
-                   online: Boolean = true)
+                   online: Boolean = true) {
+
+  def extendedTitle = Gallery.extendedTitle(title, date)
+}
 
 //access: Access.Value = Access.Guest)
 //doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
@@ -64,4 +67,7 @@ object Gallery {
     val data = s.split("/")
     new YearMonth(data(0).toInt, data(1).toInt)
   }
+
+  def extendedTitle(title: String, date: YearMonth) =
+    "“" + title + "” " + "[" + date.getMonthOfYear + "/" + date.getYear + "]"
 }
