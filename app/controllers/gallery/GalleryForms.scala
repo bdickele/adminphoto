@@ -1,6 +1,6 @@
 package controllers.gallery
 
-import play.api.mvc.{SimpleResult, Action, Controller}
+import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
 import controllers.category.Categories
@@ -9,9 +9,8 @@ import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import scala.Some
 import models.gallery.{Gallery, GalleryRW, GalleryForm}
-import scala.util.{Success, Failure}
-import reactivemongo.bson.BSONInteger
 import models.category.Category
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * User: bdickele
@@ -116,34 +115,18 @@ object GalleryForms extends Controller {
    * @param galleryId
    * @return
    */
-  def previousGallery(galleryId: Int) = Action {
-    val future = GalleryRW.findById(galleryId)
-    val gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+  def previousGallery(galleryId: Int) = Action.async {
+    val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
 
-    val previousGalleryId: Int = gallery.rank match {
-      // First gallery of the category : let's pick up the last gallery of the previous category
-      case 0 => lastGalleryIdOfPreviousCategory(gallery.categoryId)
-
-      case _ => {
-        val galleries = Galleries.findAll(gallery.categoryId)
-
-        // Let's retrieve our category
-        galleries.find(_.galleryId == galleryId) match {
-          case Some(gallery) => {
-            val galleryRank = gallery.rank
-
-            // List is sorted by rank, thus we pick up the first gallery whose rank is < gallery's rank
-            galleries.find(_.rank < galleryRank) match {
-              case None => lastGalleryIdOfPreviousCategory(gallery.categoryId)
-              case Some(otherGallery) => otherGallery.galleryId
-            }
-          }
-          case None => -1
-        }
+    val previousFuture = GalleryRW.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
+    val previousGallery: Future[Gallery] = previousFuture.map {
+      option => option match {
+        case Some(g) => g
+        case None => lastGalleryOfPreviousCategory(gallery.categoryId)
       }
     }
 
-    Redirect(routes.GalleryPicList.view(previousGalleryId))
+    previousGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
   }
 
   /**
@@ -151,7 +134,7 @@ object GalleryForms extends Controller {
    * If categoryId stands for first category, then last category (the most recent) is selected
    * @param categoryId
    */
-  def lastGalleryIdOfPreviousCategory(categoryId: Int): Int = {
+  def lastGalleryOfPreviousCategory(categoryId: Int): Gallery = {
     // Categories are sorted by rank, what means the most recent one is the first
     val categories: List[Category] = Categories.findAllFromCacheOrDB()
 
@@ -163,13 +146,12 @@ object GalleryForms extends Controller {
       case n => categories.find(_.rank < category.rank).get.categoryId
     }
 
-    val future = GalleryRW.findAll(newCategoryId)
-    val galleries = Await.result(future, Duration(5, TimeUnit.SECONDS))
+    val futureGallery = GalleryRW.findLastGalleryOfCategory(newCategoryId)
 
     // In case category doesn't contain any gallery
-    galleries match {
-      case Nil => lastGalleryIdOfPreviousCategory(newCategoryId)
-      case _ => galleries.head.galleryId
+    Await.result(futureGallery, Duration(5, TimeUnit.SECONDS)) match {
+      case None => lastGalleryOfPreviousCategory(newCategoryId)
+      case Some(g) => g
     }
   }
 
@@ -178,22 +160,18 @@ object GalleryForms extends Controller {
    * @param galleryId
    * @return
    */
-  def nextGallery(galleryId: Int) =  Action {
-    val future = GalleryRW.findById(galleryId)
-    val gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+  def nextGallery(galleryId: Int) = Action.async {
+    val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
 
-    // We need to sort the galleries from the oldest to the most recent => we have to reverse it
-    val galleries = Galleries.findAll(gallery.categoryId).reverse
-    val lastIndex = galleries.length - 1
-    val galleryIndex = galleries.indexWhere(_.galleryId == galleryId)
-
-    val nextGalleryId: Int = galleryIndex match {
-      // Last gallery of the category : let's pick up the first gallery of the next category
-      case `lastIndex` => firstGalleryIdOfNextCategory(gallery.categoryId)
-      case _ => galleries.apply(galleryIndex + 1).galleryId
+    val nextFuture = GalleryRW.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
+    val nextGallery: Future[Gallery] = nextFuture.map {
+      option => option match {
+        case Some(g) => g
+        case None => firstGalleryOfNextCategory(gallery.categoryId)
+      }
     }
 
-    Redirect(routes.GalleryPicList.view(nextGalleryId))
+    nextGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
   }
 
   /**
@@ -201,7 +179,7 @@ object GalleryForms extends Controller {
    * If categoryId stands for last category, then first category (the oldest) is selected
    * @param categoryId
    */
-  def firstGalleryIdOfNextCategory(categoryId: Int): Int = {
+  def firstGalleryOfNextCategory(categoryId: Int): Gallery = {
     // Categories are sorted by rank, what means the most recent one is the first: let's reverse it
     val categories: List[Category] = Categories.findAllFromCacheOrDB().reverse
 
@@ -213,13 +191,12 @@ object GalleryForms extends Controller {
       case n => categories.apply(categoryIndex + 1).categoryId
     }
 
-    val future = GalleryRW.findAll(newCategoryId)
-    val galleries = Await.result(future, Duration(5, TimeUnit.SECONDS))
+    val futureGallery = GalleryRW.findFirstGalleryOfCategory(newCategoryId)
 
     // In case category doesn't contain any gallery
-    galleries match {
-      case Nil => firstGalleryIdOfNextCategory(newCategoryId)
-      case _ => galleries.last.galleryId
+    Await.result(futureGallery, Duration(5, TimeUnit.SECONDS)) match {
+      case None => firstGalleryOfNextCategory(newCategoryId)
+      case Some(g) => g
     }
   }
 }
