@@ -5,9 +5,8 @@ import models.gallery.{GalleryRW, Gallery}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import app.models.TestApplication
 import org.joda.time.YearMonth
-import util.Access
+import app.TestApplication
 
 /**
  * Created by bdickele

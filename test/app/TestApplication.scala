@@ -1,4 +1,4 @@
-package app.models
+package app
 
 import org.specs2.execute.{AsResult, Result}
 import play.api.test.{FakeApplication, WithApplication}

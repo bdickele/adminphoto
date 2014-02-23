@@ -1,12 +1,12 @@
 package app.models.gallery
 
 import org.specs2.mutable.Specification
-import app.models.TestApplication
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import models.gallery.{GalleryPicturesRW, GalleryPics}
 import util.Const
+import app.TestApplication
 
 /**
  * Created by bdickele

@@ -3,7 +3,7 @@ package app.models.picture
 import org.specs2.mutable._
 
 import models.picture.{Picture, Folder}
-import app.models.TestApplication
+import app.TestApplication
 
 /**
  * User: bdickele
