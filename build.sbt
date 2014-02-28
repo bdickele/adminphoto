@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
 
 play.Project.playScalaSettings
 
+com.jamesward.play.BrowserNotifierPlugin.livereload
+
