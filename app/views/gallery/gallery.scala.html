@@ -6,7 +6,6 @@
                 document.getElementById("category").focus();
             })();
         </script>
-<script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
 } {
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, selectedCategoryId)
@@ -14,9 +13,9 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         Category :
-        <select name="category" id="category" class="input-sm">
+        <select name="category" id="category" class="input-sm" onchange="self.location = category.value">
             @for(category <- categories){
-            <option value="@category.categoryId"
+            <option value="@controllers.gallery.routes.Galleries.view(category.categoryId)"
             @if(category.categoryId==selectedCategoryId){selected}>@category.title</option>
             }
         </select>

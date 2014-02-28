@@ -32,17 +32,17 @@ pictures: List[controllers.gallery.SelectablePic])
 <br>
 
 Folder :
-<select name="folder1" id="folder1" class="input-sm">
+<select name="folder1" id="folder1" class="input-sm" onchange="self.location = folder1.value">
     @for(mainFolder <- mainFolders) {
-    <option value="@mainFolder"
+    <option value='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, mainFolder, "")'
     @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
     }
 </select>
 
 &nbsp;&nbsp; Sub-folder :
-<select name="folder2" id="folder2" class="input-sm">
+<select name="folder2" id="folder2" class="input-sm" onchange="self.location = folder2.value">
     @for(subFolder <- subFolders) {
-    <option value="@subFolder"
+    <option value='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, selectedMainFolder, subFolder)'
     @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
     }
 </select>

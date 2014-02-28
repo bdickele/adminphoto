@@ -19,16 +19,16 @@
     <div class="panel-heading">
 
         Folder :
-        <select name="folder1" id="folder1" class="input-sm">
+        <select name="folder1" id="folder1" class="input-sm" onchange="self.location = folder1.value">
             @for(mainFolder <- mainFolders) {
-            <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
+            <option value='@controllers.picture.routes.Pictures.view(mainFolder, "")' @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
             }
         </select>
 
         &nbsp;&nbsp; Sub-folder :
-        <select name="folder2" id="folder2" class="input-sm">
+        <select name="folder2" id="folder2" class="input-sm" onchange="self.location = folder2.value">
             @for(subFolder <- subFolders) {
-            <option value="@subFolder" @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
+            <option value='@controllers.picture.routes.Pictures.view(selectedMainFolder, subFolder)' @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
             }
         </select>
 

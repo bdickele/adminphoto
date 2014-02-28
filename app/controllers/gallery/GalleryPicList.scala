@@ -7,17 +7,25 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import play.api.Logger
 import reactivemongo.bson.BSONString
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * Created by bdickele on 01/02/14.
  */
 object GalleryPicList extends Controller {
 
-  def view(galleryId: Int) = Action {
+  def view(galleryId: Int) = Action.async {
     val future = GalleryPicturesRW.findByGalleryId(galleryId)
-    val galleryPics: GalleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-
-    Ok(views.html.gallery.galleryPicList(galleryPics))
+    future.map {
+      option => option match {
+        case None => {
+          val message = s"Could not find a gallery for id $galleryId"
+          Logger.error(message)
+          BadRequest(message)
+        }
+        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics))
+      }
+    }
   }
 
   def up(galleryId: Int, picIndex: Int) = Action {
