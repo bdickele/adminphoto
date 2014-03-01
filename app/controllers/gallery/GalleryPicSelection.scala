@@ -5,10 +5,8 @@ import models.picture.{Picture, Folder}
 import play.api.data.Forms._
 import play.api.data.Form
 import util.Const._
-import models.gallery.{Gallery, GalleryRW, GalleryPicturesRW, GalleryPic}
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
-import scala.concurrent.Await
+import models.gallery.{GalleryRW, GalleryPicturesRW, GalleryPic}
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * Created by bdickele
@@ -37,7 +35,7 @@ object GalleryPicSelection extends Controller {
   val form: Form[SelectedPics] = Form(formMapping)
 
 
-  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = Action {
+  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = Action.async {
     val mainFolders = Folder.mainFolders
     val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
@@ -55,12 +53,16 @@ object GalleryPicSelection extends Controller {
         p.web))
 
     val future = GalleryRW.findById(galleryId)
-    val gallery: Gallery = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-
-    Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
-      gallery.categoryId, galleryId, gallery.extendedTitle,
-      mainFolders, subFolders, mainFolderName, subFolderName,
-      selectablePics))
+    future.map {
+      option =>
+        option match {
+          case None => BadRequest("Com'on, that was not supposed to happen, really")
+          case Some(gallery) => Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
+            gallery.categoryId, galleryId, gallery.extendedTitle,
+            mainFolders, subFolders, mainFolderName, subFolderName,
+            selectablePics))
+        }
+    }
   }
 
   def save() = Action {
@@ -68,7 +70,7 @@ object GalleryPicSelection extends Controller {
       form.bindFromRequest.fold(
 
         // Validation error
-        formWithErrors => BadRequest("But that's what not supposed to happen !"),
+        formWithErrors => BadRequest("But that was not supposed to happen !"),
 
         /*
         So now we have a list of String looking like "pictureName.jpg" that

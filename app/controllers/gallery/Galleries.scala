@@ -84,15 +84,16 @@ object Galleries extends Controller {
     }
   }
 
-  def onOffLine(categoryId: Int, galleryId: Int) = Action {
-    val option = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS))
-
-    option match {
-      case Some(gallery) => {
-        GalleryRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
-        Redirect(routes.Galleries.view(categoryId))
+  def onOffLine(categoryId: Int, galleryId: Int) = Action.async {
+    val future = GalleryRW.findById(galleryId)
+    future.map {
+      option => option match {
+        case Some(gallery) => {
+          GalleryRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
+          Redirect(routes.Galleries.view(categoryId))
+        }
+        case None => couldNotFindGallery(galleryId)
       }
-      case None => couldNotFindGallery(galleryId)
     }
   }
 

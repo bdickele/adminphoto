@@ -1,16 +1,6 @@
 @(form: models.gallery.GalleryPics)
 
-@main(form.extendedTitle){
-<script>
-            (function () {
-                var firstPic = document.getElementById("picture[0]");
-                if (firstPic) {
-                    firstPic.focus();
-                }
-            })();
-
-</script>
-}{
+@main(form.extendedTitle)(){
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, form.categoryId)
 
@@ -39,7 +29,7 @@
             <a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"
                 id="picture[@index]">
             <img src="@picture.thumbnailComplete" title='@picture.comment.getOrElse("")'></a></td>
-        <td style="text-align:left;">
+        <td style="text-align:left;"><a id="@index"></a>
             <a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)">
             @picture.comment.getOrElse("")</a></td>
         <td style="text-align:center;">

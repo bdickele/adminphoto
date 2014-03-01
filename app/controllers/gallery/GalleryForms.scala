@@ -30,7 +30,7 @@ object GalleryForms extends Controller {
         }),
     "galleryId" -> number,
     "title" -> nonEmptyText.
-      verifying("Title cannot exceed 50 characters", _.length <= 50),
+      verifying("Title cannot exceed 70 characters", _.length <= 70),
     "year" -> number.
       verifying("Incorrect value for year (has to be > 1970)", _ > 1970),
     "month" -> number.
@@ -55,13 +55,16 @@ object GalleryForms extends Controller {
       galleryForm.fill(GalleryForm.newOne(categoryId))))
   }
 
-  def edit(galleryId: Int) = Action {
-    Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)) match {
-      case Some(gallery) => Ok(views.html.gallery.galleryForm(
-        gallery.extendedTitle,
-        Categories.findAllFromCacheOrDB(),
-        galleryForm.fill(GalleryForm(gallery))))
-      case None => Galleries.couldNotFindGallery(galleryId)
+  def edit(galleryId: Int) = Action.async {
+    val future = GalleryRW.findById(galleryId)
+    future.map {
+      option => option match {
+        case Some(gallery) => Ok(views.html.gallery.galleryForm(
+          gallery.extendedTitle,
+          Categories.findAllFromCacheOrDB(),
+          galleryForm.fill(GalleryForm(gallery))))
+        case None => Galleries.couldNotFindGallery(galleryId)
+      }
     }
   }
 
