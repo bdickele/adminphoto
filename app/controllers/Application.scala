@@ -18,6 +18,7 @@ object Application extends Controller {
     implicit request =>
       Ok(Routes.javascriptRouter("jsRoutes")(
         controllers.gallery.routes.javascript.Galleries.view,
+        controllers.gallery.routes.javascript.GalleryPicSelection.view,
         controllers.picture.routes.javascript.Pictures.view)).as("text/javascript")
   }
 }

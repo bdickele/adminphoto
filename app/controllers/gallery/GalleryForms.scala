@@ -36,7 +36,7 @@ object GalleryForms extends Controller {
     "month" -> number.
       verifying("Incorrect value for month", m => m > 0 && m < 13),
     "comment" -> text.
-      verifying("Description cannot exceed 500 characters", _.length <= 500),
+      verifying("Description cannot exceed 3000 characters", _.length <= 3000),
     "online" -> boolean)(GalleryForm.apply)(GalleryForm.unapply).
 
     // Title is to be unique

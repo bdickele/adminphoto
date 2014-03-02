@@ -30,7 +30,6 @@ object Picture {
    */
   def picturesFromFolder(picturesFolder: String): List[Picture] = {
     val mainFolder = LocalRoot + picturesFolder
-
     val pathSmall = mainFolder + FolderThumbnail
     val pathWeb = mainFolder + FolderWeb
     val pathPrint = mainFolder + FolderPrint

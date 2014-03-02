@@ -1,49 +1,41 @@
 @(form: Form[controllers.gallery.SelectedPics],
-categoryId: Int, galleryId: Int, title: String,
+gallery: models.gallery.Gallery,
 mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
 pictures: List[controllers.gallery.SelectablePic])
 
-@main(title){
+@main(gallery.extendedTitle){
 <script>
-            // Required for comboBoxes of folders
-            var galleryId = @galleryId;
-            var selectedSubFolder = "@selectedSubFolder";
+            // Required for comboBoxes of folders (check coffeescript file)
+            var galleryId = @gallery.galleryId;
 
             (function () {
-                var focusComponentId = "folder1";
-                if (selectedSubFolder != "") {
-                    focusComponeentId = "folder2";
-                }
-                //alert(focusComponeentId);
-                document.getElementById(focusComponentId).focus();
+                document.getElementById("folder2").focus();
             })();
+
+
 </script>
 <script src='@routes.Assets.at("javascripts/gallery/galleryPicSelection.js")'></script>
 }{
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 
-@gallerymenu(views.gallery.GalleryMenuElement.PicSelection,
-    categoryId,
-    galleryId,
-    title)
+@gallerymenu(views.gallery.GalleryMenuElement.PicSelection, gallery.categoryId,
+gallery.galleryId, gallery.extendedTitle)
 
 <br>
 
 Folder :
-<select name="folder1" id="folder1" class="input-sm" onchange="self.location = folder1.value">
+<select name="folder1" id="folder1" class="input-sm">
     @for(mainFolder <- mainFolders) {
-    <option value='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, mainFolder, "")'
-    @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
+    <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
     }
 </select>
 
 &nbsp;&nbsp; Sub-folder :
-<select name="folder2" id="folder2" class="input-sm" onchange="self.location = folder2.value">
+<select name="folder2" id="folder2" class="input-sm">
     @for(subFolder <- subFolders) {
-    <option value='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, selectedMainFolder, subFolder)'
-    @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
+    <option value="@subFolder" @if(subFolder==selectedSubFolder){selected}>@subFolder</option>
     }
 </select>
 
@@ -59,7 +51,7 @@ Folder :
 <br><br>
 
 @helper.form(action=controllers.gallery.routes.GalleryPicSelection.save,
-    'id -> "picForm") {
+'id -> "picForm") {
 
 @for(subList <- pictures.zipWithIndex.sliding(4, 4)) {
 <div class="row">
@@ -86,7 +78,7 @@ Folder :
 </div>
 }
 
-<input type="hidden" name="galleryId" value='@galleryId'>
+<input type="hidden" name="galleryId" value='@gallery.galleryId'>
 <input type="hidden" name="folder" value="@form.get.folder">
 
 <div align="center">

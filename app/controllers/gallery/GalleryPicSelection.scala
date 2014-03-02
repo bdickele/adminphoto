@@ -36,31 +36,36 @@ object GalleryPicSelection extends Controller {
 
 
   def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = Action.async {
-    val mainFolders = Folder.mainFolders
-    val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
-
-    val subFolders = Folder.subFolders(mainFolderName)
-    val subFolderName = if (subFolder == "") subFolders.head else subFolder
-
-    val folder = mainFolderName + "/" + subFolderName + "/"
-    val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
-
-    val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
-      SelectablePic(
-        folder,
-        WebRoot + folder + FolderThumbnail + p.thumbnail,
-        WebRoot + folder + FolderWeb + p.web,
-        p.web))
-
     val future = GalleryRW.findById(galleryId)
     future.map {
       option =>
         option match {
           case None => BadRequest("Com'on, that was not supposed to happen, really")
-          case Some(gallery) => Ok(views.html.gallery.galleryPicSelection(form.fill(SelectedPics(galleryId, folder, List())),
-            gallery.categoryId, galleryId, gallery.extendedTitle,
-            mainFolders, subFolders, mainFolderName, subFolderName,
-            selectablePics))
+          case Some(gallery) =>
+
+            val mainFolders = Folder.mainFolders
+
+            // Let's select main folder with same name as gallery's year if user hasn't selected any mainFolder
+            val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
+
+            val subFolders = Folder.subFolders(mainFolderName)
+            val subFolderName = if (subFolder == "") subFolders.head else subFolder
+
+            val folder = mainFolderName + "/" + subFolderName + "/"
+            val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
+
+            val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
+              SelectablePic(
+                folder,
+                WebRoot + folder + FolderThumbnail + p.thumbnail,
+                WebRoot + folder + FolderWeb + p.web,
+                p.web))
+
+            Ok(views.html.gallery.galleryPicSelection(
+              form.fill(SelectedPics(galleryId, folder, List())),
+              gallery,
+              mainFolders, subFolders, mainFolderName, subFolderName,
+              selectablePics))
         }
     }
   }
