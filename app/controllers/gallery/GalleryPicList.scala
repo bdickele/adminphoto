@@ -21,56 +21,57 @@ object GalleryPicList extends Controller {
     }
   }
 
-  def up(galleryId: Int, picIndex: Int) = Action.async {
+  def shiftPictures(galleryId: Int)
+                   (isMovementAllowed: List[GalleryPic] => Boolean)
+                   (transformation: List[GalleryPic] => List[GalleryPic]) = Action.async {
     val future = findGallery(galleryId)
     future.map {
       option =>
         option match {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(gallery) => {
-            val pictures = gallery.pictures
-
-            // First picture can't go higher, that's why we check that index is > 0
-            val movementPossible = picIndex > 0 && picIndex < pictures.length
-            if (movementPossible) {
-              val (topHead, topTail) = pictures splitAt (picIndex - 1)
-              val (bottomHead, bottomTail) = pictures splitAt (picIndex + 1)
-              val newList = topHead ::: bottomHead.last :: topTail.head :: bottomTail
-              GalleryPicturesRW.setPictures(galleryId, newList)
+            if (isMovementAllowed(gallery.pictures)) {
+              GalleryPicturesRW.setPictures(galleryId, transformation(gallery.pictures))
             }
-
-            val anchor = if (movementPossible) {
-              picIndex - 1
-            } else picIndex
             Redirect(routes.GalleryPicList.view(galleryId))
           }
         }
     }
   }
 
-  def down(galleryId: Int, picIndex: Int) = Action.async {
-    val future = findGallery(galleryId)
-    future.map {
-      option => option match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(gallery) => {
-          val pictures = gallery.pictures
+  def moveToTheBeginning(galleryId: Int, picIndex: Int) =
+    shiftPictures(galleryId)(
+      (pictures: List[GalleryPic]) => picIndex > 0 && picIndex < pictures.length)(
+        (pictures: List[GalleryPic]) => {
+          val (left, right) = pictures splitAt picIndex
+          right.head :: left ::: right.tail
+        })
 
-          // Last picture can't go lower, that's why we check that index is < pictures.length - 1
-          val movementPossible = picIndex > -1 && picIndex < (pictures.length - 1)
-          if (movementPossible) {
-            val (topHead, topTail) = pictures splitAt picIndex
-            val (bottomHead, bottomTail) = pictures splitAt (picIndex + 2)
-            val newList = topHead ::: bottomHead.last :: topTail.head :: bottomTail
-            GalleryPicturesRW.setPictures(galleryId, newList)
-          }
+  def moveToTheLeft(galleryId: Int, picIndex: Int) =
+    shiftPictures(galleryId)(
+      (pictures: List[GalleryPic]) => picIndex > 0 && picIndex < pictures.length)(
+        (pictures: List[GalleryPic]) => {
+          val (topHead, topTail) = pictures splitAt (picIndex - 1)
+          val (bottomHead, bottomTail) = pictures splitAt (picIndex + 1)
+          topHead ::: bottomHead.last :: topTail.head :: bottomTail
+        })
 
-          val anchor = if (movementPossible) {picIndex + 1} else picIndex
-          Redirect(routes.GalleryPicList.view(galleryId))
-        }
-      }
-    }
-  }
+  def moveToTheEnd(galleryId: Int, picIndex: Int) =
+    shiftPictures(galleryId)(
+      (pictures: List[GalleryPic]) => picIndex > -1 && picIndex < (pictures.length - 1))(
+        (pictures: List[GalleryPic]) => {
+          val (left, right) = pictures splitAt picIndex
+          left ::: (right.tail :+ right.head)
+        })
+
+  def moveToTheRight(galleryId: Int, picIndex: Int) =
+    shiftPictures(galleryId)(
+      (pictures: List[GalleryPic]) => picIndex > -1 && picIndex < (pictures.length - 1))(
+        (pictures: List[GalleryPic]) => {
+          val (topHead, topTail) = pictures splitAt picIndex
+          val (bottomHead, bottomTail) = pictures splitAt (picIndex + 2)
+          topHead ::: bottomHead.last :: topTail.head :: bottomTail
+        })
 
   def remove(galleryId: Int, picIndex: Int) = Action {
     GalleryPicturesRW.removePicture(galleryId, picIndex)

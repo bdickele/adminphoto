@@ -24,8 +24,10 @@ GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Gallerie
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
 GET     /galleryPicList/:galleryId                  controllers.gallery.GalleryPicList.view(galleryId: Int)
-GET     /galleryPicList/up/:galleryId/:index        controllers.gallery.GalleryPicList.up(galleryId: Int, index: Int)
-GET     /galleryPicList/down/:galleryId/:index      controllers.gallery.GalleryPicList.down(galleryId: Int, index: Int)
+GET     /galleryPicList/beginning/:galleryId/:index controllers.gallery.GalleryPicList.moveToTheBeginning(galleryId: Int, index: Int)
+GET     /galleryPicList/left/:galleryId/:index      controllers.gallery.GalleryPicList.moveToTheLeft(galleryId: Int, index: Int)
+GET     /galleryPicList/right/:galleryId/:index     controllers.gallery.GalleryPicList.moveToTheRight(galleryId: Int, index: Int)
+GET     /galleryPicList/end/:galleryId/:index       controllers.gallery.GalleryPicList.moveToTheEnd(galleryId: Int, index: Int)
 GET     /galleryPicList/remove/:galleryId/:index    controllers.gallery.GalleryPicList.remove(galleryId: Int, index: Int)
 GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
 

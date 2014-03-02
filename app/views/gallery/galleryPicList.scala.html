@@ -6,62 +6,55 @@
 
 @gallerymenu(views.gallery.GalleryMenuElement.PicList, form.categoryId, form.galleryId, form.extendedTitle)
 
-<table class="table table-condensed table-striped table-hover">
-    <thead>
-    <tr>
-        <th style="text-align:center; width:60px">Gallery's thumbnail</th>
-        <th style="text-align:center;">Picture</th>
-        <th style="text-align:center;">Name</th>
-        <th style="text-align:center;">Up</th>
-        <th style="text-align:center;">Down</th>
-        <th style="text-align:center;">Remove</th>
-    </tr>
-    </thead>
-    <tbody>
-    @for((picture, index) <- form.pictures.zipWithIndex){
-    <tr>
-        <td style="text-align:center; width:60px">
-            <input type="radio" name="thumbnail" value="@picture.thumbnail"
-                   onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(form.galleryId, index)'"
-            @if(picture.thumbnail == form.thumbnail){checked}>
-        </td>
-        <td style="text-align:center;">
-            <a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"
-                id="picture[@index]">
-            <img src="@picture.thumbnailComplete" title='@picture.comment.getOrElse("")'></a></td>
-        <td style="text-align:left;"><a id="@index"></a>
-            <a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)">
-            @picture.comment.getOrElse("")</a></td>
-        <td style="text-align:center;">
-            @if(index != 0){
-            <a href="@controllers.gallery.routes.GalleryPicList.up(form.galleryId, index)">
-                <button type="button" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-chevron-up"></span>
-                </button>
-            </a>
-            }
-        </td>
-        <td style="text-align:center;">
-            @if(index < (form.pictures.size-1)){
-            <a href="@controllers.gallery.routes.GalleryPicList.down(form.galleryId, index)">
-                <button type="button" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-chevron-down"></span>
-                </button>
-            </a>
-            }
-        </td>
-        <td style="text-align:center;">
-            <a href="@controllers.gallery.routes.GalleryPicList.remove(form.galleryId, index)">
-                <button type="button" class="btn btn-primary btn-sm" style="height:35px"
-                        title="Remove that picture from the gallery">
-                    <span class='glyphicon glyphicon-trash'></span>
-                </button>
-            </a>
-        </td>
-    </tr>
+@for(subList <- form.pictures.zipWithIndex.sliding(4, 4)) {
+<div class="row">
+    @for((picture, index) <- subList) {
+    <div class="col-xs-6 col-md-3">
+        <div class="thumbnail">
+            <table style="width:100%; text-align:center">
+                <tbody>
+                <tr>
+                    <td><a id="@index"></a>
+                        <a href="@controllers.gallery.routes.GalleryPicComment.view(form.galleryId, index)"
+                           id="picture[@index]">
+                            <img src='@picture.thumbnailComplete' title='@picture.comment.getOrElse("")'></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:center">
+                        <div class="btn-group btn-group-sm">
+                            <input type="radio" name="thumbnail" value="@picture.thumbnail"
+                                   onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(form.galleryId, index)'"
+                            @if(picture.thumbnail == form.thumbnail){checked}>
+                            @if(index != 0){
+                            <a href="@controllers.gallery.routes.GalleryPicList.moveToTheBeginning(form.galleryId, index)">
+                                <span class="glyphicon glyphicon-fast-backward"></span>
+                            </a>
+                            <a href="@controllers.gallery.routes.GalleryPicList.moveToTheLeft(form.galleryId, index)">
+                                <span class="glyphicon glyphicon-step-backward"></span>
+                            </a>
+                            }
+                            @if(index < (form.pictures.size-1)){
+                            <a href="@controllers.gallery.routes.GalleryPicList.moveToTheRight(form.galleryId, index)">
+                                <span class="glyphicon glyphicon-step-forward"></span>
+                            </a>
+                            <a href="@controllers.gallery.routes.GalleryPicList.moveToTheEnd(form.galleryId, index)">
+                                <span class="glyphicon glyphicon-fast-forward"></span>
+                            </a>
+                            }
+                            <a href="@controllers.gallery.routes.GalleryPicList.remove(form.galleryId, index)">
+                                <span class='glyphicon glyphicon-trash'></span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     }
-    </tbody>
-</table>
+</div>
+}
 
 <input type="hidden" name="galleryId" value='@form.galleryId'>
 }
