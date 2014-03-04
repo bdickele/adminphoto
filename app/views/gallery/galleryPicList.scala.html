@@ -28,18 +28,18 @@
                             @if(picture.thumbnail == form.thumbnail){checked}>
                             @if(index != 0){
                             <a href="@controllers.gallery.routes.GalleryPicList.moveToTheBeginning(form.galleryId, index)">
-                                <span class="glyphicon glyphicon-fast-backward"></span>
+                                <span class="glyphicon glyphicon-step-backward"></span>
                             </a>
                             <a href="@controllers.gallery.routes.GalleryPicList.moveToTheLeft(form.galleryId, index)">
-                                <span class="glyphicon glyphicon-step-backward"></span>
+                                <span class="glyphicon glyphicon-chevron-left"></span>
                             </a>
                             }
                             @if(index < (form.pictures.size-1)){
                             <a href="@controllers.gallery.routes.GalleryPicList.moveToTheRight(form.galleryId, index)">
-                                <span class="glyphicon glyphicon-step-forward"></span>
+                                <span class="glyphicon glyphicon-chevron-right"></span>
                             </a>
                             <a href="@controllers.gallery.routes.GalleryPicList.moveToTheEnd(form.galleryId, index)">
-                                <span class="glyphicon glyphicon-fast-forward"></span>
+                                <span class="glyphicon glyphicon-step-forward"></span>
                             </a>
                             }
                             <a href="@controllers.gallery.routes.GalleryPicList.remove(form.galleryId, index)">
