@@ -7,8 +7,6 @@ mongoimport --db website --collection category --file category.json
 mongoimport --db website --collection gallery --file gallery.json
 
 
-Dans le shell mongo, après un use XXX : load("db_init.js")
-
 Questions :
 - Fichier routes : peut-on configurer à la fois sans et avec le dernier slash en une seule ligne ?
 Avec Play 1 on pouvait mais avec Play 2 je n'ai pas trouvé pour l'instant
