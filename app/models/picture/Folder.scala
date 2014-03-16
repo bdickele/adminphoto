@@ -3,7 +3,8 @@ package models.picture
 import play.api.Play.current
 import play.api.cache.Cache
 import java.io.File
-import util.Const
+import util.{FtpUtil, Const}
+import org.apache.commons.net.ftp.{FTPFile, FTPClient}
 
 /**
  * Created by bdickele
@@ -35,8 +36,7 @@ object Folder {
     }
 
   /** @return complete list of main folders */
-  def mainFolders: List[String] =
-    foldersOfFolder(Const.LocalRoot).reverse
+  def mainFolders: List[String] = FtpUtil.getFolders(None).reverse
 
   /**
    * Loads sub-folders of a main folder (from cache if already cached)
@@ -52,14 +52,6 @@ object Folder {
    * @param mainFolderName Name of main folder
    * @return List of sub-folders
    */
-  def subFolders(mainFolderName: String): List[String] =
-    foldersOfFolder(Const.LocalRoot + mainFolderName).reverse
-
-  def foldersOfFolder(folder: String): List[String] =
-    new File(folder).
-      listFiles().
-      filter(_.isDirectory).
-      map(_.getName).
-      toList
+  def subFolders(mainFolderName: String): List[String] = FtpUtil.getFolders(Some(mainFolderName)).reverse
 
 }

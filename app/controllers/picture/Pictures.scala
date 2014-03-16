@@ -4,6 +4,7 @@ import play.api.mvc.{Action, Controller}
 import models.picture.{Picture, Folder}
 import util.Const._
 
+
 /**
  * User: bdickele
  * Date: 1/7/14
@@ -25,8 +26,8 @@ object Pictures extends Controller {
     val folder = mainFolderName + "/" + subFolderName + "/"
     val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail
-    val pathWebUrl = WebRoot + folder + FolderWeb
+    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail + "/"
+    val pathWebUrl = WebRoot + folder + FolderWeb + "/"
 
     val picturesVO: List[PictureVO] = picturesRaw.map(picture =>
       PictureVO(

@@ -34,9 +34,9 @@ GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryP
 GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComment.view(galleryId: Int, index: Int)
 POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComment.save
 
-GET     /galleryPicSelection/:galleryId                         controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String = "", subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:mainFolder             controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String, subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:mainFolder/:subFolder  controllers.gallery.GalleryPicSelection.view(galleryId: Int, mainFolder: String, subFolder: String)
+GET     /galleryPicSelection/:galleryId                         controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String = "", subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder             controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder/:subFolder  controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String)
 
 POST    /galleryPicSelection/save                   controllers.gallery.GalleryPicSelection.save
 
@@ -58,10 +58,10 @@ POST    /category/save                      controllers.category.CategoryForms.s
 # STOCK OF PICTURE
 # #########################################################
 
-GET     /picture                            controllers.picture.Pictures.view(mainFolder: String = "", subFolder: String = "")
+GET     /picture                            controllers.picture.Pictures.view(parentFolder: String = "", subFolder: String = "")
 GET     /picture/refresh                    controllers.picture.Pictures.refresh
-GET     /picture/:mainFolder                controllers.picture.Pictures.view(mainFolder: String, subFolder: String = "")
-GET     /picture/:mainFolder/:subFolder     controllers.picture.Pictures.view(mainFolder: String, subFolder: String)
+GET     /picture/:parentFolder                controllers.picture.Pictures.view(parentFolder: String, subFolder: String = "")
+GET     /picture/:parentFolder/:subFolder     controllers.picture.Pictures.view(parentFolder: String, subFolder: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

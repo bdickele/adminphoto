@@ -45,7 +45,7 @@ object GalleryPicSelection extends Controller {
 
             val mainFolders = Folder.mainFolders
 
-            // Let's select main folder with same name as gallery's year if user hasn't selected any mainFolder
+            // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
             val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
 
             val subFolders = Folder.subFolders(mainFolderName)

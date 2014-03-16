@@ -20,8 +20,8 @@
 
         Folder :
         <select name="folder1" id="folder1" class="input-sm" >
-            @for(mainFolder <- mainFolders) {
-            <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
+            @for(parentFolder <- mainFolders) {
+            <option value="@parentFolder" @if(parentFolder==selectedMainFolder){selected}>@parentFolder</option>
             }
         </select>
 
@@ -39,10 +39,10 @@
         </button>
     </div>
     <div class="panel-body">
-        @for(subList <- pictures.sliding(4, 4)) {
+        @for(subList <- pictures.sliding(6, 6)) {
         <div class="row">
             @for(picture <- subList) {
-            <div class="col-xs-6 col-md-3">
+            <div class="col-md-2">
                 <div class="thumbnail">
                     <table style="width:100%; text-align:center">
                         <tbody>

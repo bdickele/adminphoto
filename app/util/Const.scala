@@ -9,10 +9,11 @@ object Const {
 
   lazy val LocalRoot = Play.current.configuration.getString("local.photostock.root").get
   //val WebRoot = "http://www.dickele.com/photostock/"
-  val WebRoot = "http://localhost:8080/photostock/"
+  //val WebRoot = "http://localhost:8080/photostock/"
+  val WebRoot = "http://dickele.cluster010.ovh.net/photostock/"
 
-  val FolderWeb = "web/"
-  val FolderThumbnail = "thumbnail/"
-  val FolderPrint = "print/"
+  val FolderWeb = "web"
+  val FolderThumbnail = "thumbnail"
+  val FolderPrint = "print"
 
 }

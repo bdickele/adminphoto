@@ -27,8 +27,8 @@ gallery.galleryId, gallery.extendedTitle)
 
 Folder :
 <select name="folder1" id="folder1" class="input-sm">
-    @for(mainFolder <- mainFolders) {
-    <option value="@mainFolder" @if(mainFolder==selectedMainFolder){selected}>@mainFolder</option>
+    @for(parentFolder <- mainFolders) {
+    <option value="@parentFolder" @if(parentFolder==selectedMainFolder){selected}>@parentFolder</option>
     }
 </select>
 

@@ -2,14 +2,18 @@ package controllers.gallery
 
 import play.api.mvc.{Action, Controller}
 import models.gallery._
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import reactivemongo.bson.BSONString
 import play.api.libs.concurrent.Execution.Implicits._
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
 
 /**
  * Created by bdickele on 01/02/14.
  */
 object GalleryPicList extends Controller {
+
+  var count = 0
 
   def view(galleryId: Int) = Action.async {
     val future = GalleryPicturesRW.findByGalleryId(galleryId)
@@ -31,7 +35,8 @@ object GalleryPicList extends Controller {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(gallery) => {
             if (isMovementAllowed(gallery.pictures)) {
-              GalleryPicturesRW.setPictures(galleryId, transformation(gallery.pictures))
+              // Waiting for update before redirection
+              Await.result(GalleryPicturesRW.setPictures(galleryId, transformation(gallery.pictures)), Duration(5, TimeUnit.SECONDS))
             }
             Redirect(routes.GalleryPicList.view(galleryId))
           }
