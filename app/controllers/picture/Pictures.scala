@@ -26,8 +26,8 @@ object Pictures extends Controller {
     val folder = mainFolderName + "/" + subFolderName + "/"
     val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail + "/"
-    val pathWebUrl = WebRoot + folder + FolderWeb + "/"
+    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail
+    val pathWebUrl = WebRoot + folder + FolderWeb
 
     val picturesVO: List[PictureVO] = picturesRaw.map(picture =>
       PictureVO(

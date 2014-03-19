@@ -35,7 +35,7 @@ object GalleryPicList extends Controller {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(gallery) => {
             if (isMovementAllowed(gallery.pictures)) {
-              // Waiting for update before redirection
+              // Waiting for update before redirection (otherwise screen is not updated)
               Await.result(GalleryPicturesRW.setPictures(galleryId, transformation(gallery.pictures)), Duration(5, TimeUnit.SECONDS))
             }
             Redirect(routes.GalleryPicList.view(galleryId))
@@ -79,7 +79,8 @@ object GalleryPicList extends Controller {
         })
 
   def remove(galleryId: Int, picIndex: Int) = Action {
-    GalleryPicturesRW.removePicture(galleryId, picIndex)
+    // Waiting for update before redirection (otherwise screen is not updated)
+    Await.result(GalleryPicturesRW.removePicture(galleryId, picIndex), Duration(5, TimeUnit.SECONDS))
     Redirect(routes.GalleryPicList.view(galleryId))
   }
 
