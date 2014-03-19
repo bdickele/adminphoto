@@ -1,7 +1,6 @@
 package util
 
 import org.apache.commons.net.ftp.{FTPFile, FTPClient}
-import play.api.Logger
 
 /**
  * Created by bdickele
@@ -21,7 +20,7 @@ object FtpUtil {
         case Some(s) => photoStockRoot + "/" + s
       })
 
-      Logger.info("FTPClient dir : " + client.printWorkingDirectory())
+      //Logger.info("FTPClient dir : " + client.printWorkingDirectory())
 
       val folders = client.listFiles().filter(filterFunction)
 
