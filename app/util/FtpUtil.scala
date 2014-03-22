@@ -1,7 +1,7 @@
 package util
 
 import org.apache.commons.net.ftp.{FTPFile, FTPClient}
-import play.api.Play
+import play.api.{Logger, Play}
 
 /**
  * Created by bdickele
@@ -23,7 +23,7 @@ object FtpUtil {
       val photoStockRoot = FtpClientPhotoStock
       client.changeWorkingDirectory(parentFolder match {
         case None => photoStockRoot
-        case Some(s) => photoStockRoot + "/" + s
+        case Some(s) => photoStockRoot + s
       })
 
       //Logger.info("FTPClient dir : " + client.printWorkingDirectory())
@@ -33,13 +33,13 @@ object FtpUtil {
       client.logout()
       folders.map(f => f.getName).toList
     } catch {
-      case e: Exception => e.printStackTrace()
+      case e: Exception => Logger.error(e.getMessage)
         List()
     } finally {
       try {
         client.disconnect()
       } catch {
-        case e: Exception => e.printStackTrace()
+        case e: Exception => Logger.error(e.getMessage)
       }
     }
   }
@@ -55,13 +55,19 @@ object FtpUtil {
         f.getName.endsWith(".jpg") || f.getName.endsWith(".jpeg"))
     }
 
+  /**
+   * Method called by screen displaying stock of available pictures
+   * @param parentFolder
+   * @return
+   */
   def loadJpegs(parentFolder: String): (List[String], List[String], List[String]) = {
     val client = new FTPClient()
     try {
-      client.connect("ftp.perso.ovh.net")
-      client.login("dickele", "Espace34")
+      client.connect(FtpClientAddress)
+      client.login(FtpClientLogin, FtpClientPassword)
 
-      val picturesRoot = "/www/photostock/" + parentFolder
+      val picturesRoot = FtpClientPhotoStock + parentFolder
+      println(picturesRoot)
 
       def filterFunction (f: FTPFile): Boolean = {
         (f.getType == FTPFile.FILE_TYPE) && (f.getName.endsWith(".jpg") || f.getName.endsWith(".jpeg"))
@@ -69,7 +75,6 @@ object FtpUtil {
 
       def getPics(folder: String): List[String] = {
         val folderExist = client.changeWorkingDirectory(picturesRoot + folder)
-        //Logger.info("FTPClient dir : " + client.printWorkingDirectory())
         if (folderExist) client.listFiles().filter(filterFunction).map(_.getName).toList else List()
       }
 
@@ -80,13 +85,13 @@ object FtpUtil {
       client.logout()
       (thumbnails, webs, prints)
     } catch {
-      case e: Exception => e.printStackTrace()
+      case e: Exception => Logger.error(e.getMessage)
         (Nil, Nil, Nil)
     } finally {
       try {
         client.disconnect()
       } catch {
-        case e: Exception => e.printStackTrace()
+        case e: Exception => Logger.error(e.getMessage)
       }
     }
   }
