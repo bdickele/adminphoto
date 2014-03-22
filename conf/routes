@@ -24,19 +24,16 @@ GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Gallerie
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
 GET     /galleryPicList/:galleryId                  controllers.gallery.GalleryPicList.view(galleryId: Int)
-GET     /galleryPicList/beginning/:galleryId/:index controllers.gallery.GalleryPicList.moveToTheBeginning(galleryId: Int, index: Int)
-GET     /galleryPicList/left/:galleryId/:index      controllers.gallery.GalleryPicList.moveToTheLeft(galleryId: Int, index: Int)
-GET     /galleryPicList/right/:galleryId/:index     controllers.gallery.GalleryPicList.moveToTheRight(galleryId: Int, index: Int)
-GET     /galleryPicList/end/:galleryId/:index       controllers.gallery.GalleryPicList.moveToTheEnd(galleryId: Int, index: Int)
-GET     /galleryPicList/remove/:galleryId/:index    controllers.gallery.GalleryPicList.remove(galleryId: Int, index: Int)
 GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
+
+POST    /galleryPicList/save                        controllers.gallery.GalleryPicList.save
 
 GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComment.view(galleryId: Int, index: Int)
 POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComment.save
 
-GET     /galleryPicSelection/:galleryId                         controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String = "", subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:parentFolder             controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:parentFolder/:subFolder  controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String)
+GET     /galleryPicSelection/:galleryId                             controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String = "", subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder               controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder/:subFolder    controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String)
 
 POST    /galleryPicSelection/save                   controllers.gallery.GalleryPicSelection.save
 
