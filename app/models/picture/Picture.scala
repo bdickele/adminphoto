@@ -32,18 +32,13 @@ object Picture {
   def picturesFromFolder(picturesFolder: String): List[Picture] = {
 
     val tuple = FtpUtil.loadJpegs(picturesFolder)
-    val picturesWeb: List[String] = tuple._1
-    val picturesSmall: List[String] = tuple._2
+    val picturesSmall: List[String] = tuple._1
+    val picturesWeb: List[String] = tuple._2
     val picturesPrint: List[String] = tuple._3
-
-    def findMatchingThumbnail(webPic: String): String =
-      picturesSmall.find(p => p.indexOf(webPic) > -1).getOrElse("")
-
 
     picturesWeb.map(w => Picture(
       picturesFolder,
-      //picturesSmall.find(_.indexOf(w) > -1).getOrElse(""),
-      findMatchingThumbnail(w),
+      picturesSmall.find(p => p.indexOf(w) > -1).getOrElse(""),
       w,
       picturesPrint.find(_.indexOf(w) > -1))).
       toList

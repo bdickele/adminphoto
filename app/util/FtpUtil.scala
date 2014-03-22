@@ -69,9 +69,8 @@ object FtpUtil {
       val picturesRoot = FtpClientPhotoStock + parentFolder
       println(picturesRoot)
 
-      def filterFunction (f: FTPFile): Boolean = {
+      def filterFunction (f: FTPFile): Boolean =
         (f.getType == FTPFile.FILE_TYPE) && (f.getName.endsWith(".jpg") || f.getName.endsWith(".jpeg"))
-      }
 
       def getPics(folder: String): List[String] = {
         val folderExist = client.changeWorkingDirectory(picturesRoot + folder)
