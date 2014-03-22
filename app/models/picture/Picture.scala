@@ -1,7 +1,5 @@
 package models.picture
 
-import java.io.File
-import util.Const._
 import util.FtpUtil
 
 /**
