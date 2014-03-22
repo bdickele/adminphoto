@@ -1,6 +1,7 @@
 package util
 
 import org.apache.commons.net.ftp.{FTPFile, FTPClient}
+import play.api.Play
 
 /**
  * Created by bdickele
@@ -8,13 +9,18 @@ import org.apache.commons.net.ftp.{FTPFile, FTPClient}
  */
 object FtpUtil {
 
+  lazy val FtpClientAddress = Play.current.configuration.getString("ftp.client.address").get
+  lazy val FtpClientLogin = Play.current.configuration.getString("ftp.client.login").get
+  lazy val FtpClientPassword = Play.current.configuration.getString("ftp.client.password").get
+  lazy val FtpClientPhotoStock = Play.current.configuration.getString("ftp.client.photostock").get
+
   def load(parentFolder: Option[String])(filterFunction: FTPFile => Boolean): List[String] = {
     val client = new FTPClient()
     try {
-      client.connect("ftp.perso.ovh.net")
-      client.login("dickele", "Espace34")
+      client.connect(FtpClientAddress)
+      client.login(FtpClientLogin, FtpClientPassword)
 
-      val photoStockRoot = "www/photostock"
+      val photoStockRoot = FtpClientPhotoStock
       client.changeWorkingDirectory(parentFolder match {
         case None => photoStockRoot
         case Some(s) => photoStockRoot + "/" + s
