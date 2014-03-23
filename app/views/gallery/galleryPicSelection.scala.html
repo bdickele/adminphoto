@@ -16,6 +16,7 @@ pictures: List[controllers.gallery.SelectablePic])
 
 </script>
 <script src='@routes.Assets.at("javascripts/gallery/galleryPicSelection.js")'></script>
+<script>checkThumbnailClass()</script>
 }{
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
@@ -57,7 +58,7 @@ Folder :
 <div class="row">
     @for((picture, index) <- subList) {
     <div class="col-md-2">
-        <div class="thumbnail">
+        <div name="divThumbnail" class="thumbnail">
             <table style="width:100%; text-align:center">
                 <tbody>
                 <tr>
@@ -66,7 +67,7 @@ Folder :
                 <tr>
                     <td style="text-align:center">
                         <div class="btn-group btn-group-sm">
-                            <input name="pictures[@index]" type="checkbox" value="@picture.web">
+                            <input name="pictures[@index]" type="checkbox" onclick="checkThumbnailClass()" value="@picture.web">
                         </div>
                     </td>
                 </tr>
