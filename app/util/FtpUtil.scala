@@ -67,7 +67,6 @@ object FtpUtil {
       client.login(FtpClientLogin, FtpClientPassword)
 
       val picturesRoot = FtpClientPhotoStock + parentFolder
-      println(picturesRoot)
 
       def filterFunction (f: FTPFile): Boolean =
         (f.getType == FTPFile.FILE_TYPE) && (f.getName.endsWith(".jpg") || f.getName.endsWith(".jpeg"))
