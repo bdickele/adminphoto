@@ -37,17 +37,6 @@ object GalleryPicturesRW extends Controller with MongoController {
   // UPDATE
   // --------------------------------------------------------------
 
-  def removePicture(galleryId: Int, index: Int): Future[LastError] = {
-    val future: Future[Option[BSONDocument]] = collection.
-      find(BSONDocument("galleryId" -> galleryId)).
-      one[BSONDocument]
-    val doc: BSONDocument = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-
-    val list: List[BSONValue] = doc.getAs[BSONArray]("pictures").get.values.toList
-    val listNew = list.take(index) ::: list.drop(index + 1)
-    GalleryRW.updateField(galleryId, "pictures", BSONArray(listNew))
-  }
-
   def addPictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
     val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write(_)))
     collection.update(BSONDocument("galleryId" -> galleryId),

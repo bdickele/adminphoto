@@ -28,6 +28,12 @@ object GalleryPicList extends Controller {
 
   val form: Form[GalleryPicAction] = Form(formMapping)
 
+  val MoveToTheBeginning = "MOVE_TO_THE_BEGINNING"
+  val MoveToTheLeft = "MOVE_TO_THE_LEFT"
+  val MoveToTheRight = "MOVE_TO_THE_RIGHT"
+  val MoveToTheEnd = "MOVE_TO_THE_END"
+  val Remove = "REMOVE"
+
 
   def view(galleryId: Int) = Action.async {
     val future = GalleryPicturesRW.findByGalleryId(galleryId)
@@ -35,6 +41,17 @@ object GalleryPicList extends Controller {
       option => option match {
         case None => Galleries.couldNotFindGallery(galleryId)
         case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
+      }
+    }
+  }
+
+  def viewAndSelect(galleryId: Int, indexes: String) = Action.async {
+    val future = GalleryPicturesRW.findByGalleryId(galleryId)
+    future.map {
+      option => option match {
+        case None => Galleries.couldNotFindGallery(galleryId)
+        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
+          GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
       }
     }
   }
@@ -51,63 +68,49 @@ object GalleryPicList extends Controller {
           val selectedIndexes = form.picIndexes
 
           val newSelectedIndexes =
-            if (actionName == "" || selectedIndexes.isEmpty) {
+            if (selectedIndexes.isEmpty) {
               Nil
-            } else if (actionName == "MOVE_TO_THE_BEGINNING" || actionName == "MOVE_TO_THE_LEFT" ||
-              actionName == "MOVE_TO_THE_RIGHT" || actionName == "MOVE_TO_THE_END" ||
-              actionName == "REMOVE") {
+            } else if (actionName == MoveToTheBeginning || actionName == MoveToTheLeft ||
+              actionName == MoveToTheRight || actionName == MoveToTheEnd ||
+              actionName == Remove) {
               movePictures(galleryId, actionName, selectedIndexes)
             } else {
               Nil
             }
 
-          val future = GalleryPicturesRW.findByGalleryId(galleryId)
-          val galleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
-          Ok(views.html.gallery.galleryPicList(galleryPics, GalleryPicAction(galleryId, "", newSelectedIndexes)))
+          newSelectedIndexes match {
+            case Nil => Redirect(routes.GalleryPicList.view(galleryId))
+            case List() => Redirect(routes.GalleryPicList.view(galleryId))
+            case list => Redirect(routes.GalleryPicList.viewAndSelect(galleryId, newSelectedIndexes.mkString("&")))
+          }
         })
   }
 
   /**
-   *
-   * @param actionName
-   * @param selectedIndexes
+   * Move pictures of a gallery according to action required and list of indexes of selected pictures
+   * @param galleryId Gallery ID
+   * @param actionName Action required
+   * @param selectedIndexes Indexes of selected pictures
    * @return Indexes of selected pictures in the new list
    */
   def movePictures(galleryId: Int, actionName: String, selectedIndexes: List[Int]): List[Int] = {
     val future = findGallery(galleryId)
-    val option: Option[GalleryPics] = Await.result(future, Duration(5, TimeUnit.SECONDS))
-    option match {
+    Await.result(future, Duration(5, TimeUnit.SECONDS)) match {
       case None => Nil
       case Some(gallery) => {
         val pics = gallery.pictures
+        val selectedPics = selectedIndexes.map(i => pics.apply(i)).toList
 
-        var selectedPicNames = List[String]() // Names of selected pictures
-        for (i <- selectedIndexes) {
-          selectedPicNames = selectedPicNames :+ pics.apply(i).web
-        }
+        val nonSelectedIndexes = (0 until pics.size).toList.filterNot(i => selectedIndexes.contains(i))
 
-        val allIndexes = (0 until pics.size).toList
-        val nonSelectedIndexes = allIndexes.filterNot(i => selectedIndexes.contains(i))
-
-        val newIndexesAll = newListIndexes(actionName, allIndexes, selectedIndexes, nonSelectedIndexes)
-
-        var newPics = List[GalleryPic]()
-        for (i <- newIndexesAll) {
-          newPics = newPics :+ pics.apply(i)
-        }
-
-        var newIndexesSelected = List[Int]() // Indexes of selected pictures in the new list
-        // If I just removed pictures or I moved some to the beginning or to the end then nothing has to be selected
-        if (actionName == "MOVE_TO_THE_LEFT" || actionName == "MOVE_TO_THE_RIGHT") {
-          for {i <- 0 until newPics.size
-               if selectedPicNames.contains(newPics.apply(i).web)} {
-            newIndexesSelected = newIndexesSelected :+ i
-          }
-        }
-
+        val indexesReordered = reorderIndexes(actionName, selectedIndexes, nonSelectedIndexes)
+        val newPics = indexesReordered.map(i => pics.apply(i)).toList
         // Waiting for update otherwise screen could be displayed before being updated
         Await.result(GalleryPicturesRW.setPictures(galleryId, newPics), Duration(5, TimeUnit.SECONDS))
-        newIndexesSelected
+
+        // We return the list of indexes of selected pictures in the new list
+        for {(pic, index) <- newPics.zipWithIndex
+             if selectedPics.contains(pic)} yield index
       }
     }
   }
@@ -115,58 +118,49 @@ object GalleryPicList extends Controller {
   /**
    *
    * @param actionName
-   * @param allIndexes
    * @param selectedIndexes
    * @param nonSelectedIndexes
    * @return List of picture indexes as it should be after update. For instance, let us say we have 4 pictures
    *         in the gallery. User wants to shift 3rd picture (whose index is 2) to the left. That list would be
    *         List(0, 2, 1, 3) : index 2 is now in second position, and index 1 is now on 3rd position
    */
-  def newListIndexes(actionName: String, allIndexes: List[Int], selectedIndexes: List[Int],
-                     nonSelectedIndexes: List[Int]): List[Int] = {
-    var newIndexes = List[Int]()
+  def reorderIndexes(actionName: String, selectedIndexes: List[Int], nonSelectedIndexes: List[Int]): List[Int] = {
+
+    def moveToTheLeftOrRight(acc: List[Int], selIndexes: List[Int], nonSelIndexes: List[Int],
+                             condition: (Int, Int) => Boolean): List[Int] = selIndexes match {
+      case Nil => acc ::: nonSelIndexes
+      case selHead :: selTail => nonSelIndexes match {
+        case Nil => acc ::: selIndexes
+        case nonSelHead :: nonSelTail =>
+          if (condition(selHead, acc.size)) moveToTheLeftOrRight(acc :+ nonSelHead, selIndexes, nonSelTail, condition)
+          else moveToTheLeftOrRight(acc :+ selHead, selTail, nonSelIndexes, condition)
+      }
+    }
 
     actionName match {
-      case "REMOVE" => nonSelectedIndexes
-      case "MOVE_TO_THE_LEFT" => {
+      case Remove => nonSelectedIndexes
 
-        def dealWithLists(acc: List[Int], selIndexes: List[Int], nonSelIndexes: List[Int]): List[Int] = selIndexes match {
-          case Nil => acc ::: nonSelIndexes
-          case selHead :: selTail => {
-            nonSelIndexes match {
-              case Nil => acc ::: selIndexes // should not happen
-              case nonSelHead :: nonSelTail => {
-                if (nonSelHead < (selHead-1)) dealWithLists(acc :+ nonSelHead, selIndexes, nonSelTail)
-                else dealWithLists(acc :+ selHead, selTail, nonSelIndexes)
-              }
-            }
-          }
-        }
+      case MoveToTheBeginning => selectedIndexes ::: nonSelectedIndexes
 
-        dealWithLists(List(), selectedIndexes, nonSelectedIndexes)
+      case MoveToTheEnd => nonSelectedIndexes ::: selectedIndexes
+
+      case MoveToTheLeft => moveToTheLeftOrRight(List(), selectedIndexes, nonSelectedIndexes,
+        (selHead: Int, accSize: Int) => (selHead - 1) > accSize)
+
+      case MoveToTheRight => {
+        val finalSize = selectedIndexes.size + nonSelectedIndexes.size
+        moveToTheLeftOrRight(List(), selectedIndexes.reverse, nonSelectedIndexes.reverse,
+          (selHead: Int, accSize: Int) => (selHead + 2) < (finalSize - accSize)).reverse
       }
-      case "MOVE_TO_THE_RIGHT" => {
-
-        def dealWithLists(acc: List[Int], selIndexes: List[Int], nonSelIndexes: List[Int]): List[Int] = selIndexes match {
-          case Nil => acc ::: nonSelIndexes
-          case selHead :: selTail => {
-            nonSelIndexes match {
-              case Nil => acc ::: selIndexes // should not happen
-              case nonSelHead :: nonSelTail => {
-                if (nonSelHead > (selHead+1)) dealWithLists(acc :+ nonSelHead, selIndexes, nonSelTail)
-                else dealWithLists(acc :+ selHead, selTail, nonSelIndexes)
-              }
-            }
-          }
-        }
-
-        dealWithLists(List(), selectedIndexes.reverse, nonSelectedIndexes.reverse).reverse
-      }
-      case "MOVE_TO_THE_BEGINNING" => selectedIndexes ::: nonSelectedIndexes
-      case "MOVE_TO_THE_END" => nonSelectedIndexes ::: selectedIndexes
     }
   }
 
+  /**
+   * Change thumbnail of a gallery
+   * @param galleryId Gallery ID
+   * @param picIndex Index of picture that will be the new thumbnail
+   * @return
+   */
   def changeThumbnail(galleryId: Int, picIndex: Int) = Action.async {
     val future = findGallery(galleryId)
     future.map {

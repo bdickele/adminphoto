@@ -5972,3 +5972,7 @@ td.visible-print {
 .affix {
   position: fixed;
 }
+
+.galleryPicSelected {
+  background-color: #ccc;
+}

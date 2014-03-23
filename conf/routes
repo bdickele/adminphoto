@@ -23,7 +23,8 @@ GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Gallerie
 
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
-GET     /galleryPicList/:galleryId                  controllers.gallery.GalleryPicList.view(galleryId: Int)
+GET     /galleryPicList/view/:galleryId             controllers.gallery.GalleryPicList.view(galleryId: Int)
+GET     /galleryPicList/select/:galleryId/:indexes  controllers.gallery.GalleryPicList.viewAndSelect(galleryId: Int, indexes: String)
 GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
 
 POST    /galleryPicList/save                        controllers.gallery.GalleryPicList.save

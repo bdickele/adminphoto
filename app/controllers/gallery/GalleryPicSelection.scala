@@ -7,6 +7,9 @@ import play.api.data.Form
 import util.Const._
 import models.gallery.{GalleryRW, GalleryPicturesRW, GalleryPic}
 import play.api.libs.concurrent.Execution.Implicits._
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by bdickele
@@ -99,7 +102,8 @@ object GalleryPicSelection extends Controller {
                 case Some(p) => Some(folder + FolderPrint + p)
               },
               None))
-          GalleryPicturesRW.addPictures(form.galleryId, galleryPics)
+          // Waiting for update otherwise screen could be displayed before being updated
+          Await.result(GalleryPicturesRW.addPictures(form.galleryId, galleryPics), Duration(5, TimeUnit.SECONDS))
           Redirect(routes.GalleryPicList.view(form.galleryId))
         })
   }
