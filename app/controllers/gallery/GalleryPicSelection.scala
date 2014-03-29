@@ -43,7 +43,7 @@ object GalleryPicSelection extends Controller {
     future.map {
       option =>
         option match {
-          case None => BadRequest("Com'on, that was not supposed to happen, really")
+          case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
           case Some(gallery) =>
 
             val mainFolders = Folder.mainFolders
@@ -78,7 +78,7 @@ object GalleryPicSelection extends Controller {
       form.bindFromRequest.fold(
 
         // Validation error
-        formWithErrors => BadRequest("But that was not supposed to happen !"),
+        formWithErrors => BadRequest(views.html.badRequest("But that was not supposed to happen !")),
 
         /*
         So now we have a list of String looking like "pictureName.jpg" that

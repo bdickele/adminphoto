@@ -1,0 +1,10 @@
+@(error: String)
+
+@main("Bad request")(){
+<br>
+<div class="alert alert-danger">
+    <h1>Something's wrong</h1>
+    <span>@error</span><br><br>
+    <a href="javascript:history.back()">Click to go back</a>
+</div>
+}

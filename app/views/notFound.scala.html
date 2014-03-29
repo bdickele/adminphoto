@@ -1,0 +1,10 @@
+@(path: String)
+
+@main("Page not found")(){
+<br>
+<div class="alert alert-danger">
+    <h1>Ooops, page not found</h1>
+    <span>URL "@path" doesn't match any route, check it please.</span><br><br>
+    <a href="javascript:history.back()">Click to go back</a>
+</div>
+}

@@ -60,7 +60,7 @@ object GalleryPicList extends Controller {
     implicit request =>
       form.bindFromRequest.fold(
 
-        formWithErrors => BadRequest("" + formWithErrors.errors.map(error => error.message).toList),
+        formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
         form => {
           val galleryId = form.galleryId

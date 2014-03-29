@@ -21,15 +21,21 @@ object Galleries extends Controller {
     val categories: List[Category] = Categories.findAllFromCacheOrDB()
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
-    val future: Future[List[Gallery]] = GalleryRW.findAll(categoryId)
+    // In case URL contains an incorrect gallery ID
+    categories.find(c => c.categoryId == categoryId).isDefined match {
+      case false => Future.successful(Categories.couldNotFindCategory(categoryId))
 
-    future.map {
-      galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
-    }.recover {
-      case e =>
-        Logger.error(e.getMessage)
-        BadRequest(e.getMessage)
+      case true => {
+        GalleryRW.findAll(categoryId).map {
+          galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
+        }.recover {
+          case e =>
+            Logger.error(e.getMessage)
+            BadRequest(views.html.badRequest(e.getMessage))
+        }
+      }
     }
+
   }
 
   def refresh(categoryId: Int) = Action {
@@ -100,9 +106,6 @@ object Galleries extends Controller {
   def findAll(categoryId: Int): List[Gallery] =
     Await.result(GalleryRW.findAll(categoryId), Duration(5, TimeUnit.SECONDS))
 
-  def couldNotFindGallery(galleryId: Int): SimpleResult = {
-    val message = "Could not find gallery with ID " + galleryId
-    Logger.error(message)
-    BadRequest(message)
-  }
+  def couldNotFindGallery(galleryId: Int): SimpleResult =
+    BadRequest(views.html.badRequest("Could not find a gallery with ID " + galleryId))
 }

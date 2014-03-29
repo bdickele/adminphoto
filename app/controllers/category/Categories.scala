@@ -111,9 +111,6 @@ object Categories extends Controller {
     }
   }
 
-  def couldNotFindCategory(categoryId: Int): SimpleResult = {
-    val message = "Could not find category with ID " + categoryId
-    Logger.error(message)
-    BadRequest(message)
-  }
+  def couldNotFindCategory(categoryId: Int): SimpleResult =
+    BadRequest(views.html.badRequest("Could not find a category with ID " + categoryId))
 }

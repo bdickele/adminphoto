@@ -1,5 +1,7 @@
-import play.api.{Logger, Application, GlobalSettings}
-import scala.Some
+import play.api._
+import play.api.mvc._
+import play.api.mvc.Results._
+import scala.concurrent.Future
 
 /**
  * Overriding GlobalSettings to customize error pages for instance
@@ -18,7 +20,6 @@ object Global extends GlobalSettings {
     prettyLog(databaseMessage)
   }
 
-  /*
   override def onHandlerNotFound(request: RequestHeader) = {
     Future.successful(NotFound(
       views.html.notFound(request.path)
@@ -30,7 +31,6 @@ object Global extends GlobalSettings {
       views.html.badRequest(ex.getMessage)
     ))
   }
-  */
 
   def prettyLog(messages: String*) = {
     Logger.info("****************************************************")

@@ -58,7 +58,7 @@ object GalleryPicComment extends Controller {
       picForm.bindFromRequest.fold(
 
         // Validation error
-        formWithErrors => BadRequest("Unexpected technical error "),
+        formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
         // Validation OK
         form => {
