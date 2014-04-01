@@ -1,0 +1,104 @@
+Database : website
+
+Collection "category" :
+{
+	id: 		    ObjectId,
+	categoryId:	    Integer,
+	rank:           Integer,
+	title: 		    String,
+	comment:	String,
+	online: 	    Boolean
+}
+
+Collection "gallery" :
+{
+	id: 		    ObjectId,
+	categoryId:	    Integer,
+	rank:           Integer,
+	galleryId:	    Integer,
+    date: 		    String,     format year/month
+    title:		    String,
+    comment:	    String,
+    thumbnail: 	    String,
+    online:		    Boolean,
+    access:		    String,
+    pictures: 	    [{  thumbnail: 	String,
+                        web:		String,
+                        print:      String,
+                        comment:    String}
+                    ]
+}
+
+mongoexport --db website -collection category --out category.json
+mongoexport --db website -collection gallery --out gallery.json
+mongoimport --upsert --db website --collection category --file category.json
+mongoimport --upsert --db website --collection gallery --file gallery.json
+
+// ********************************************************************************
+// Remove existing collections
+// ********************************************************************************
+db.category.drop()
+db.gallery.drop()
+
+// ********************************************************************************
+// Creating collections
+// ********************************************************************************
+db.runCommand({create: "category"})
+db.runCommand({create: "gallery"})
+db.runCommand({create: "user"})
+
+// ********************************************************************************
+// Indexs
+// ********************************************************************************
+db.category.ensureIndex({categoryId: 1}, {unique: true})
+db.category.ensureIndex({categoryId: 1, rank: -1, title: 1})
+db.category.ensureIndex({categoryId: 1, rank: -1, title: 1, online: 1, access: 1})
+
+db.gallery.ensureIndex({galleryId: 1}, {unique: true})
+db.gallery.ensureIndex({categoryId: 1, galleryId: 1, rank: -1, title: 1, online: 1, access: 1})
+
+// ********************************************************************************
+// Misc
+// ********************************************************************************
+db.user.insert({
+    userId: 1,
+    identityId: {userId: "bdickele@gmail.com", providerId: "userpass"},
+    firstName: "Bertrand",
+    lastName: "DICKELE",
+    fullName: "Bertrand DICKELE",
+    email: "bdickele@gmail.com",
+    authMethod: "userPassword",
+    role: "ADMIN",
+    passwordInfo: {
+        hasher: "bcrypt",
+        password: "$2a$10$.InhinMn9PxeSYMOhc3YtekcNfqmsp9xO18jowWDmhXo8W5F48s4C"}
+    })
+
+    case class SocialUser(
+        val identityId : securesocial.core.IdentityId,
+            case class IdentityId(val userId : String, val providerId : String)
+        val firstName : String,
+        val lastName : String,
+        val fullName : String,
+        val email : Option[String],
+        val avatarUrl : Option[String],
+        val authMethod : securesocial.core.AuthenticationMethod,
+            case class AuthenticationMethod(val method : String)
+        val oAuth1Info : Option[securesocial.core.OAuth1Info],
+            case class OAuth1Info(val token : String, val secret : String)
+        val oAuth2Info : Option[securesocial.core.OAuth2Info],
+            case class OAuth2Info(val accessToken : String, val tokenType : Option[String]
+        val passwordInfo : Option[securesocial.core.PasswordInfo]
+            case class PasswordInfo(val hasher : String, val password : String, val salt : Option[String])
+
+    SocialUser(
+        IdentityId(bdickele@gmail.com,userpass),
+        Bertrand,
+        DICKELE,
+        Bertrand DICKELE,
+        Some(bdickele@gmail.com),
+        None,
+        AuthenticationMethod(userPassword),
+        None,
+        None,
+        Some(PasswordInfo(bcrypt,$2a$10$.InhinMn9PxeSYMOhc3YtekcNfqmsp9xO18jowWDmhXo8W5F48s4C,None)))]

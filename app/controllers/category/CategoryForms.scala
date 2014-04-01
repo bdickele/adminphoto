@@ -43,14 +43,15 @@ object CategoryForms extends Controller {
 
   def create() = Action {
     Ok(views.html.category.categoryForm("New category",
-      categoryForm.fill(Category(-1, -1, "", None, true))))
+      categoryForm.fill(Category(-1, -1, "", None))))
   }
 
   def edit(categoryId: Int) = Action {
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => Ok(views.html.category.categoryForm("Category \"" + category.title + "\"",
-        categoryForm.fill(category)))
-      case None => Categories.couldNotFindCategory(categoryId)
+      case Some(category) =>
+        Ok(views.html.category.categoryForm("Category \"" + category.title + "\"", categoryForm.fill(category)))
+      case None =>
+        Categories.couldNotFindCategory(categoryId)
     }
   }
 
@@ -63,10 +64,7 @@ object CategoryForms extends Controller {
 
         // Validation OK
         form => {
-          val categoryId = form.categoryId
-          println("categoryId = " + categoryId)
-
-          Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
+          Categories.findAllFromCacheOrDB().find(_.categoryId == form.categoryId) match {
 
             // Edition of an existing category
             case Some(category) => CategoryRW.update(

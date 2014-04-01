@@ -12,6 +12,7 @@ import scala.Some
 import play.api.data.Form
 
 /**
+ * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
  * Created by bdickele on 01/02/14.
  */
 
@@ -36,9 +37,8 @@ object GalleryPicList extends Controller {
 
 
   def view(galleryId: Int) = Action.async {
-    val future = GalleryPicturesRW.findByGalleryId(galleryId)
-    future.map {
-      option => option match {
+    GalleryPicturesRW.findByGalleryId(galleryId).map {
+      _ match {
         case None => Galleries.couldNotFindGallery(galleryId)
         case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
       }
@@ -46,9 +46,8 @@ object GalleryPicList extends Controller {
   }
 
   def viewAndSelect(galleryId: Int, indexes: String) = Action.async {
-    val future = GalleryPicturesRW.findByGalleryId(galleryId)
-    future.map {
-      option => option match {
+    GalleryPicturesRW.findByGalleryId(galleryId).map {
+      _ match {
         case None => Galleries.couldNotFindGallery(galleryId)
         case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
           GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
@@ -97,7 +96,7 @@ object GalleryPicList extends Controller {
     val future = findGallery(galleryId)
     Await.result(future, Duration(5, TimeUnit.SECONDS)) match {
       case None => Nil
-      case Some(gallery) => {
+      case Some(gallery) =>
         val pics = gallery.pictures
         val selectedPics = selectedIndexes.map(i => pics.apply(i)).toList
 
@@ -111,15 +110,14 @@ object GalleryPicList extends Controller {
         // We return the list of indexes of selected pictures in the new list
         for {(pic, index) <- newPics.zipWithIndex
              if selectedPics.contains(pic)} yield index
-      }
     }
   }
 
   /**
    *
-   * @param actionName
-   * @param selectedIndexes
-   * @param nonSelectedIndexes
+   * @param actionName Action name
+   * @param selectedIndexes Indexes of selected pictures
+   * @param nonSelectedIndexes Indexes of non selected pictures
    * @return List of picture indexes as it should be after update. For instance, let us say we have 4 pictures
    *         in the gallery. User wants to shift 3rd picture (whose index is 2) to the left. That list would be
    *         List(0, 2, 1, 3) : index 2 is now in second position, and index 1 is now on 3rd position
@@ -147,11 +145,10 @@ object GalleryPicList extends Controller {
       case MoveToTheLeft => moveToTheLeftOrRight(List(), selectedIndexes, nonSelectedIndexes,
         (selHead: Int, accSize: Int) => (selHead - 1) > accSize)
 
-      case MoveToTheRight => {
+      case MoveToTheRight =>
         val finalSize = selectedIndexes.size + nonSelectedIndexes.size
         moveToTheLeftOrRight(List(), selectedIndexes.reverse, nonSelectedIndexes.reverse,
           (selHead: Int, accSize: Int) => (selHead + 2) < (finalSize - accSize)).reverse
-      }
     }
   }
 
@@ -162,17 +159,15 @@ object GalleryPicList extends Controller {
    * @return
    */
   def changeThumbnail(galleryId: Int, picIndex: Int) = Action.async {
-    val future = findGallery(galleryId)
-    future.map {
-      option => option match {
+    findGallery(galleryId).map {
+      _ match {
         case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(gallery) => {
+        case Some(gallery) =>
           val pictures = gallery.pictures
           if (picIndex > -1 && picIndex < pictures.length) {
             GalleryRW.updateField(galleryId, "thumbnail", BSONString(pictures.apply(picIndex).thumbnail))
           }
           Redirect(routes.GalleryPicList.view(galleryId))
-        }
       }
     }
   }

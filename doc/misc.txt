@@ -1,12 +1,6 @@
 play -Dconfig.file=conf/application_test.conf "run 9100"
 play -Dconfig.file=conf/application_dev.conf "run 9100"
 
-mongoexport --db website -collection category --out category.json
-mongoexport --db website -collection gallery --out gallery.json
-mongoimport --upsert --db website --collection category --file category.json
-mongoimport --upsert --db website --collection gallery --file gallery.json
-
-
 Questions :
 - Fichier routes : peut-on configurer à la fois sans et avec le dernier slash en une seule ligne ?
 Avec Play 1 on pouvait mais avec Play 2 je n'ai pas trouvé pour l'instant

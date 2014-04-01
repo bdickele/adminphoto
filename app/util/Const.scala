@@ -3,6 +3,7 @@ package util
 import play.api.Play
 
 /**
+ * Constants
  * Created by bdickele on 17/01/14.
  */
 object Const {

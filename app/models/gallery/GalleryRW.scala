@@ -70,8 +70,8 @@ object GalleryRW extends Controller with MongoController {
   /**
    * Purpose of that method is to returning gallery, of the same category, that is right before a
    * gallery with passed rank. If currentRank is 0 then it will return None
-   * @param categoryId
-   * @param currentRank
+   * @param categoryId Category ID
+   * @param currentRank Rank of current gallery in the category
    * @return
    */
   def findPreviousGalleryInCategory(categoryId: Int, currentRank: Int): Future[Option[Gallery]] =
@@ -89,8 +89,8 @@ object GalleryRW extends Controller with MongoController {
   /**
    * Purpose of that method is to returning gallery, of the same category, that is right after a
    * gallery with passed rank. If currentRank has a rank higher than all its siblings, then it will return None
-   * @param categoryId
-   * @param currentRank
+   * @param categoryId Category ID
+   * @param currentRank Rank of current gallery in the category
    * @return
    */
   def findNextGalleryInCategory(categoryId: Int, currentRank: Int): Future[Option[Gallery]] =
@@ -111,18 +111,15 @@ object GalleryRW extends Controller with MongoController {
 
   /** Create a gallery (without thumbnail or picture) */
   def create(categoryId: Int,
-             galleryId: Int,
              title: String,
              year: Int,
              month: Int,
              comment: String,
              online: Boolean): Future[LastError] = {
-    val rank = findMaxRankForCategory(categoryId) + 1
-
     val gallery = Gallery(
       categoryId,
-      galleryId,
-      rank,
+      GalleryRW.findMaxGalleryId + 1,
+      findMaxRankForCategory(categoryId) + 1,
       new YearMonth(year, month),
       title,
       if (comment == "") None else Some(comment),

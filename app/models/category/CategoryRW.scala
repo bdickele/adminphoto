@@ -4,7 +4,7 @@ import play.api.mvc.Controller
 import scala.concurrent.{Await, Future}
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
-import reactivemongo.bson.{BSONObjectID, BSONValue, BSON, BSONDocument}
+import reactivemongo.bson.{BSONValue, BSON, BSONDocument}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
 import scala.concurrent.duration.Duration

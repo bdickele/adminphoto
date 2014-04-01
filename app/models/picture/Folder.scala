@@ -2,9 +2,7 @@ package models.picture
 
 import play.api.Play.current
 import play.api.cache.Cache
-import java.io.File
-import util.{FtpUtil, Const}
-import org.apache.commons.net.ftp.{FTPFile, FTPClient}
+import util.FtpUtil
 
 /**
  * Created by bdickele
@@ -18,14 +16,14 @@ object Folder {
   /** Clear cache from main and sub folders */
   def clearCache() =
     Cache.getAs[List[String]](CacheMainFolders) match {
-      case Some(list) => {
+      case Some(list) =>
         // Clearing cache of sub folders
         for (name <- list) {
           Cache.remove(CacheSubFolders + name)
         }
         // Clearing cache of main folders
         Cache.remove(CacheMainFolders)
-      }
+
       case None => // Nothing to do
     }
 

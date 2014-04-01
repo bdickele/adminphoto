@@ -3,12 +3,9 @@ package controllers.gallery
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import play.api.data.Form
-import models.gallery.{GalleryRW, Gallery, GalleryPicturesRW}
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Future, Await}
+import models.gallery.GalleryPicturesRW
 import util.Const
-import controllers.category.Categories
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * Created by bdickele
@@ -36,21 +33,25 @@ object GalleryPicComment extends Controller {
   val picForm: Form[GalleryPicComment] = Form(formMapping)
 
 
-  def view(galleryId: Int, index: Int) = Action {
-    val future = GalleryPicturesRW.findByGalleryId(galleryId)
-    val galleryPics = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
+  def view(galleryId: Int, index: Int) = Action.async {
+    GalleryPicturesRW.findByGalleryId(galleryId).map {
+      _ match {
+        case Some(galleryPics) =>
+          val realIndex = if (index < 0 || index > (galleryPics.pictures.length - 1)) 0 else index
 
-    val realIndex = if (index < 0 || index > (galleryPics.pictures.length - 1)) 0 else index
+          val galleryPic = galleryPics.pictures.apply(realIndex)
 
-    val galleryPic = galleryPics.pictures.apply(realIndex)
+          Ok(views.html.gallery.galleryPicComment(
+            picForm.fill(GalleryPicComment(
+              galleryPics.categoryId,
+              galleryId,
+              realIndex,
+              Const.WebRoot + galleryPic.web,
+              galleryPic.comment))))
 
-    Ok(views.html.gallery.galleryPicComment(
-      picForm.fill(GalleryPicComment(
-        galleryPics.categoryId,
-        galleryId,
-        realIndex,
-        Const.WebRoot + galleryPic.web,
-        galleryPic.comment))))
+        case _ => Galleries.couldNotFindGallery(galleryId)
+      }
+    }
   }
 
   def save() = Action {

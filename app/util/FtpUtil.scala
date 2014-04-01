@@ -57,7 +57,7 @@ object FtpUtil {
 
   /**
    * Method called by screen displaying stock of available pictures
-   * @param parentFolder
+   * @param parentFolder Parent folder
    * @return
    */
   def loadJpegs(parentFolder: String): (List[String], List[String], List[String]) = {

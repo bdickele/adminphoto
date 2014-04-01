@@ -22,20 +22,17 @@ object Galleries extends Controller {
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
     // In case URL contains an incorrect gallery ID
-    categories.find(c => c.categoryId == categoryId).isDefined match {
+    categories.exists(c => c.categoryId == categoryId) match {
       case false => Future.successful(Categories.couldNotFindCategory(categoryId))
 
-      case true => {
-        GalleryRW.findAll(categoryId).map {
-          galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
-        }.recover {
-          case e =>
-            Logger.error(e.getMessage)
-            BadRequest(views.html.badRequest(e.getMessage))
-        }
+      case true => GalleryRW.findAll(categoryId).map {
+        galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
+      }.recover {
+        case e =>
+          Logger.error(e.getMessage)
+          BadRequest(views.html.badRequest(e.getMessage))
       }
     }
-
   }
 
   def refresh(categoryId: Int) = Action {
@@ -48,20 +45,19 @@ object Galleries extends Controller {
 
     // Let's retrieve our category
     galleries.find(_.galleryId == galleryId) match {
-      case Some(gallery) => {
+      case Some(gallery) =>
         val galleryRank = gallery.rank
 
         // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
         galleries.reverse.find(_.rank > galleryRank) match {
-          case None => // nothing to do then
-          case Some(otherGallery) => {
+          case Some(otherGallery) =>
             GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank + 1))
             GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
-          }
+          case _ => // nothing to do then
         }
 
         Redirect(routes.Galleries.view(categoryId))
-      }
+
       case None => couldNotFindGallery(galleryId)
     }
   }
@@ -72,33 +68,31 @@ object Galleries extends Controller {
 
     // Let's retrieve our category
     galleries.find(_.galleryId == galleryId) match {
-      case Some(gallery) => {
+      case Some(gallery) =>
         val galleryRank = gallery.rank
 
         // List is sorted by rank, thus we pick up the first gallery whose rank is < gallery's rank
         galleries.find(_.rank < galleryRank) match {
           case None => // nothing to do then
-          case Some(otherGallery) => {
+          case Some(otherGallery) =>
             GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank - 1))
             GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
-          }
         }
 
         Redirect(routes.Galleries.view(categoryId))
-      }
+
       case None => couldNotFindGallery(galleryId)
     }
   }
 
   def onOffLine(categoryId: Int, galleryId: Int) = Action.async {
-    val future = GalleryRW.findById(galleryId)
-    future.map {
-      option => option match {
-        case Some(gallery) => {
+    GalleryRW.findById(galleryId).map {
+      _ match {
+        case Some(gallery) =>
           GalleryRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
           Redirect(routes.Galleries.view(categoryId))
-        }
-        case None => couldNotFindGallery(galleryId)
+        case None =>
+          couldNotFindGallery(galleryId)
       }
     }
   }

@@ -22,9 +22,6 @@ case class Gallery(categoryId: Int,
   def extendedTitle = Gallery.extendedTitle(title, date)
 }
 
-//access: Access.Value = Access.Guest)
-//doc.getAs[BSONString]("access").map(s => Access.fromString(s.value)).get)
-//"access" -> BSONString(g.access.asInstanceOf[Access.AccessVal].dbId))
 
 object Gallery {
 

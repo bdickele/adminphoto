@@ -2,7 +2,6 @@ package controllers.category
 
 import play.api.mvc.{SimpleResult, Action, Controller}
 import models.category.{Category, CategoryRW}
-import play.api.Logger
 import play.api.cache.Cache
 import play.api.Play.current
 import scala.concurrent.Await
@@ -52,21 +51,20 @@ object Categories extends Controller {
 
     // Let's retrieve our category
     categories.find(_.categoryId == categoryId) match {
-      case Some(category) => {
+      case Some(category) =>
         val categoryRank = category.rank
 
         // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
         categories.reverse.find(_.rank > categoryRank) match {
           case None => // nothing to do then
-          case Some(otherCategory) => {
+          case Some(otherCategory) =>
             clearCache()
             CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank + 1))
             CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
-          }
         }
 
         Redirect(routes.Categories.view())
-      }
+
       case None => couldNotFindCategory(categoryId)
     }
   }
@@ -81,32 +79,31 @@ object Categories extends Controller {
 
     // Let's retrieve our category
     categories.find(_.categoryId == categoryId) match {
-      case Some(category) => {
+      case Some(category) =>
         val categoryRank = category.rank
 
         // List is sorted by rank, thus we pick up the first category whose rank is < category's rank
         categories.find(_.rank < categoryRank) match {
           case None => // nothing to do then
-          case Some(otherCategory) => {
+          case Some(otherCategory) =>
             clearCache()
             CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank - 1))
             CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
-          }
         }
 
         Redirect(routes.Categories.view())
-      }
+
       case None => couldNotFindCategory(categoryId)
     }
   }
 
   def onOffLine(categoryId: Int) = Action {
     findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) => {
+      case Some(category) =>
         clearCache()
         CategoryRW.updateField(category.categoryId, "online", BSONBoolean(!category.online))
         Redirect(routes.Categories.view())
-      }
+
       case None => couldNotFindCategory(categoryId)
     }
   }

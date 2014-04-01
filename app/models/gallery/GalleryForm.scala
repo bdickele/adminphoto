@@ -13,13 +13,13 @@ case class GalleryForm(categoryId: Int,
                        year: Int,
                        month: Int,
                        comment: String,
-                       online: Boolean)
+                       online: Boolean = true)
 
 object GalleryForm {
 
   def newOne(categoryId: Int): GalleryForm = {
     val today = new YearMonth()
-    GalleryForm(categoryId, -1, "", today.getYear, today.getMonthOfYear, "", true)
+    GalleryForm(categoryId, -1, "", today.getYear, today.getMonthOfYear, "")
   }
 
   def apply(gallery: Gallery): GalleryForm =

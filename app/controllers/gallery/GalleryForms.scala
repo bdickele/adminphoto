@@ -85,7 +85,7 @@ object GalleryForms extends Controller {
           option match {
 
             // Edition of an existing gallery
-            case Some(gallery) => {
+            case Some(gallery) =>
               GalleryRW.update(
                 form.galleryId,
                 form.categoryId,
@@ -95,15 +95,11 @@ object GalleryForms extends Controller {
                 if (form.comment.isEmpty) None else Some(form.comment),
                 form.online)
               Redirect(routes.GalleryPicList.view(form.galleryId))
-            }
 
             // New gallery
-            case None => {
-              val galleryId = GalleryRW.findMaxGalleryId + 1
-              GalleryRW.create(form.categoryId, galleryId, form.title, form.year, form.month,
-                form.comment, form.online)
+            case None =>
+              GalleryRW.create(form.categoryId, form.title, form.year, form.month, form.comment, form.online)
               Redirect(routes.GalleryPicSelection.view(galleryId, "", ""))
-            }
           }
         }
       )
@@ -115,7 +111,7 @@ object GalleryForms extends Controller {
 
   /**
    * Redirect to previous gallery of passed gallery ID
-   * @param galleryId
+   * @param galleryId Gallery ID
    * @return
    */
   def previousGallery(galleryId: Int) = Action.async {
@@ -135,7 +131,7 @@ object GalleryForms extends Controller {
   /**
    * Retrieves ID of last gallery of category before category of passed categoryId.
    * If categoryId stands for first category, then last category (the most recent) is selected
-   * @param categoryId
+   * @param categoryId Category ID
    */
   def lastGalleryOfPreviousCategory(categoryId: Int): Gallery = {
     // Categories are sorted by rank, what means the most recent one is the first
@@ -160,7 +156,7 @@ object GalleryForms extends Controller {
 
   /**
    * Redirect to next gallery of passed gallery ID
-   * @param galleryId
+   * @param galleryId Gallery ID
    * @return
    */
   def nextGallery(galleryId: Int) = Action.async {
@@ -180,7 +176,7 @@ object GalleryForms extends Controller {
   /**
    * Retrieves ID of first gallery of category after category of passed categoryId.
    * If categoryId stands for last category, then first category (the oldest) is selected
-   * @param categoryId
+   * @param categoryId Category ID
    */
   def firstGalleryOfNextCategory(categoryId: Int): Gallery = {
     // Categories are sorted by rank, what means the most recent one is the first: let's reverse it

@@ -4,10 +4,9 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import reactivemongo.api.collections.default.BSONCollection
 import scala.concurrent.{Await, Future}
-import reactivemongo.bson.{BSONString, BSONValue, BSONDocument, BSONArray}
+import reactivemongo.bson.{BSONValue, BSONDocument, BSONArray}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
-import controllers.gallery.{routes, Galleries}
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 
@@ -25,7 +24,7 @@ object GalleryPicturesRW extends Controller with MongoController {
   // --------------------------------------------------------------
 
   /**
-   * @param galleryId
+   * @param galleryId Gallery ID
    * @return Pictures of a gallery
    */
   def findByGalleryId(galleryId: Int): Future[Option[GalleryPics]] =
@@ -38,13 +37,13 @@ object GalleryPicturesRW extends Controller with MongoController {
   // --------------------------------------------------------------
 
   def addPictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
-    val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write(_)))
+    val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write))
     collection.update(BSONDocument("galleryId" -> galleryId),
       BSONDocument("$pushAll" -> BSONDocument("pictures" -> array)))
   }
 
   def setPictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
-    val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write(_)))
+    val array = BSONArray(pictures.map(GalleryPics.GalleryPicBSONHandler.write))
     GalleryRW.updateField(galleryId, "pictures", array)
   }
 
@@ -52,9 +51,9 @@ object GalleryPicturesRW extends Controller with MongoController {
    * To update comment of a picture.
    * Je ne suis pas convaincu par ce que j'ai fait : est-ce qu'il y a un moyen de mettre à jour
    * un élémen précis du tableau ?
-   * @param galleryId
-   * @param index
-   * @param comment
+   * @param galleryId Gallery ID
+   * @param index Index of picture in the list of pictures
+   * @param comment New comment
    * @return
    */
   def updateComment(galleryId: Int, index: Int, comment: Option[String]): Future[LastError] = {
