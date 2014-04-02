@@ -4,6 +4,7 @@ import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
 import models.category.{Category, CategoryRW}
 import play.api.data.Form
+import securesocial.core.SecureSocial
 
 /**
  * Controller dedicated to category's form (creation and modification)
@@ -11,7 +12,7 @@ import play.api.data.Form
  * Date: 25/01/14
  */
 
-object CategoryForms extends Controller {
+object CategoryForms extends Controller with SecureSocial {
 
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]
@@ -41,21 +42,23 @@ object CategoryForms extends Controller {
   def findByTitle(title: String): Option[Category] =
     Categories.findAllFromCacheOrDB().find(_.title == title)
 
-  def create() = Action {
-    Ok(views.html.category.categoryForm("New category",
-      categoryForm.fill(Category(-1, -1, "", None))))
+  def create() = SecuredAction {
+    implicit request =>
+      Ok(views.html.category.categoryForm("New category",
+        categoryForm.fill(Category(-1, -1, "", None))))
   }
 
-  def edit(categoryId: Int) = Action {
-    Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
-      case Some(category) =>
-        Ok(views.html.category.categoryForm("Category \"" + category.title + "\"", categoryForm.fill(category)))
-      case None =>
-        Categories.couldNotFindCategory(categoryId)
-    }
+  def edit(categoryId: Int) = SecuredAction {
+    implicit request =>
+      Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
+        case Some(category) =>
+          Ok(views.html.category.categoryForm("Category \"" + category.title + "\"", categoryForm.fill(category)))
+        case None =>
+          Categories.couldNotFindCategory(categoryId)
+      }
   }
 
-  def save() = Action {
+  def save() = SecuredAction {
     implicit request =>
       categoryForm.bindFromRequest.fold(
 

@@ -1,6 +1,6 @@
 package controllers.gallery
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import models.gallery._
 import scala.concurrent.{Await, Future}
 import play.api.libs.concurrent.Execution.Implicits._
@@ -10,6 +10,7 @@ import play.api.data.Forms._
 import reactivemongo.bson.BSONString
 import scala.Some
 import play.api.data.Form
+import securesocial.core.SecureSocial
 
 /**
  * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
@@ -20,7 +21,7 @@ case class GalleryPicAction(galleryId: Int,
                             actionName: String,
                             picIndexes: List[Int])
 
-object GalleryPicList extends Controller {
+object GalleryPicList extends Controller with SecureSocial {
 
   val formMapping = mapping(
     "galleryId" -> number,
@@ -36,26 +37,28 @@ object GalleryPicList extends Controller {
   val Remove = "REMOVE"
 
 
-  def view(galleryId: Int) = Action.async {
-    GalleryPicturesRW.findByGalleryId(galleryId).map {
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
+  def view(galleryId: Int) = SecuredAction.async {
+    implicit request =>
+      GalleryPicturesRW.findByGalleryId(galleryId).map {
+        _ match {
+          case None => Galleries.couldNotFindGallery(galleryId)
+          case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
+        }
       }
-    }
   }
 
-  def viewAndSelect(galleryId: Int, indexes: String) = Action.async {
-    GalleryPicturesRW.findByGalleryId(galleryId).map {
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
-          GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
+  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction.async {
+    implicit request =>
+      GalleryPicturesRW.findByGalleryId(galleryId).map {
+        _ match {
+          case None => Galleries.couldNotFindGallery(galleryId)
+          case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
+            GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
+        }
       }
-    }
   }
 
-  def save() = Action {
+  def save() = SecuredAction {
     implicit request =>
       form.bindFromRequest.fold(
 
@@ -158,18 +161,19 @@ object GalleryPicList extends Controller {
    * @param picIndex Index of picture that will be the new thumbnail
    * @return
    */
-  def changeThumbnail(galleryId: Int, picIndex: Int) = Action.async {
-    findGallery(galleryId).map {
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(gallery) =>
-          val pictures = gallery.pictures
-          if (picIndex > -1 && picIndex < pictures.length) {
-            GalleryRW.updateField(galleryId, "thumbnail", BSONString(pictures.apply(picIndex).thumbnail))
-          }
-          Redirect(routes.GalleryPicList.view(galleryId))
+  def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction.async {
+    implicit request =>
+      findGallery(galleryId).map {
+        _ match {
+          case None => Galleries.couldNotFindGallery(galleryId)
+          case Some(gallery) =>
+            val pictures = gallery.pictures
+            if (picIndex > -1 && picIndex < pictures.length) {
+              GalleryRW.updateField(galleryId, "thumbnail", BSONString(pictures.apply(picIndex).thumbnail))
+            }
+            Redirect(routes.GalleryPicList.view(galleryId))
+        }
       }
-    }
   }
 
   def findGallery(galleryId: Int): Future[Option[GalleryPics]] =

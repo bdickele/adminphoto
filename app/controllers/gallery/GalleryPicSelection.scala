@@ -10,6 +10,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
+import securesocial.core.SecureSocial
 
 /**
  * Created by bdickele
@@ -25,7 +26,7 @@ case class SelectablePic(folder: String,
                          webComplete: String,
                          web: String)
 
-object GalleryPicSelection extends Controller {
+object GalleryPicSelection extends Controller with SecureSocial {
 
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[CategoryForm]]
@@ -38,42 +39,43 @@ object GalleryPicSelection extends Controller {
   val form: Form[SelectedPics] = Form(formMapping)
 
 
-  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = Action.async {
-    val future = GalleryRW.findById(galleryId)
-    future.map {
-      option =>
-        option match {
-          case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
-          case Some(gallery) =>
+  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async {
+    implicit request =>
+      val future = GalleryRW.findById(galleryId)
+      future.map {
+        option =>
+          option match {
+            case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
+            case Some(gallery) =>
 
-            val mainFolders = Folder.mainFolders
+              val mainFolders = Folder.mainFolders
 
-            // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
-            val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
+              // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
+              val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
 
-            val subFolders = Folder.subFolders(mainFolderName)
-            val subFolderName = if (subFolder == "") subFolders.head else subFolder
+              val subFolders = Folder.subFolders(mainFolderName)
+              val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
-            val folder = mainFolderName + "/" + subFolderName + "/"
-            val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
+              val folder = mainFolderName + "/" + subFolderName + "/"
+              val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-            val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
-              SelectablePic(
-                folder,
-                WebRoot + folder + FolderThumbnail + p.thumbnail,
-                WebRoot + folder + FolderWeb + p.web,
-                p.web))
+              val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
+                SelectablePic(
+                  folder,
+                  WebRoot + folder + FolderThumbnail + p.thumbnail,
+                  WebRoot + folder + FolderWeb + p.web,
+                  p.web))
 
-            Ok(views.html.gallery.galleryPicSelection(
-              form.fill(SelectedPics(galleryId, folder, List())),
-              gallery,
-              mainFolders, subFolders, mainFolderName, subFolderName,
-              selectablePics))
-        }
-    }
+              Ok(views.html.gallery.galleryPicSelection(
+                form.fill(SelectedPics(galleryId, folder, List())),
+                gallery,
+                mainFolders, subFolders, mainFolderName, subFolderName,
+                selectablePics))
+          }
+      }
   }
 
-  def save() = Action {
+  def save() = SecuredAction {
     implicit request =>
       form.bindFromRequest.fold(
 

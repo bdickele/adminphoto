@@ -6,6 +6,7 @@ import play.api.data.Form
 import models.gallery.GalleryPicturesRW
 import util.Const
 import play.api.libs.concurrent.Execution.Implicits._
+import securesocial.core.SecureSocial
 
 /**
  * Created by bdickele
@@ -17,7 +18,7 @@ case class GalleryPicComment(categoryId: Int,
                              webComplete: String,
                              comment: Option[String])
 
-object GalleryPicComment extends Controller {
+object GalleryPicComment extends Controller with SecureSocial {
 
   val formMapping = mapping(
     "categoryId" -> number,
@@ -33,7 +34,8 @@ object GalleryPicComment extends Controller {
   val picForm: Form[GalleryPicComment] = Form(formMapping)
 
 
-  def view(galleryId: Int, index: Int) = Action.async {
+  def view(galleryId: Int, index: Int) = SecuredAction.async {
+    implicit request =>
     GalleryPicturesRW.findByGalleryId(galleryId).map {
       _ match {
         case Some(galleryPics) =>
@@ -54,7 +56,7 @@ object GalleryPicComment extends Controller {
     }
   }
 
-  def save() = Action {
+  def save() = SecuredAction {
     implicit request =>
       picForm.bindFromRequest.fold(
 

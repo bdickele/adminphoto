@@ -26,6 +26,12 @@ object Global extends GlobalSettings {
     ))
   }
 
+  override def onBadRequest(request: RequestHeader, error: String) = {
+    Future.successful(BadRequest(
+      views.html.badRequest(error)
+    ))
+  }
+
   override def onError(request: RequestHeader, ex: Throwable) = {
     Future.successful(BadRequest(
       views.html.badRequest(ex.getMessage)

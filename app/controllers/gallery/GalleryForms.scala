@@ -1,6 +1,6 @@
 package controllers.gallery
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import play.api.data.Forms._
 import play.api.data.Form
 import controllers.category.Categories
@@ -11,12 +11,13 @@ import scala.Some
 import models.gallery.{Gallery, GalleryRW, GalleryForm}
 import models.category.Category
 import play.api.libs.concurrent.Execution.Implicits._
+import securesocial.core.SecureSocial
 
 /**
  * User: bdickele
  * Date: 1/26/14
  */
-object GalleryForms extends Controller {
+object GalleryForms extends Controller with SecureSocial {
 
   // ---------------------------------------------------------------
   // Mapping with all rules to check + Form[Mapping[GalleryForm]]
@@ -49,26 +50,34 @@ object GalleryForms extends Controller {
   val galleryForm: Form[GalleryForm] = Form(formMapping)
 
 
-  def create(categoryId: Int) = Action {
-    Ok(views.html.gallery.galleryForm("New gallery",
-      Categories.findAllFromCacheOrDB(),
-      galleryForm.fill(GalleryForm.newOne(categoryId))))
-  }
+  def create(categoryId: Int) = SecuredAction {
+    implicit request =>
+      val categories: List[Category] = Categories.findAllFromCacheOrDB()
+      categories.find(_.categoryId == categoryId) match {
+        case Some(category) =>
+          Ok(views.html.gallery.galleryForm("New gallery",
+            Categories.findAllFromCacheOrDB(),
+            galleryForm.fill(GalleryForm.newOne(categoryId))))
 
-  def edit(galleryId: Int) = Action.async {
-    val future = GalleryRW.findById(galleryId)
-    future.map {
-      option => option match {
-        case Some(gallery) => Ok(views.html.gallery.galleryForm(
-          gallery.extendedTitle,
-          Categories.findAllFromCacheOrDB(),
-          galleryForm.fill(GalleryForm(gallery))))
-        case None => Galleries.couldNotFindGallery(galleryId)
+        case None => Categories.couldNotFindCategory(categoryId)
       }
-    }
   }
 
-  def save() = Action {
+  def edit(galleryId: Int) = SecuredAction.async {
+    implicit request =>
+      val future = GalleryRW.findById(galleryId)
+      future.map {
+        option => option match {
+          case Some(gallery) => Ok(views.html.gallery.galleryForm(
+            gallery.extendedTitle,
+            Categories.findAllFromCacheOrDB(),
+            galleryForm.fill(GalleryForm(gallery))))
+          case None => Galleries.couldNotFindGallery(galleryId)
+        }
+      }
+  }
+
+  def save() = SecuredAction {
     implicit request =>
       galleryForm.bindFromRequest.fold(
 
@@ -114,18 +123,19 @@ object GalleryForms extends Controller {
    * @param galleryId Gallery ID
    * @return
    */
-  def previousGallery(galleryId: Int) = Action.async {
-    val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
+  def previousGallery(galleryId: Int) = SecuredAction.async {
+    implicit request =>
+      val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
 
-    val previousFuture = GalleryRW.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
-    val previousGallery: Future[Gallery] = previousFuture.map {
-      option => option match {
-        case Some(g) => g
-        case None => lastGalleryOfPreviousCategory(gallery.categoryId)
+      val previousFuture = GalleryRW.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
+      val previousGallery: Future[Gallery] = previousFuture.map {
+        option => option match {
+          case Some(g) => g
+          case None => lastGalleryOfPreviousCategory(gallery.categoryId)
+        }
       }
-    }
 
-    previousGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
+      previousGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
   }
 
   /**
@@ -159,18 +169,19 @@ object GalleryForms extends Controller {
    * @param galleryId Gallery ID
    * @return
    */
-  def nextGallery(galleryId: Int) = Action.async {
-    val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
+  def nextGallery(galleryId: Int) = SecuredAction.async {
+    implicit request =>
+      val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
 
-    val nextFuture = GalleryRW.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
-    val nextGallery: Future[Gallery] = nextFuture.map {
-      option => option match {
-        case Some(g) => g
-        case None => firstGalleryOfNextCategory(gallery.categoryId)
+      val nextFuture = GalleryRW.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
+      val nextGallery: Future[Gallery] = nextFuture.map {
+        option => option match {
+          case Some(g) => g
+          case None => firstGalleryOfNextCategory(gallery.categoryId)
+        }
       }
-    }
 
-    nextGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
+      nextGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
   }
 
   /**

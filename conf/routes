@@ -44,7 +44,7 @@ POST    /galleryPicSelection/save                   controllers.gallery.GalleryP
 
 GET     /category                           controllers.category.Categories.view
 GET     /category/refresh                   controllers.category.Categories.refresh
-GET     /category/create/                   controllers.category.CategoryForms.create
+GET     /category/create                    controllers.category.CategoryForms.create
 GET     /category/edit/:categoryId          controllers.category.CategoryForms.edit(categoryId: Int)
 GET     /category/up/:categoryId            controllers.category.Categories.up(categoryId: Int)
 GET     /category/down/:categoryId          controllers.category.Categories.down(categoryId: Int)
