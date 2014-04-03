@@ -1,5 +1,5 @@
 @(galleryPictures: models.gallery.GalleryPics,
-    picAction: controllers.gallery.GalleryPicAction)
+    picAction: controllers.gallery.GalleryPicAction)(implicit request: play.api.mvc.RequestHeader)
 
 @main(galleryPictures.extendedTitle){
 <script src='@routes.Assets.at("javascripts/gallery/galleryPicList.js")'></script>

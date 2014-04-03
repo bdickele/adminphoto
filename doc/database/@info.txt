@@ -45,7 +45,7 @@ db.gallery.drop()
 // ********************************************************************************
 db.runCommand({create: "category"})
 db.runCommand({create: "gallery"})
-db.runCommand({create: "user"})
+db.runCommand({create: "backenduser"})
 
 // ********************************************************************************
 // Indexs
@@ -60,7 +60,7 @@ db.gallery.ensureIndex({categoryId: 1, galleryId: 1, rank: -1, title: 1, online:
 // ********************************************************************************
 // Misc
 // ********************************************************************************
-db.user.insert({
+db.backenduser.insert({
     userId: 1,
     identityId: {userId: "bdickele@gmail.com", providerId: "userpass"},
     firstName: "Bertrand",
@@ -71,7 +71,7 @@ db.user.insert({
     role: "ADMIN",
     passwordInfo: {
         hasher: "bcrypt",
-        password: "$2a$10$.InhinMn9PxeSYMOhc3YtekcNfqmsp9xO18jowWDmhXo8W5F48s4C"}
+        password: "$2a$..."}
     })
 
     case class SocialUser(
@@ -101,4 +101,4 @@ db.user.insert({
         AuthenticationMethod(userPassword),
         None,
         None,
-        Some(PasswordInfo(bcrypt,$2a$10$.InhinMn9PxeSYMOhc3YtekcNfqmsp9xO18jowWDmhXo8W5F48s4C,None)))]
+        Some(PasswordInfo(bcrypt,$2a$...,None)))]

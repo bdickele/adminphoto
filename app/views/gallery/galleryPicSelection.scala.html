@@ -2,7 +2,7 @@
 gallery: models.gallery.Gallery,
 mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
-pictures: List[controllers.gallery.SelectablePic])
+pictures: List[controllers.gallery.SelectablePic])(implicit request: play.api.mvc.RequestHeader)
 
 @main(gallery.extendedTitle){
 <script>

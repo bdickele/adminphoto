@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import reactivemongo.bson.{BSONBoolean, BSONInteger}
 import securesocial.core.SecureSocial
+import models.user.BackEndUser
 
 /**
  * User: bdickele

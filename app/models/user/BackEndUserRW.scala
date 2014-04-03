@@ -18,7 +18,7 @@ import play.api.Logger
  */
 object BackEndUserRW extends Controller with MongoController {
 
-  def collection = db.collection[BSONCollection]("user")
+  def collection = db.collection[BSONCollection]("backenduser")
 
   // --------------------------------------------------------------
   // FIND

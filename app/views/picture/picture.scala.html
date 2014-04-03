@@ -1,6 +1,6 @@
 @(mainFolders: List[String], subFolders: List[String],
     selectedMainFolder: String, selectedSubFolder: String,
-    pictures: List[controllers.picture.PictureVO])
+    pictures: List[controllers.picture.PictureVO])(implicit request: play.api.mvc.RequestHeader)
 
 @main("Pictures"){
     @carousel(pictures)

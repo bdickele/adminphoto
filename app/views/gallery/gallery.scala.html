@@ -1,4 +1,5 @@
-@(selectedCategoryId: Int, categories: List[models.category.Category], galleries: List[models.gallery.Gallery])
+@(selectedCategoryId: Int, categories: List[models.category.Category],
+    galleries: List[models.gallery.Gallery])(implicit request: RequestHeader)
 
 @main("Galleries"){
         <script>
@@ -7,7 +8,7 @@
             })();
         </script>
     <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
-} {
+}{
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, selectedCategoryId)
 

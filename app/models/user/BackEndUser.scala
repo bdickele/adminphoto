@@ -7,6 +7,7 @@ import reactivemongo.bson.BSONString
 import scala.Some
 import reactivemongo.bson.BSONInteger
 import securesocial.core.OAuth1Info
+import play.api.mvc.RequestHeader
 
 /**
  * Created by bdickele
@@ -31,6 +32,13 @@ case class BackEndUser(id: Int,
 
 
 object BackEndUser {
+
+  def user(request: RequestHeader) = request.asInstanceOf[SecuredRequest[Any]].user.asInstanceOf[BackEndUser]
+
+  def isWriter(request: SecuredRequest[Any]) = request.user.asInstanceOf[BackEndUser].role == "WRITER"
+
+  def isWriter(request: RequestHeader) : Boolean = isWriter(request.asInstanceOf[SecuredRequest[Any]])
+
 
   implicit object BackEndUserBSONHandler extends BSONDocumentReader[BackEndUser] with BSONDocumentWriter[BackEndUser] {
 
