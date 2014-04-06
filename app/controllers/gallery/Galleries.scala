@@ -89,17 +89,16 @@ object Galleries extends Controller with SecureSocial {
       }
   }
 
-  def onOffLine(categoryId: Int, galleryId: Int) = SecuredAction.async {
-    implicit request =>
-      GalleryReadService.findById(galleryId).map {
-        _ match {
-          case Some(gallery) =>
-            GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online))
-            Redirect(routes.Galleries.view(categoryId))
-          case None =>
-            couldNotFindGallery(galleryId)
-        }
+  def onOffLine(galleryId: Int) = SecuredAction.async {
+    GalleryReadService.findById(galleryId).map {
+      _ match {
+        case Some(gallery) =>
+          GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online))
+          Redirect(routes.Galleries.view(gallery.categoryId))
+        case None =>
+          couldNotFindGallery(galleryId)
       }
+    }
   }
 
   def findAll(categoryId: Int): List[Gallery] =
@@ -107,4 +106,7 @@ object Galleries extends Controller with SecureSocial {
 
   def couldNotFindGallery(galleryId: Int): SimpleResult =
     BadRequest(views.html.badRequest("Could not find a gallery with ID " + galleryId))
+
+  def notAllowed: SimpleResult =
+    BadRequest(views.html.badRequest("You're not allowed to perform this operation"))
 }

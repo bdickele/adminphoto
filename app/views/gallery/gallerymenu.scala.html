@@ -18,11 +18,13 @@
            title="Next gallery">
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
+        @if(models.BackEndUser.isWriter(request)){
         <a href="@controllers.gallery.routes.GalleryForms.create(categoryId)" role="button"
            class="btn btn-primary btn-sm"
            title="Create a new gallery">
             <span class="glyphicon glyphicon-plus"></span>
         </a>
+        }
     </div>
 </div>
         <br>
@@ -31,15 +33,19 @@
 <ul class="nav nav-tabs" style="margin-bottom: 10px">
 
     @if(galleryId > 0) {
-    <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
-    <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
-    <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
-    <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
-    <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
-    <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
+        <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
+        <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
+        <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
+        <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
+        @if(models.BackEndUser.isWriter(request)){
+        <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
+        <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
+        }
     } else {
-    <li class="active"><a href="#">Gallery's description</a></li>
-    <li class="disabled"><a href="#">Gallery's pictures</a></li>
-    <li class="disabled"><a href="#">Add pictures</a></li>
+        <li class="active"><a href="#">Gallery's description</a></li>
+        <li class="disabled"><a href="#">Gallery's pictures</a></li>
+        @if(models.BackEndUser.isWriter(request)){
+        <li class="disabled"><a href="#">Add pictures</a></li>
+        }
     }
 </ul>

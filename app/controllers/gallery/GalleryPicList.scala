@@ -15,7 +15,6 @@ import play.api.libs.json.Json
  * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
  * bdickele
  */
-
 case class GalleryPicAction(galleryId: Int,
                             actionName: String,
                             picIndexes: List[Int])

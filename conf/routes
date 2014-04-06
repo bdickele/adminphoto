@@ -19,7 +19,7 @@ GET     /gallery/:categoryId                        controllers.gallery.Gallerie
 GET     /gallery/refresh/:categoryId                controllers.gallery.Galleries.refresh(categoryId: Int)
 GET     /gallery/up/:categoryId/:galleryId          controllers.gallery.Galleries.up(categoryId: Int, galleryId: Int)
 GET     /gallery/down/:categoryId/:galleryId        controllers.gallery.Galleries.down(categoryId: Int, galleryId: Int)
-GET     /gallery/onOffline/:categoryId/:galleryId   controllers.gallery.Galleries.onOffLine(categoryId: Int, galleryId: Int)
+GET     /gallery/onOffLine/:galleryId               controllers.gallery.Galleries.onOffLine(galleryId: Int)
 
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 

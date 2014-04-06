@@ -12,7 +12,7 @@ import models.GalleryPicComment
 
 /**
  * Controller dedicated to page where we update picture's comment
- * Date: 2/2/14
+ * bdickele
  */
 object GalleryPicComments extends Controller with SecureSocial {
 

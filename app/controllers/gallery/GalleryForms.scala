@@ -178,7 +178,7 @@ object GalleryForms extends Controller with SecureSocial {
 
       val nextFuture = GalleryReadService.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
       val nextGallery: Future[Gallery] = nextFuture.map {
-        option => option match {
+        _ match {
           case Some(g) => g
           case None => firstGalleryOfNextCategory(gallery.categoryId)
         }

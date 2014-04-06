@@ -18,7 +18,7 @@
     'class -> "form-horizontal",
     'role -> "form") {
 
-    @form.globalError.map { error =>
+    @form.globalError.map{ error =>
     <div class="alert alert-dismissable alert-danger">
         <button type="button" class="close" data-dismiss="alert">×</button>
         <strong>@error.message</strong>
@@ -47,10 +47,12 @@
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <a href="@controllers.category.routes.Categories.view()" role="button" class="btn btn-primary btn-sm">Cancel</a>
+            @if(models.BackEndUser.isWriter(request)){
             &nbsp;&nbsp;
             <button type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
             </button>
+            }
         </div>
     </div>
 

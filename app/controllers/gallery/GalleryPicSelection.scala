@@ -15,7 +15,6 @@ import models.{Picture, GalleryPic}
  * Controller related to screen where we select pictures for a gallery
  * bdickele
  */
-
 case class SelectedPics(galleryId: Int,
                         folder: String,
                         pictures: List[String])

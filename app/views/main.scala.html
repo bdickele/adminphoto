@@ -4,7 +4,7 @@
 
 <html >
 <head>
-    <title>@title</title>
+    <title>Admin module - @title</title>
 
     <meta charset="UTF-8"/>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -27,7 +27,7 @@
 
 <nav class="navbar navbar-fixed-top" role="navigation">
     <p class="navbar-text navbar-right">
-        Signed in as @models.BackEndUser.user(request).fullName &nbsp;&nbsp;
+        Signed in as @models.BackEndUser.user(request).fullName (@models.BackEndUser.user(request).role) &nbsp;&nbsp;
         <a href="/logout" class="btn btn-default btn-xs" title="Sign out" role="button">
             <span class="glyphicon glyphicon-off"></span>
         </a>

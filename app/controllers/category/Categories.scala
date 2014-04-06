@@ -15,7 +15,6 @@ import models.Category
  * Controller for screen related to list of categories
  * bdickele
  */
-
 object Categories extends Controller with SecureSocial {
 
   val CacheCategory = "CacheCategory"

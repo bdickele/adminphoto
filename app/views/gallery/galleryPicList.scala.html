@@ -12,6 +12,7 @@
     gallery.galleryId,
     gallery.extendedTitle)
 
+@if(models.BackEndUser.isWriter(request)){
 <button type="button" class="btn btn-primary btn-sm" onclick="toggleCheckBoxes(true);">
     <span class="glyphicon glyphicon-ok-circle"></span> Select all
 </button>
@@ -41,6 +42,7 @@
 </button>
 
 <br><br>
+}
 
 @helper.form(action=controllers.gallery.routes.GalleryPicList.save,
     'id -> "picForm") {
@@ -54,10 +56,14 @@
                     <tbody>
                     <tr>
                         <td><a id="@index"></a>
+                            @if(models.BackEndUser.isWriter(request)){
                             <a href="@controllers.gallery.routes.GalleryPicComments.view(gallery.galleryId, index)">
-                                <img src='@picture.thumbnailComplete' title='@picture.comment.getOrElse("")'></a>
+                            }
+                            <img src='@picture.thumbnailComplete' title='@picture.comment.getOrElse("")'>
+                            @if(models.BackEndUser.isWriter(request)){</a>}
                         </td>
                     </tr>
+                    @if(models.BackEndUser.isWriter(request)){
                     <tr>
                         <td style="text-align:center">
                             <div class="btn-group btn-group-sm">
@@ -70,6 +76,7 @@
                             </div>
                         </td>
                     </tr>
+                    }
                     </tbody>
                 </table>
             </div>

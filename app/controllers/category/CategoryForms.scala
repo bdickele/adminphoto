@@ -11,7 +11,6 @@ import models.Category
  * Controller dedicated to category's form (creation and modification)
  * bdickele
  */
-
 object CategoryForms extends Controller with SecureSocial {
 
   // ---------------------------------------------------------------

@@ -22,11 +22,13 @@
         </select>
     </div>
     <div class="panel-body">
+        @if(models.BackEndUser.isWriter(request)){
         <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
            class="btn btn-primary btn-sm"
            title="Create a new gallery">
             <span class="glyphicon glyphicon-plus"></span> Add
         </a>
+        }
         <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
            class="btn btn-primary btn-sm"
            title="Refresh list of galleries">
@@ -56,7 +58,7 @@
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;">
                     <label><input type="checkbox"
-                                  onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.categoryId, gallery.galleryId)'"
+                                  onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.galleryId)'"
                                   @if(models.BackEndUser.isReader(request)){disabled}
                                   @if(gallery.online){checked}></label>
                 </td>
