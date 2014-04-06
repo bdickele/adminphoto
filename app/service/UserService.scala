@@ -19,7 +19,6 @@ import models.BackEndUser
  * Service related to (back-end) users
  * bdickele
  */
-
 class UserService(application: play.api.Application) extends UserServicePlugin(application) with Controller with MongoController {
 
   val logger = Logger("models.UserService")
@@ -78,12 +77,10 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
   }
 
   def save(token: Token) {
-    println("saving token")
     tokens.insert(Json.toJson(token))
   }
 
   def findToken(token: String): Option[Token] = {
-    println("findToken")
     val future = tokens.
       find(Json.obj("uuid" -> token)).
       one[Token]
@@ -91,17 +88,14 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
   }
 
   def deleteToken(uuid: String) {
-    println("delete token by uuid")
     tokens.remove(Json.obj("uuid" -> uuid))
   }
 
   def deleteTokens() {
-    println("delete all tokens")
     tokens.remove(Json.obj())
   }
 
   def deleteExpiredTokens() {
-    println("delete expired tokens")
     val future = tokens.
       find(Json.obj()).
       cursor[Token].

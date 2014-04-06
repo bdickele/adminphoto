@@ -47,6 +47,7 @@ db.runCommand({create: "category"})
 db.runCommand({create: "gallery"})
 db.runCommand({create: "backenduser"})
 db.runCommand({create: "backendusertoken"})
+db.runCommand({create: "authenticator"})
 
 // ********************************************************************************
 // Indexs

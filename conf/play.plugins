@@ -1,6 +1,6 @@
 400:play.modules.reactivemongo.ReactiveMongoPlugin
 1500:com.typesafe.plugin.CommonsMailerPlugin
-9994:securesocial.core.DefaultAuthenticatorStore
+9994:service.AuthenticatorStoreService
 9995:securesocial.core.DefaultIdGenerator
 9996:securesocial.core.providers.utils.DefaultPasswordValidator
 9997:securesocial.controllers.DefaultTemplatesPlugin
