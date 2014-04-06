@@ -29,8 +29,8 @@ GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryP
 
 POST    /galleryPicList/save                        controllers.gallery.GalleryPicList.save
 
-GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComment.view(galleryId: Int, index: Int)
-POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComment.save
+GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComments.view(galleryId: Int, index: Int)
+POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComments.save
 
 GET     /galleryPicSelection/:galleryId                             controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String = "", subFolder: String = "")
 GET     /galleryPicSelection/:galleryId/:parentFolder               controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String = "")

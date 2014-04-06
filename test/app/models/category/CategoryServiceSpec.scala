@@ -1,23 +1,19 @@
 package app.models.category
 
 import org.specs2.mutable.Specification
-import models.category.{CategoryRW, Category}
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import util.Access
 import app.TestApplication
+import service.CategoryService
+import models.Category
 
 
-/**
- * User: bdickele
- * Date: 1/11/14
- */
-class CategoryRWSpec extends Specification {
+class CategoryServiceSpec extends Specification {
 
   "Seach of a single category" should {
 
-    lazy val future = CategoryRW.find(1)
+    lazy val future = CategoryService.find(1)
     lazy val category = Await.result(future, Duration(5, TimeUnit.SECONDS)).get
 
     "return 2004 when categoryID is 1" in new TestApplication {
@@ -25,19 +21,17 @@ class CategoryRWSpec extends Specification {
       category.title must equalTo("2004")
       category.comment must equalTo("Année 2004")
       category.online must beTrue
-      //category.access must equalTo(Access.Guest)
     }
-
   }
 
   "Total list of categories" should {
 
-    lazy val future = CategoryRW.findAll
+    lazy val future = CategoryService.findAll
     lazy val list: List[Category] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     "contain all categories" in new TestApplication {
       list.foreach(c => println("> Found " + c.toString))
-      list.size must equalTo(2)
+      list.size must equalTo(10)
     }
 
     "contain 2004 as last category" in new TestApplication {
@@ -46,7 +40,6 @@ class CategoryRWSpec extends Specification {
       c.title must equalTo("2004")
       c.comment must equalTo("Année 2004")
       c.online must beTrue
-      //c.access must equalTo(Access.Guest)
     }
   }
 

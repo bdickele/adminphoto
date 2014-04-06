@@ -1,14 +1,14 @@
-package models.picture
+package service
 
 import play.api.Play.current
 import play.api.cache.Cache
 import util.FtpUtil
 
 /**
- * Created by bdickele
- * Date: 2/2/14
+ * Service used to return list of available folders and sub-folders in the picture stock
+ * bdickele
  */
-object Folder {
+object PictureStockService {
 
   val CacheMainFolders = "CacheMainFolders"
   val CacheSubFolders = "CacheSubFolders."

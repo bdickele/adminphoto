@@ -2,14 +2,14 @@ package controllers.category
 
 import play.api.mvc.{Action, Controller}
 import play.api.data.Forms._
-import models.category.{Category, CategoryRW}
 import play.api.data.Form
 import securesocial.core.SecureSocial
+import service.CategoryService
+import models.Category
 
 /**
  * Controller dedicated to category's form (creation and modification)
- * Created by bdickele
- * Date: 25/01/14
+ * bdickele
  */
 
 object CategoryForms extends Controller with SecureSocial {
@@ -70,14 +70,14 @@ object CategoryForms extends Controller with SecureSocial {
           Categories.findAllFromCacheOrDB().find(_.categoryId == form.categoryId) match {
 
             // Edition of an existing category
-            case Some(category) => CategoryRW.update(
+            case Some(category) => CategoryService.update(
               category.copy(
                 title = form.title,
                 comment = form.comment,
                 online = form.online))
 
             // New category
-            case None => CategoryRW.create(form.title, form.comment, form.online)
+            case None => CategoryService.create(form.title, form.comment, form.online)
           }
 
           Categories.clearCache()

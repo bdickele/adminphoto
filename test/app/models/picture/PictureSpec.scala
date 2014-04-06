@@ -2,8 +2,9 @@ package app.models.picture
 
 import org.specs2.mutable._
 
-import models.picture.{Picture, Folder}
 import app.TestApplication
+import service.PictureStockService
+import models.Picture
 
 /**
  * User: bdickele
@@ -13,7 +14,7 @@ class PictureSpec extends Specification {
 
   val Url = "http://www.dickele.com/photostock/"
 
-  lazy val mainFolders = Folder.mainFolders
+  lazy val mainFolders = PictureStockService.mainFolders
 
 
   "The list of categories" should {
@@ -24,7 +25,7 @@ class PictureSpec extends Specification {
 
   "The list of sub-folders for 2004" should {
     "contain 2 galleries : misc and venise" in new TestApplication {
-      val subFolderNames = Folder.subFolders(mainFolders.last)
+      val subFolderNames = PictureStockService.subFolders(mainFolders.last)
       subFolderNames must equalTo(List("0408_venise", "0406_misc"))
     }
   }

@@ -1,5 +1,5 @@
-@(selectedCategoryId: Int, categories: List[models.category.Category],
-    galleries: List[models.gallery.Gallery])(implicit request: RequestHeader)
+@(selectedCategoryId: Int, categories: List[models.Category],
+    galleries: List[models.Gallery])(implicit request: RequestHeader)
 
 @main("Galleries"){
         <script>
@@ -7,7 +7,7 @@
                 document.getElementById("category").focus();
             })();
         </script>
-    <script src='@routes.Assets.at("javascripts/gallery/gallery.js")'></script>
+    <script src='@routes.Assets.at("javascripts/gallery.js")'></script>
 }{
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, selectedCategoryId)
@@ -41,22 +41,26 @@
                 <th style="text-align:center;">Titre</th>
                 <th style="text-align:center; width:30">Pictures</th>
                 <th style="text-align:center; width:30">Online</th>
+                @if(models.BackEndUser.isWriter(request)){
                 <th style="text-align:center;">Up</th>
                 <th style="text-align:center;">Down</th>
+                }
             </tr>
             </thead>
             <tbody>
             @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
                 <td><a href="@controllers.gallery.routes.GalleryPicList.view(gallery.galleryId)">
-                    <img src='@gallery.thumbnail'></a></td>
+                    <img src='@gallery.thumbnailComplete'></a></td>
                 <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>
                 <td style="text-align:center;">
                     <label><input type="checkbox"
                                   onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.categoryId, gallery.galleryId)'"
-                        @if(gallery.online){checked}></label>
+                                  @if(models.BackEndUser.isReader(request)){disabled}
+                                  @if(gallery.online){checked}></label>
                 </td>
+                @if(models.BackEndUser.isWriter(request)){
                 <td style="text-align:center;">
                     @if(index != 0){
                     <a href="@controllers.gallery.routes.Galleries.up(gallery.categoryId, gallery.galleryId)">
@@ -75,6 +79,7 @@
                     </a>
                     }
                 </td>
+                }
             </tr>
             }
             </tbody>

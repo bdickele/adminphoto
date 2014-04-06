@@ -4,9 +4,10 @@ import org.specs2.mutable.Specification
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import models.gallery.{GalleryPicturesRW, GalleryPics}
+import models.gallery.GalleryPics
 import util.Const
 import app.TestApplication
+import service.GalleryPicturesRW
 
 /**
  * Created by bdickele

@@ -3,6 +3,10 @@ package controllers
 import play.api.mvc._
 import play.api.Routes
 
+/**
+ * Default controller
+ * bdickele
+ */
 object Application extends Controller {
 
 

@@ -1,19 +1,21 @@
 package controllers.category
 
+
 import play.api.mvc.{SimpleResult, Controller}
-import models.category.{Category, CategoryRW}
 import play.api.cache.Cache
 import play.api.Play.current
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
-import reactivemongo.bson.{BSONInteger, BSONBoolean}
+import scala.concurrent.duration._
 import securesocial.core.SecureSocial
+import service.CategoryService
+import play.api.libs.json.Json
+import models.Category
 
 /**
- * User: bdickele
- * Date: 1/7/14
+ * Controller for screen related to list of categories
+ * bdickele
  */
+
 object Categories extends Controller with SecureSocial {
 
   val CacheCategory = "CacheCategory"
@@ -21,14 +23,13 @@ object Categories extends Controller with SecureSocial {
 
   def view() = SecuredAction {
     implicit request =>
+      clearCache()
       Ok(views.html.category.category(findAllFromCacheOrDB()))
   }
 
-  // Is it a good practice ? I don't know to this day, but I need that as that list of categories
-  // is required in many places of the application
   def findAllFromCacheOrDB(): List[Category] =
     Cache.getOrElse[List[Category]](CacheCategory) {
-      Await.result(CategoryRW.findAll, Duration(5, TimeUnit.SECONDS))
+      Await.result(CategoryService.findAll, 5 seconds)
     }
 
   def refresh() = SecuredAction {
@@ -63,8 +64,8 @@ object Categories extends Controller with SecureSocial {
             case None => // nothing to do then
             case Some(otherCategory) =>
               clearCache()
-              CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank + 1))
-              CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
+              CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank + 1))
+              CategoryService.updateField(otherCategory.categoryId, "rank", Json.toJson(categoryRank))
           }
 
           Redirect(routes.Categories.view())
@@ -92,8 +93,8 @@ object Categories extends Controller with SecureSocial {
             case None => // nothing to do then
             case Some(otherCategory) =>
               clearCache()
-              CategoryRW.updateField(category.categoryId, "rank", BSONInteger(categoryRank - 1))
-              CategoryRW.updateField(otherCategory.categoryId, "rank", BSONInteger(categoryRank))
+              CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank - 1))
+              CategoryService.updateField(otherCategory.categoryId, "rank", Json.toJson(categoryRank))
           }
 
           Redirect(routes.Categories.view())
@@ -107,7 +108,7 @@ object Categories extends Controller with SecureSocial {
       findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
         case Some(category) =>
           clearCache()
-          CategoryRW.updateField(category.categoryId, "online", BSONBoolean(!category.online))
+          CategoryService.updateField(category.categoryId, "online", Json.toJson(!category.online))
           Redirect(routes.Categories.view())
 
         case None => couldNotFindCategory(categoryId)

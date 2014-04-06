@@ -1,16 +1,16 @@
-@(galleryPictures: models.gallery.GalleryPics,
+@(gallery: models.Gallery,
     picAction: controllers.gallery.GalleryPicAction)(implicit request: play.api.mvc.RequestHeader)
 
-@main(galleryPictures.extendedTitle){
-<script src='@routes.Assets.at("javascripts/gallery/galleryPicList.js")'></script>
+@main(gallery.extendedTitle){
+<script src='@routes.Assets.at("javascripts/galleryPicList.js")'></script>
         <script>checkThumbnailClass()</script>
 }{
 
-@menu.topmenu(views.menu.TopMenuElement.Gallery, galleryPictures.categoryId)
+@menu.topmenu(views.menu.TopMenuElement.Gallery, gallery.categoryId)
 
-@gallerymenu(views.gallery.GalleryMenuElement.PicList, galleryPictures.categoryId,
-    galleryPictures.galleryId,
-    galleryPictures.extendedTitle)
+@gallerymenu(views.gallery.GalleryMenuElement.PicList, gallery.categoryId,
+    gallery.galleryId,
+    gallery.extendedTitle)
 
 <button type="button" class="btn btn-primary btn-sm" onclick="toggleCheckBoxes(true);">
     <span class="glyphicon glyphicon-ok-circle"></span> Select all
@@ -45,7 +45,7 @@
 @helper.form(action=controllers.gallery.routes.GalleryPicList.save,
     'id -> "picForm") {
 
-    @for(subList <- galleryPictures.pictures.zipWithIndex.sliding(6, 6)) {
+    @for(subList <- gallery.pictures.zipWithIndex.sliding(6, 6)) {
     <div class="row">
         @for((picture, index) <- subList) {
         <div class="col-md-2">
@@ -54,7 +54,7 @@
                     <tbody>
                     <tr>
                         <td><a id="@index"></a>
-                            <a href="@controllers.gallery.routes.GalleryPicComment.view(galleryPictures.galleryId, index)">
+                            <a href="@controllers.gallery.routes.GalleryPicComments.view(gallery.galleryId, index)">
                                 <img src='@picture.thumbnailComplete' title='@picture.comment.getOrElse("")'></a>
                         </td>
                     </tr>
@@ -64,8 +64,8 @@
                                 <input name="picIndexes[@index]" type="checkbox" onclick="checkThumbnailClass()" value="@index"
                                 @if(picAction.picIndexes.contains(index)){checked} > Select<br>
                                 <input type="radio" name="thumbnail" value="@picture.thumbnail"
-                                       onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(galleryPictures.galleryId, index)'"
-                                @if(picture.thumbnail == galleryPictures.thumbnail){checked}>
+                                       onchange="self.location='@controllers.gallery.routes.GalleryPicList.changeThumbnail(gallery.galleryId, index)'"
+                                @if(picture.thumbnail == gallery.thumbnail){checked}>
                                 Thumb.
                             </div>
                         </td>

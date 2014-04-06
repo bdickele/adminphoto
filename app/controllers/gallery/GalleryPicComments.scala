@@ -1,24 +1,20 @@
 package controllers.gallery
 
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Controller
 import play.api.data.Forms._
 import play.api.data.Form
-import models.gallery.GalleryPicturesRW
 import util.Const
-import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.SecureSocial
+import service.{GalleryReadService, GalleryWriteService}
+import play.api.libs.concurrent.Execution.Implicits._
+import models.GalleryPicComment
+
 
 /**
- * Created by bdickele
+ * Controller dedicated to page where we update picture's comment
  * Date: 2/2/14
  */
-case class GalleryPicComment(categoryId: Int,
-                             galleryId: Int,
-                             index: Int,
-                             webComplete: String,
-                             comment: Option[String])
-
-object GalleryPicComment extends Controller with SecureSocial {
+object GalleryPicComments extends Controller with SecureSocial {
 
   val formMapping = mapping(
     "categoryId" -> number,
@@ -36,16 +32,16 @@ object GalleryPicComment extends Controller with SecureSocial {
 
   def view(galleryId: Int, index: Int) = SecuredAction.async {
     implicit request =>
-    GalleryPicturesRW.findByGalleryId(galleryId).map {
+      GalleryReadService.findById(galleryId).map {
       _ match {
-        case Some(galleryPics) =>
-          val realIndex = if (index < 0 || index > (galleryPics.pictures.length - 1)) 0 else index
+        case Some(gallery) =>
+          val realIndex = if (index < 0 || index > (gallery.pictures.length - 1)) 0 else index
 
-          val galleryPic = galleryPics.pictures.apply(realIndex)
+          val galleryPic = gallery.pictures.apply(realIndex)
 
           Ok(views.html.gallery.galleryPicComment(
             picForm.fill(GalleryPicComment(
-              galleryPics.categoryId,
+              gallery.categoryId,
               galleryId,
               realIndex,
               Const.WebRoot + galleryPic.web,
@@ -65,9 +61,9 @@ object GalleryPicComment extends Controller with SecureSocial {
 
         // Validation OK
         form => {
-          GalleryPicturesRW.updateComment(form.galleryId, form.index, form.comment)
+          GalleryWriteService.updateComment(form.galleryId, form.index, form.comment)
           // Once comment is saved we moved to next picture
-          Redirect(routes.GalleryPicComment.view(form.galleryId, form.index + 1))
+          Redirect(routes.GalleryPicComments.view(form.galleryId, form.index + 1))
         }
       )
   }

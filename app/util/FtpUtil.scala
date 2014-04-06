@@ -4,8 +4,8 @@ import org.apache.commons.net.ftp.{FTPFile, FTPClient}
 import play.api.{Logger, Play}
 
 /**
- * Created by bdickele
- * Date: 3/16/14
+ * Util class to retrieve pictures through FTP
+ * bdickele
  */
 object FtpUtil {
 

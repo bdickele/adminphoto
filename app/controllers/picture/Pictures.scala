@@ -1,29 +1,30 @@
 package controllers.picture
 
 import play.api.mvc.{Action, Controller}
-import models.picture.{Picture, Folder}
 import util.Const._
 import securesocial.core.SecureSocial
+import service.PictureStockService
+import models.Picture
 
 
 /**
- * User: bdickele
- * Date: 1/7/14
+ * Controller for screen related to list of available pictures
+ * bdickele
  */
 object Pictures extends Controller with SecureSocial {
 
   def refresh() = Action {
     implicit request =>
-      Folder.clearCache()
+      PictureStockService.clearCache()
       Redirect(routes.Pictures.view("", ""))
   }
 
   def view(mainFolder: String = "", subFolder: String = "") = SecuredAction {
     implicit request =>
-      val mainFolders = Folder.mainFolders
+      val mainFolders = PictureStockService.mainFolders
       val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-      val subFolders = Folder.subFolders(mainFolderName)
+      val subFolders = PictureStockService.subFolders(mainFolderName)
       val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
       val folder = mainFolderName + "/" + subFolderName + "/"

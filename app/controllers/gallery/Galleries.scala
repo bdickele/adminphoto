@@ -1,21 +1,19 @@
 package controllers.gallery
 
-import play.api.mvc.{SimpleResult, Action, Controller}
+import play.api.mvc.{SimpleResult, Controller}
 import scala.concurrent.{Await, Future}
-import models.category.Category
-import models.gallery.{Gallery, GalleryRW}
+import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.Logger
 import controllers.category.Categories
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
-import reactivemongo.bson.{BSONBoolean, BSONInteger}
 import securesocial.core.SecureSocial
-import models.user.BackEndUser
+import service.{GalleryReadService, GalleryWriteService}
+import play.api.libs.json.Json
+import models.{Gallery, Category}
 
 /**
- * User: bdickele
- * Date: 1/7/14
+ * Controller for galleries
+ * bdickele
  */
 object Galleries extends Controller with SecureSocial {
 
@@ -28,7 +26,7 @@ object Galleries extends Controller with SecureSocial {
       categories.exists(c => c.categoryId == categoryId) match {
         case false => Future.successful(Categories.couldNotFindCategory(categoryId))
 
-        case true => GalleryRW.findAll(categoryId).map {
+        case true => GalleryReadService.findAll(categoryId).map {
           galleries => Ok(views.html.gallery.gallery(categoryId, categories, galleries))
         }.recover {
           case e =>
@@ -56,8 +54,8 @@ object Galleries extends Controller with SecureSocial {
           // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
           galleries.reverse.find(_.rank > galleryRank) match {
             case Some(otherGallery) =>
-              GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank + 1))
-              GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
+              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank + 1))
+              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank))
             case _ => // nothing to do then
           }
 
@@ -81,8 +79,8 @@ object Galleries extends Controller with SecureSocial {
           galleries.find(_.rank < galleryRank) match {
             case None => // nothing to do then
             case Some(otherGallery) =>
-              GalleryRW.updateField(galleryId, "rank", BSONInteger(galleryRank - 1))
-              GalleryRW.updateField(otherGallery.galleryId, "rank", BSONInteger(galleryRank))
+              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank - 1))
+              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank))
           }
 
           Redirect(routes.Galleries.view(categoryId))
@@ -93,10 +91,10 @@ object Galleries extends Controller with SecureSocial {
 
   def onOffLine(categoryId: Int, galleryId: Int) = SecuredAction.async {
     implicit request =>
-      GalleryRW.findById(galleryId).map {
+      GalleryReadService.findById(galleryId).map {
         _ match {
           case Some(gallery) =>
-            GalleryRW.updateField(galleryId, "online", BSONBoolean(!gallery.online))
+            GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online))
             Redirect(routes.Galleries.view(categoryId))
           case None =>
             couldNotFindGallery(galleryId)
@@ -105,7 +103,7 @@ object Galleries extends Controller with SecureSocial {
   }
 
   def findAll(categoryId: Int): List[Gallery] =
-    Await.result(GalleryRW.findAll(categoryId), Duration(5, TimeUnit.SECONDS))
+    Await.result(GalleryReadService.findAll(categoryId), 5 seconds)
 
   def couldNotFindGallery(galleryId: Int): SimpleResult =
     BadRequest(views.html.badRequest("Could not find a gallery with ID " + galleryId))

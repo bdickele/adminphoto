@@ -1,20 +1,19 @@
 package controllers.gallery
 
-import play.api.mvc.{Action, Controller}
-import models.picture.{Picture, Folder}
+import play.api.mvc.Controller
 import play.api.data.Forms._
 import play.api.data.Form
 import util.Const._
-import models.gallery.{GalleryRW, GalleryPicturesRW, GalleryPic}
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
+import scala.concurrent.duration._
 import securesocial.core.SecureSocial
+import service.{PictureStockService, GalleryReadService, GalleryWriteService}
+import models.{Picture, GalleryPic}
 
 /**
- * Created by bdickele
- * Date: 2/2/14
+ * Controller related to screen where we select pictures for a gallery
+ * bdickele
  */
 
 case class SelectedPics(galleryId: Int,
@@ -41,19 +40,19 @@ object GalleryPicSelection extends Controller with SecureSocial {
 
   def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async {
     implicit request =>
-      val future = GalleryRW.findById(galleryId)
+      val future = GalleryReadService.findById(galleryId)
       future.map {
         option =>
           option match {
             case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
             case Some(gallery) =>
 
-              val mainFolders = Folder.mainFolders
+              val mainFolders = PictureStockService.mainFolders
 
               // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
               val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
 
-              val subFolders = Folder.subFolders(mainFolderName)
+              val subFolders = PictureStockService.subFolders(mainFolderName)
               val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
               val folder = mainFolderName + "/" + subFolderName + "/"
@@ -96,7 +95,7 @@ object GalleryPicSelection extends Controller with SecureSocial {
           val filteredPictures: List[Picture] = availablePics.filter(p => picturesRaw.contains(p.web))
 
           val galleryPics: List[GalleryPic] = filteredPictures.map(pic =>
-            GalleryPic("", // We don't care about the complete path to thumbnail here
+            GalleryPic(
               folder + FolderThumbnail + pic.thumbnail,
               folder + FolderWeb + pic.web,
               pic.print match {
@@ -105,7 +104,7 @@ object GalleryPicSelection extends Controller with SecureSocial {
               },
               None))
           // Waiting for update otherwise screen could be displayed before being updated
-          Await.result(GalleryPicturesRW.addPictures(form.galleryId, galleryPics), Duration(5, TimeUnit.SECONDS))
+          Await.result(GalleryWriteService.addPictures(form.galleryId, galleryPics), 5 seconds)
           Redirect(routes.GalleryPicList.view(form.galleryId))
         })
   }

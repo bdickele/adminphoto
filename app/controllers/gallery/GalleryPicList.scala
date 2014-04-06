@@ -1,20 +1,19 @@
 package controllers.gallery
 
 import play.api.mvc.Controller
-import models.gallery._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.Duration
 import play.api.data.Forms._
-import reactivemongo.bson.BSONString
 import scala.Some
 import play.api.data.Form
 import securesocial.core.SecureSocial
+import service.{GalleryReadService, GalleryWriteService}
+import play.api.libs.json.Json
 
 /**
  * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
- * Created by bdickele on 01/02/14.
+ * bdickele
  */
 
 case class GalleryPicAction(galleryId: Int,
@@ -39,7 +38,7 @@ object GalleryPicList extends Controller with SecureSocial {
 
   def view(galleryId: Int) = SecuredAction.async {
     implicit request =>
-      GalleryPicturesRW.findByGalleryId(galleryId).map {
+      GalleryReadService.findById(galleryId).map {
         _ match {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
@@ -49,7 +48,7 @@ object GalleryPicList extends Controller with SecureSocial {
 
   def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction.async {
     implicit request =>
-      GalleryPicturesRW.findByGalleryId(galleryId).map {
+      GalleryReadService.findById(galleryId).map {
         _ match {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
@@ -96,8 +95,8 @@ object GalleryPicList extends Controller with SecureSocial {
    * @return Indexes of selected pictures in the new list
    */
   def movePictures(galleryId: Int, actionName: String, selectedIndexes: List[Int]): List[Int] = {
-    val future = findGallery(galleryId)
-    Await.result(future, Duration(5, TimeUnit.SECONDS)) match {
+    val future = GalleryReadService.findById(galleryId)
+    Await.result(future, 5 seconds) match {
       case None => Nil
       case Some(gallery) =>
         val pics = gallery.pictures
@@ -108,7 +107,7 @@ object GalleryPicList extends Controller with SecureSocial {
         val indexesReordered = reorderIndexes(actionName, selectedIndexes, nonSelectedIndexes)
         val newPics = indexesReordered.map(i => pics.apply(i)).toList
         // Waiting for update otherwise screen could be displayed before being updated
-        Await.result(GalleryPicturesRW.setPictures(galleryId, newPics), Duration(5, TimeUnit.SECONDS))
+        Await.result(GalleryWriteService.setPictures(galleryId, newPics), 5 seconds)
 
         // We return the list of indexes of selected pictures in the new list
         for {(pic, index) <- newPics.zipWithIndex
@@ -163,20 +162,17 @@ object GalleryPicList extends Controller with SecureSocial {
    */
   def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction.async {
     implicit request =>
-      findGallery(galleryId).map {
+      GalleryReadService.findById(galleryId).map {
         _ match {
           case None => Galleries.couldNotFindGallery(galleryId)
           case Some(gallery) =>
             val pictures = gallery.pictures
             if (picIndex > -1 && picIndex < pictures.length) {
-              GalleryRW.updateField(galleryId, "thumbnail", BSONString(pictures.apply(picIndex).thumbnail))
+              GalleryWriteService.updateField(galleryId, "thumbnail", Json.toJson(pictures.apply(picIndex).thumbnail))
             }
             Redirect(routes.GalleryPicList.view(galleryId))
         }
       }
   }
-
-  def findGallery(galleryId: Int): Future[Option[GalleryPics]] =
-    GalleryPicturesRW.findByGalleryId(galleryId)
 
 }

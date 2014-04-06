@@ -5,17 +5,16 @@ import play.api.data.Forms._
 import play.api.data.Form
 import controllers.category.Categories
 import scala.concurrent.{Future, Await}
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
+import scala.concurrent.duration._
 import scala.Some
-import models.gallery.{Gallery, GalleryRW, GalleryForm}
-import models.category.Category
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.SecureSocial
+import service.{GalleryReadService, GalleryWriteService}
+import models.{GalleryForm, Gallery, Category}
 
 /**
- * User: bdickele
- * Date: 1/26/14
+ * Controller for actions related to gallery's form (creation and edition)
+ * bdickele
  */
 object GalleryForms extends Controller with SecureSocial {
 
@@ -53,7 +52,9 @@ object GalleryForms extends Controller with SecureSocial {
   def create(categoryId: Int) = SecuredAction {
     implicit request =>
       val categories: List[Category] = Categories.findAllFromCacheOrDB()
+
       categories.find(_.categoryId == categoryId) match {
+
         case Some(category) =>
           Ok(views.html.gallery.galleryForm("New gallery",
             Categories.findAllFromCacheOrDB(),
@@ -65,9 +66,10 @@ object GalleryForms extends Controller with SecureSocial {
 
   def edit(galleryId: Int) = SecuredAction.async {
     implicit request =>
-      val future = GalleryRW.findById(galleryId)
+      val future = GalleryReadService.findById(galleryId)
+
       future.map {
-        option => option match {
+        _ match {
           case Some(gallery) => Ok(views.html.gallery.galleryForm(
             gallery.extendedTitle,
             Categories.findAllFromCacheOrDB(),
@@ -88,14 +90,14 @@ object GalleryForms extends Controller with SecureSocial {
         // Validation OK
         form => {
           val galleryId = form.galleryId
-          val future: Future[Option[Gallery]] = GalleryRW.findById(galleryId)
-          val option: Option[Gallery] = Await.result(future, Duration(10, TimeUnit.SECONDS))
+          val future: Future[Option[Gallery]] = GalleryReadService.findById(galleryId)
+          val option: Option[Gallery] = Await.result(future, 5 seconds)
 
           option match {
 
             // Edition of an existing gallery
             case Some(gallery) =>
-              GalleryRW.update(
+              GalleryWriteService.update(
                 form.galleryId,
                 form.categoryId,
                 form.title,
@@ -107,8 +109,9 @@ object GalleryForms extends Controller with SecureSocial {
 
             // New gallery
             case None =>
-              GalleryRW.create(form.categoryId, form.title, form.year, form.month, form.comment, form.online)
-              Redirect(routes.GalleryPicSelection.view(galleryId, "", ""))
+              val newGalleryId = GalleryReadService.findMaxGalleryId + 1
+              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.year, form.month, form.comment, form.online)
+              Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
           }
         }
       )
@@ -116,7 +119,7 @@ object GalleryForms extends Controller with SecureSocial {
 
   // Required by form's validation
   def findByTitle(title: String): Option[Gallery] =
-    Await.result(GalleryRW.findByTitle(title), Duration(5, TimeUnit.SECONDS))
+    Await.result(GalleryReadService.findByTitle(title), 5 seconds)
 
   /**
    * Redirect to previous gallery of passed gallery ID
@@ -125,11 +128,11 @@ object GalleryForms extends Controller with SecureSocial {
    */
   def previousGallery(galleryId: Int) = SecuredAction.async {
     implicit request =>
-      val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
+      val gallery = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
 
-      val previousFuture = GalleryRW.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
+      val previousFuture = GalleryReadService.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
       val previousGallery: Future[Gallery] = previousFuture.map {
-        option => option match {
+        _ match {
           case Some(g) => g
           case None => lastGalleryOfPreviousCategory(gallery.categoryId)
         }
@@ -155,10 +158,10 @@ object GalleryForms extends Controller with SecureSocial {
       case n => categories.find(_.rank < category.rank).get.categoryId
     }
 
-    val futureGallery = GalleryRW.findLastGalleryOfCategory(newCategoryId)
+    val futureGallery = GalleryReadService.findLastGalleryOfCategory(newCategoryId)
 
     // In case category doesn't contain any gallery
-    Await.result(futureGallery, Duration(5, TimeUnit.SECONDS)) match {
+    Await.result(futureGallery, 5 seconds) match {
       case None => lastGalleryOfPreviousCategory(newCategoryId)
       case Some(g) => g
     }
@@ -171,9 +174,9 @@ object GalleryForms extends Controller with SecureSocial {
    */
   def nextGallery(galleryId: Int) = SecuredAction.async {
     implicit request =>
-      val gallery = Await.result(GalleryRW.findById(galleryId), Duration(5, TimeUnit.SECONDS)).get
+      val gallery = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
 
-      val nextFuture = GalleryRW.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
+      val nextFuture = GalleryReadService.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
       val nextGallery: Future[Gallery] = nextFuture.map {
         option => option match {
           case Some(g) => g
@@ -201,10 +204,10 @@ object GalleryForms extends Controller with SecureSocial {
       case n => categories.apply(categoryIndex + 1).categoryId
     }
 
-    val futureGallery = GalleryRW.findFirstGalleryOfCategory(newCategoryId)
+    val futureGallery = GalleryReadService.findFirstGalleryOfCategory(newCategoryId)
 
     // In case category doesn't contain any gallery
-    Await.result(futureGallery, Duration(5, TimeUnit.SECONDS)) match {
+    Await.result(futureGallery, 5 seconds) match {
       case None => firstGalleryOfNextCategory(newCategoryId)
       case Some(g) => g
     }

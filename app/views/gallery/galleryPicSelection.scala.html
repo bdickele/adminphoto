@@ -1,5 +1,5 @@
 @(form: Form[controllers.gallery.SelectedPics],
-gallery: models.gallery.Gallery,
+gallery: models.Gallery,
 mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
 pictures: List[controllers.gallery.SelectablePic])(implicit request: play.api.mvc.RequestHeader)
@@ -15,7 +15,7 @@ pictures: List[controllers.gallery.SelectablePic])(implicit request: play.api.mv
 
 
 </script>
-<script src='@routes.Assets.at("javascripts/gallery/galleryPicSelection.js")'></script>
+<script src='@routes.Assets.at("javascripts/galleryPicSelection.js")'></script>
 <script>checkThumbnailClass()</script>
 }{
 
