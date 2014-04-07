@@ -9,7 +9,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import securesocial.core.SecureSocial
 import service.{PictureStockService, GalleryReadService, GalleryWriteService}
-import models.{Picture, GalleryPic}
+import models.{Role, WithRole, Picture, GalleryPic}
 
 /**
  * Controller related to screen where we select pictures for a gallery
@@ -73,7 +73,7 @@ object GalleryPicSelection extends Controller with SecureSocial {
       }
   }
 
-  def save() = SecuredAction {
+  def save() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       form.bindFromRequest.fold(
 

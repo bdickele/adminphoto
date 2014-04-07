@@ -10,6 +10,7 @@ import play.api.data.Form
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
 import play.api.libs.json.Json
+import models.{Role, WithRole}
 
 /**
  * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
@@ -45,7 +46,7 @@ object GalleryPicList extends Controller with SecureSocial {
       }
   }
 
-  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction.async {
+  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async {
     implicit request =>
       GalleryReadService.findById(galleryId).map {
         _ match {
@@ -56,7 +57,7 @@ object GalleryPicList extends Controller with SecureSocial {
       }
   }
 
-  def save() = SecuredAction {
+  def save() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       form.bindFromRequest.fold(
 
@@ -159,7 +160,7 @@ object GalleryPicList extends Controller with SecureSocial {
    * @param picIndex Index of picture that will be the new thumbnail
    * @return
    */
-  def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction.async {
+  def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction(WithRole(Role.Writer)).async {
     implicit request =>
       GalleryReadService.findById(galleryId).map {
         _ match {

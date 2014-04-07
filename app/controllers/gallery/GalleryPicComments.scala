@@ -7,7 +7,7 @@ import util.Const
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.GalleryPicComment
+import models.{Role, WithRole, GalleryPicComment}
 
 
 /**
@@ -30,7 +30,7 @@ object GalleryPicComments extends Controller with SecureSocial {
   val picForm: Form[GalleryPicComment] = Form(formMapping)
 
 
-  def view(galleryId: Int, index: Int) = SecuredAction.async {
+  def view(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async {
     implicit request =>
       GalleryReadService.findById(galleryId).map {
       _ match {
@@ -52,7 +52,7 @@ object GalleryPicComments extends Controller with SecureSocial {
     }
   }
 
-  def save() = SecuredAction {
+  def save() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       picForm.bindFromRequest.fold(
 

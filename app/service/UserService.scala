@@ -109,6 +109,7 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
     }
   }
 
+
   // --------------------------------------------------------------
   // Mappers (reading)
   // --------------------------------------------------------------

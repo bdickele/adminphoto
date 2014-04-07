@@ -10,7 +10,10 @@ import scala.Some
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
-import models.{GalleryForm, Gallery, Category}
+import models._
+import models.WithRole
+import scala.Some
+import models.Category
 
 /**
  * Controller for actions related to gallery's form (creation and edition)
@@ -49,7 +52,7 @@ object GalleryForms extends Controller with SecureSocial {
   val galleryForm: Form[GalleryForm] = Form(formMapping)
 
 
-  def create(categoryId: Int) = SecuredAction {
+  def create(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       val categories: List[Category] = Categories.findAllFromCacheOrDB()
 
@@ -79,7 +82,7 @@ object GalleryForms extends Controller with SecureSocial {
       }
   }
 
-  def save() = SecuredAction {
+  def save() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       galleryForm.bindFromRequest.fold(
 

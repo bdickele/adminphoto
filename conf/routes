@@ -48,7 +48,7 @@ GET     /category/create                    controllers.category.CategoryForms.c
 GET     /category/edit/:categoryId          controllers.category.CategoryForms.edit(categoryId: Int)
 GET     /category/up/:categoryId            controllers.category.Categories.up(categoryId: Int)
 GET     /category/down/:categoryId          controllers.category.Categories.down(categoryId: Int)
-GET     /category/onOffline/:categoryId     controllers.category.Categories.onOffLine(categoryId: Int)
+GET     /category/onOffLine/:categoryId     controllers.category.Categories.onOffLine(categoryId: Int)
 
 POST    /category/save                      controllers.category.CategoryForms.save
 

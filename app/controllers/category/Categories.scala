@@ -6,10 +6,11 @@ import play.api.cache.Cache
 import play.api.Play.current
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import securesocial.core.SecureSocial
+import securesocial.core.{SecuredRequest, SecureSocial}
 import service.CategoryService
 import play.api.libs.json.Json
-import models.Category
+import models.{WithRole, Role, Category}
+import models.WithRole
 
 /**
  * Controller for screen related to list of categories
@@ -49,7 +50,7 @@ object Categories extends Controller with SecureSocial {
    * @param categoryId ID of category to promote
    * @return
    */
-  def up(categoryId: Int) = SecuredAction {
+  def up(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       val categories: List[Category] = findAllFromCacheOrDB()
 
@@ -78,7 +79,7 @@ object Categories extends Controller with SecureSocial {
    * @param categoryId ID of category to promote
    * @return
    */
-  def down(categoryId: Int) = SecuredAction {
+  def down(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       val categories: List[Category] = findAllFromCacheOrDB()
 
@@ -102,7 +103,7 @@ object Categories extends Controller with SecureSocial {
       }
   }
 
-  def onOffLine(categoryId: Int) = SecuredAction {
+  def onOffLine(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
         case Some(category) =>

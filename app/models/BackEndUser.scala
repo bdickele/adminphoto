@@ -20,9 +20,9 @@ case class BackEndUser(id: Int,
                        oAuth2Info: Option[securesocial.core.OAuth2Info],
                        passwordInfo: Option[securesocial.core.PasswordInfo]) extends Identity {
 
-  val isWriter = role == "WRITER"
+  val isWriter = BackEndUser.isWriter(role)
 
-  val isReader = !isWriter
+  val isReader = BackEndUser.isReader(role)
 }
 
 
@@ -34,8 +34,28 @@ object BackEndUser {
 
   def isReader(request: RequestHeader) : Boolean = !isWriter(request)
 
-  def isWriter(request: SecuredRequest[Any]) = request.user.asInstanceOf[BackEndUser].isWriter
+  def isWriter(request: SecuredRequest[Any]) : Boolean = isWriter(request.user.asInstanceOf[BackEndUser].role)
 
   def isWriter(request: RequestHeader) : Boolean = isWriter(request.asInstanceOf[SecuredRequest[Any]])
 
+  // Central point for business logic related to: is a role of type Writer or Reader
+  def isWriter(s: String) = s == Role.Writer.toString
+
+  def isReader(s: String) = !isWriter(s)
+
+}
+
+// Available values for role
+object Role extends Enumeration {
+  val Reader = Value("READER")
+  val Writer = Value("WRITER")
+}
+
+// That class is used by securesocial's SecuredAction to check user role
+case class WithRole(role: Role.Value) extends Authorization {
+
+  def isAuthorized(user: Identity) = role match {
+    case Role.Writer => BackEndUser.isWriter(user.asInstanceOf[BackEndUser].role)
+    case _ => true
+  }
 }

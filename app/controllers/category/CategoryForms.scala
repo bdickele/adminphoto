@@ -5,7 +5,7 @@ import play.api.data.Forms._
 import play.api.data.Form
 import securesocial.core.SecureSocial
 import service.CategoryService
-import models.Category
+import models.{Role, WithRole, Category}
 
 /**
  * Controller dedicated to category's form (creation and modification)
@@ -41,7 +41,7 @@ object CategoryForms extends Controller with SecureSocial {
   def findByTitle(title: String): Option[Category] =
     Categories.findAllFromCacheOrDB().find(_.title == title)
 
-  def create() = SecuredAction {
+  def create() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       Ok(views.html.category.categoryForm("New category",
         categoryForm.fill(Category(-1, -1, "", None))))
@@ -57,7 +57,7 @@ object CategoryForms extends Controller with SecureSocial {
       }
   }
 
-  def save() = SecuredAction {
+  def save() = SecuredAction(WithRole(Role.Writer)) {
     implicit request =>
       categoryForm.bindFromRequest.fold(
 
