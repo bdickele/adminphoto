@@ -7,11 +7,10 @@ import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.duration._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
-import org.joda.time.YearMonth
-import models.{GalleryPic, Gallery}
+import models.Gallery
+import service.mapper.GalleryMapper._
 
 /**
  * Service related to reading of data related to galleries
@@ -108,33 +107,4 @@ object GalleryReadService extends Controller with MongoController {
     findOne(
       Json.obj("categoryId" -> categoryId),
       Json.obj("rank" -> 1))
-
-  // --------------------------------------------------------------
-  // Mappers
-  // --------------------------------------------------------------
-
-  implicit object GalleryDateReader extends AnyRef with Reads[YearMonth] {
-    def reads(json: JsValue): JsResult[YearMonth] =
-      new JsSuccess[YearMonth](Gallery.buildYearMonth(json.as[String]))
-  }
-
-  // Mapper: JsObject -> GalleryPic
-  implicit val galleryPicReader: Reads[GalleryPic] = (
-    (__ \ "thumbnail").read[String] and
-      (__ \ "web").read[String] and
-      (__ \ "print").readNullable[String] and
-      (__ \ "comment").readNullable[String]
-    )(GalleryPic.apply _)
-
-  // Mapper: JsObject -> Gallery
-  implicit val galleryReader: Reads[Gallery] = (
-    (__ \ "categoryId").read[Int] and
-      (__ \ "galleryId").read[Int] and
-      (__ \ "rank").read[Int] and
-      (__ \ "date").read[YearMonth] and
-      (__ \ "title").read[String] and
-      (__ \ "comment").readNullable[String] and
-      (__ \ "thumbnail").read[String] and
-      (__ \ "pictures").read[List[GalleryPic]] and
-      (__ \ "online").read[Boolean])(Gallery.apply _)
 }

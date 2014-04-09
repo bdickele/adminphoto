@@ -30,9 +30,8 @@ object GalleryPicComments extends Controller with SecureSocial {
   val picForm: Form[GalleryPicComment] = Form(formMapping)
 
 
-  def view(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async {
-    implicit request =>
-      GalleryReadService.findById(galleryId).map {
+  def view(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+    GalleryReadService.findById(galleryId).map {
       _ match {
         case Some(gallery) =>
           val realIndex = if (index < 0 || index > (gallery.pictures.length - 1)) 0 else index
@@ -52,20 +51,19 @@ object GalleryPicComments extends Controller with SecureSocial {
     }
   }
 
-  def save() = SecuredAction(WithRole(Role.Writer)) {
-    implicit request =>
-      picForm.bindFromRequest.fold(
+  def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    picForm.bindFromRequest.fold(
 
-        // Validation error
-        formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
+      // Validation error
+      formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
-        // Validation OK
-        form => {
-          GalleryWriteService.updateComment(form.galleryId, form.index, form.comment)
-          // Once comment is saved we moved to next picture
-          Redirect(routes.GalleryPicComments.view(form.galleryId, form.index + 1))
-        }
-      )
+      // Validation OK
+      form => {
+        GalleryWriteService.updateComment(form.galleryId, form.index, form.comment)
+        // Once comment is saved we moved to next picture
+        Redirect(routes.GalleryPicComments.view(form.galleryId, form.index + 1))
+      }
+    )
   }
 
 }

@@ -8,6 +8,7 @@ import play.api.mvc.RequestHeader
  * bdickele
  */
 case class BackEndUser(id: Int,
+                       authId: String,
                        identityId: securesocial.core.IdentityId,
                        firstName: String,
                        lastName: String,
@@ -32,11 +33,11 @@ object BackEndUser {
 
   def isReader(request: SecuredRequest[Any]) = !isWriter(request)
 
-  def isReader(request: RequestHeader) : Boolean = !isWriter(request)
+  def isReader(request: RequestHeader): Boolean = !isWriter(request)
 
-  def isWriter(request: SecuredRequest[Any]) : Boolean = isWriter(request.user.asInstanceOf[BackEndUser].role)
+  def isWriter(request: SecuredRequest[Any]): Boolean = isWriter(request.user.asInstanceOf[BackEndUser].role)
 
-  def isWriter(request: RequestHeader) : Boolean = isWriter(request.asInstanceOf[SecuredRequest[Any]])
+  def isWriter(request: RequestHeader): Boolean = isWriter(request.asInstanceOf[SecuredRequest[Any]])
 
   // Central point for business logic related to: is a role of type Writer or Reader
   def isWriter(s: String) = s == Role.Writer.toString

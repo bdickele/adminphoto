@@ -37,74 +37,71 @@ object GalleryPicSelection extends Controller with SecureSocial {
   val form: Form[SelectedPics] = Form(formMapping)
 
 
-  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async {
-    implicit request =>
-      val future = GalleryReadService.findById(galleryId)
-      future.map {
-        option =>
-          option match {
-            case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
-            case Some(gallery) =>
+  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async { implicit request =>
+    val future = GalleryReadService.findById(galleryId)
+    future.map(
+      _ match {
+        case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
+        case Some(gallery) =>
 
-              val mainFolders = PictureStockService.mainFolders
+          val mainFolders = PictureStockService.mainFolders
 
-              // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
-              val mainFolderName = if (mainFolder == "") gallery.date.getYear.toString else mainFolder
+          // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
+          val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-              val subFolders = PictureStockService.subFolders(mainFolderName)
-              val subFolderName = if (subFolder == "") subFolders.head else subFolder
+          val subFolders = PictureStockService.subFolders(mainFolderName)
+          val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
-              val folder = mainFolderName + "/" + subFolderName + "/"
-              val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
+          val folder = mainFolderName + "/" + subFolderName + "/"
+          val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-              val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
-                SelectablePic(
-                  folder,
-                  WebRoot + folder + FolderThumbnail + p.thumbnail,
-                  WebRoot + folder + FolderWeb + p.web,
-                  p.web))
+          val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
+            SelectablePic(
+              folder,
+              WebRoot + folder + FolderThumbnail + p.thumbnail,
+              WebRoot + folder + FolderWeb + p.web,
+              p.web))
 
-              Ok(views.html.gallery.galleryPicSelection(
-                form.fill(SelectedPics(galleryId, folder, List())),
-                gallery,
-                mainFolders, subFolders, mainFolderName, subFolderName,
-                selectablePics))
-          }
+          Ok(views.html.gallery.galleryPicSelection(
+            form.fill(SelectedPics(galleryId, folder, List())),
+            gallery,
+            mainFolders, subFolders, mainFolderName, subFolderName,
+            selectablePics))
       }
+    )
   }
 
-  def save() = SecuredAction(WithRole(Role.Writer)) {
-    implicit request =>
-      form.bindFromRequest.fold(
+  def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    form.bindFromRequest.fold(
 
-        // Validation error
-        formWithErrors => BadRequest(views.html.badRequest("But that was not supposed to happen !")),
+      // Validation error
+      formWithErrors => BadRequest(views.html.badRequest("But that was not supposed to happen !")),
 
-        /*
-        So now we have a list of String looking like "pictureName.jpg" that
-        stand for pictures to add.
-        First : let's use these Strings to build the values to add in the DB
-        Then: Update the DB
-         */
-        form => {
-          val folder = form.folder
-          val picturesRaw = form.pictures
+      /*
+      So now we have a list of String looking like "pictureName.jpg" that
+      stand for pictures to add.
+      First : let's use these Strings to build the values to add in the DB
+      Then: Update the DB
+       */
+      form => {
+        val folder = form.folder
+        val picturesRaw = form.pictures
 
-          val availablePics = Picture.picturesFromFolder(folder)
-          val filteredPictures: List[Picture] = availablePics.filter(p => picturesRaw.contains(p.web))
+        val availablePics = Picture.picturesFromFolder(folder)
+        val filteredPictures: List[Picture] = availablePics.filter(p => picturesRaw.contains(p.web))
 
-          val galleryPics: List[GalleryPic] = filteredPictures.map(pic =>
-            GalleryPic(
-              folder + FolderThumbnail + pic.thumbnail,
-              folder + FolderWeb + pic.web,
-              pic.print match {
-                case None => None
-                case Some(p) => Some(folder + FolderPrint + p)
-              },
-              None))
-          // Waiting for update otherwise screen could be displayed before being updated
-          Await.result(GalleryWriteService.addPictures(form.galleryId, galleryPics), 5 seconds)
-          Redirect(routes.GalleryPicList.view(form.galleryId))
-        })
+        val galleryPics: List[GalleryPic] = filteredPictures.map(pic =>
+          GalleryPic(
+            folder + FolderThumbnail + pic.thumbnail,
+            folder + FolderWeb + pic.web,
+            pic.print match {
+              case None => None
+              case Some(p) => Some(folder + FolderPrint + p)
+            },
+            None))
+        // Waiting for update otherwise screen could be displayed before being updated
+        Await.result(GalleryWriteService.addPictures(form.galleryId, galleryPics), 5 seconds)
+        Redirect(routes.GalleryPicList.view(form.galleryId))
+      })
   }
 }

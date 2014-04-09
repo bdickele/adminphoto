@@ -1,0 +1,60 @@
+package service.mapper
+
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+import models.{Gallery, GalleryPic}
+
+/**
+ * Mapper for class Gallery
+ * bdickele
+ */
+object GalleryMapper {
+
+  // --------------------------------------------------------------
+  // Reading
+  // --------------------------------------------------------------
+
+  // Mapper: JsObject -> GalleryPic
+  implicit val galleryPicReader: Reads[GalleryPic] = (
+    (__ \ "thumbnail").read[String] and
+      (__ \ "web").read[String] and
+      (__ \ "print").readNullable[String] and
+      (__ \ "comment").readNullable[String]
+    )(GalleryPic.apply _)
+
+  // Mapper: JsObject -> Gallery
+  implicit val galleryReader: Reads[Gallery] = (
+    (__ \ "categoryId").read[Int] and
+      (__ \ "galleryId").read[Int] and
+      (__ \ "rank").read[Int] and
+      (__ \ "title").read[String] and
+      (__ \ "comment").readNullable[String] and
+      (__ \ "thumbnail").read[String] and
+      (__ \ "pictures").read[List[GalleryPic]] and
+      (__ \ "online").read[Boolean])(Gallery.apply _)
+
+  // --------------------------------------------------------------
+  // Writing
+  // --------------------------------------------------------------
+
+  // Mapper: GalleryPic -> JsObject
+  implicit val galleryPicWriter: Writes[GalleryPic] = (
+    (__ \ "thumbnail").write[String] and
+      (__ \ "web").write[String] and
+      (__ \ "print").writeNullable[String] and
+      (__ \ "comment").writeNullable[String]
+    )(unlift(GalleryPic.unapply))
+
+  // Mapper: Gallery -> JsObject
+  implicit val galleryWriter: Writes[Gallery] = (
+    (__ \ "categoryId").write[Int] and
+      (__ \ "galleryId").write[Int] and
+      (__ \ "rank").write[Int] and
+      (__ \ "title").write[String] and
+      (__ \ "comment").writeNullable[String] and
+      (__ \ "thumbnail").write[String] and
+      (__ \ "pictures").write[List[GalleryPic]] and
+      (__ \ "online").write[Boolean]
+    )(unlift(Gallery.unapply))
+}

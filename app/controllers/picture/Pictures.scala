@@ -13,35 +13,33 @@ import models.Picture
  */
 object Pictures extends Controller with SecureSocial {
 
-  def refresh() = Action {
-    implicit request =>
-      PictureStockService.clearCache()
-      Redirect(routes.Pictures.view("", ""))
+  def refresh() = Action { implicit request =>
+    PictureStockService.clearCache()
+    Redirect(routes.Pictures.view("", ""))
   }
 
-  def view(mainFolder: String = "", subFolder: String = "") = SecuredAction {
-    implicit request =>
-      val mainFolders = PictureStockService.mainFolders
-      val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
+  def view(mainFolder: String = "", subFolder: String = "") = SecuredAction { implicit request =>
+    val mainFolders = PictureStockService.mainFolders
+    val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-      val subFolders = PictureStockService.subFolders(mainFolderName)
-      val subFolderName = if (subFolder == "") subFolders.head else subFolder
+    val subFolders = PictureStockService.subFolders(mainFolderName)
+    val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
-      val folder = mainFolderName + "/" + subFolderName + "/"
-      val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
+    val folder = mainFolderName + "/" + subFolderName + "/"
+    val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-      val pathThumbnailUrl = WebRoot + folder + FolderThumbnail
-      val pathWebUrl = WebRoot + folder + FolderWeb
+    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail
+    val pathWebUrl = WebRoot + folder + FolderWeb
 
-      val picturesVO: List[PictureVO] = picturesRaw.map(picture =>
-        PictureVO(
-          pathThumbnailUrl + picture.thumbnail,
-          pathWebUrl + picture.web,
-          picture.thumbnail,
-          picture.web,
-          picture.print))
+    val picturesVO: List[PictureVO] = picturesRaw.map(picture =>
+      PictureVO(
+        pathThumbnailUrl + picture.thumbnail,
+        pathWebUrl + picture.web,
+        picture.thumbnail,
+        picture.web,
+        picture.print))
 
-      Ok(views.html.picture.picture(mainFolders, subFolders, mainFolderName, subFolderName, picturesVO))
+    Ok(views.html.picture.picture(mainFolders, subFolders, mainFolderName, subFolderName, picturesVO))
   }
 
 }

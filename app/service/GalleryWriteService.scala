@@ -6,14 +6,13 @@ import scala.concurrent.{Await, Future}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
 import scala.concurrent.duration._
-import org.joda.time.YearMonth
 import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import models.{GalleryPic, Gallery}
+import service.mapper.GalleryMapper._
 
 /**
  * Creation or update of gallery or pictures
@@ -31,15 +30,12 @@ object GalleryWriteService extends Controller with MongoController {
   def create(categoryId: Int,
              galleryId: Int,
              title: String,
-             year: Int,
-             month: Int,
              comment: String,
              online: Boolean): Future[LastError] = {
     val gallery = Gallery(
       categoryId,
       galleryId,
       GalleryReadService.findMaxRankForCategory(categoryId) + 1,
-      new YearMonth(year, month),
       title,
       if (comment == "") None else Some(comment),
       "",
@@ -54,15 +50,12 @@ object GalleryWriteService extends Controller with MongoController {
   def update(galleryId: Int,
              categoryId: Int,
              title: String,
-             year: Int,
-             month: Int,
              comment: Option[String],
              online: Boolean): Future[LastError] = {
     collection.update(Json.obj("galleryId" -> galleryId),
       Json.obj("$set" -> Json.obj(
         "categoryId" -> categoryId,
         "title" -> title,
-        "date" -> (year + "/" + month),
         "online" -> online),
         comment match {
           case None => "$unset" -> Json.obj("comment" -> 1)
@@ -118,33 +111,4 @@ object GalleryWriteService extends Controller with MongoController {
     val listNew = pictures.take(index) ::: newPicture :: pictures.drop(index + 1)
     updateField(galleryId, "pictures", Json.toJson(listNew))
   }
-
-  // --------------------------------------------------------------
-  // Mappers
-  // --------------------------------------------------------------
-
-  implicit object GalleryDateWriter extends Writes[YearMonth] {
-    def writes(date: YearMonth): JsValue = JsString(date.getYear + "/" + date.getMonthOfYear)
-  }
-
-  // Mapper: GalleryPic -> JsObject
-  implicit val galleryPicWriter: Writes[GalleryPic] = (
-    (__ \ "thumbnail").write[String] and
-      (__ \ "web").write[String] and
-      (__ \ "print").writeNullable[String] and
-      (__ \ "comment").writeNullable[String]
-    )(unlift(GalleryPic.unapply))
-
-  // Mapper: Gallery -> JsObject
-  implicit val galleryWriter: Writes[Gallery] = (
-    (__ \ "categoryId").write[Int] and
-      (__ \ "galleryId").write[Int] and
-      (__ \ "rank").write[Int] and
-      (__ \ "date").write[YearMonth] and
-      (__ \ "title").write[String] and
-      (__ \ "comment").writeNullable[String] and
-      (__ \ "thumbnail").write[String] and
-      (__ \ "pictures").write[List[GalleryPic]] and
-      (__ \ "online").write[Boolean]
-    )(unlift(Gallery.unapply))
 }

@@ -40,6 +40,8 @@ mongoimport --upsert --db website --collection gallery --file gallery.json
 db.category.drop()
 db.gallery.drop()
 
+db.gallery.update({}, {$unset: {date: 1}}, {multi: true})
+
 // ********************************************************************************
 // Creating collections
 // ********************************************************************************

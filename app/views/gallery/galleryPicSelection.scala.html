@@ -4,7 +4,7 @@ mainFolders: List[String], subFolders: List[String],
 selectedMainFolder: String, selectedSubFolder: String,
 pictures: List[controllers.gallery.SelectablePic])(implicit request: play.api.mvc.RequestHeader)
 
-@main(gallery.extendedTitle){
+@main(gallery.title){
 <script>
             // Required for comboBoxes of folders (check coffeescript file)
             var galleryId = @gallery.galleryId;
@@ -22,7 +22,7 @@ pictures: List[controllers.gallery.SelectablePic])(implicit request: play.api.mv
 @menu.topmenu(views.menu.TopMenuElement.Gallery)
 
 @gallerymenu(views.gallery.GalleryMenuElement.PicSelection, gallery.categoryId,
-gallery.galleryId, gallery.extendedTitle)
+gallery.galleryId, gallery.title)
 
 <br>
 

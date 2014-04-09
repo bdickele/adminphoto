@@ -2,8 +2,6 @@ package service
 
 import play.api.mvc.Controller
 import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import play.modules.reactivemongo.MongoController
@@ -11,6 +9,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.core.commands.LastError
 import play.api.libs.concurrent.Execution.Implicits._
 import models.Category
+import service.mapper.CategoryMapper._
 
 /**
  * Services related to CRUD operations of categories
@@ -70,22 +69,4 @@ object CategoryService extends Controller with MongoController {
     collection.update(
       Json.obj("categoryId" -> categoryId),
       Json.obj("$set" -> Json.obj(field -> value)))
-
-  // --------------------------------------------------------------
-  // Mappers
-  // --------------------------------------------------------------
-
-  implicit val categoryReader: Reads[Category] = (
-    (__ \ "categoryId").read[Int] and
-      (__ \ "rank").read[Int] and
-      (__ \ "title").read[String] and
-      (__ \ "comment").readNullable[String] and
-      (__ \ "online").read[Boolean])(Category.apply _)
-
-  implicit val categoryWriter: Writes[Category] = (
-    (__ \ "categoryId").write[Int] and
-      (__ \ "rank").write[Int] and
-      (__ \ "title").write[String] and
-      (__ \ "comment").writeNullable[String] and
-      (__ \ "online").write[Boolean])(unlift(Category.unapply))
 }

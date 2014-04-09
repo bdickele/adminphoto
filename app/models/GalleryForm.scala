@@ -1,6 +1,5 @@
 package models
 
-import org.joda.time.YearMonth
 
 /**
  * Object used for gallery's form (without anything related to pictures)
@@ -9,24 +8,17 @@ import org.joda.time.YearMonth
 case class GalleryForm(categoryId: Int,
                        galleryId: Int,
                        title: String,
-                       year: Int,
-                       month: Int,
                        comment: String,
                        online: Boolean = true)
 
 object GalleryForm {
 
-  def newOne(categoryId: Int): GalleryForm = {
-    val today = new YearMonth()
-    GalleryForm(categoryId, -1, "", today.getYear, today.getMonthOfYear, "")
-  }
+  def newOne(categoryId: Int): GalleryForm = GalleryForm(categoryId, -1, "", "")
 
   def apply(gallery: Gallery): GalleryForm =
     GalleryForm(gallery.categoryId,
       gallery.galleryId,
       gallery.title,
-      gallery.date.getYear,
-      gallery.date.getMonthOfYear,
       gallery.comment match {
         case None => ""
         case Some(s) => s

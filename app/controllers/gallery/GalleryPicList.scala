@@ -36,55 +36,52 @@ object GalleryPicList extends Controller with SecureSocial {
   val Remove = "REMOVE"
 
 
-  def view(galleryId: Int) = SecuredAction.async {
-    implicit request =>
-      GalleryReadService.findById(galleryId).map {
-        _ match {
-          case None => Galleries.couldNotFindGallery(galleryId)
-          case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
-        }
+  def view(galleryId: Int) = SecuredAction.async { implicit request =>
+    GalleryReadService.findById(galleryId).map(
+      _ match {
+        case None => Galleries.couldNotFindGallery(galleryId)
+        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
       }
+    )
   }
 
-  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async {
-    implicit request =>
-      GalleryReadService.findById(galleryId).map {
-        _ match {
-          case None => Galleries.couldNotFindGallery(galleryId)
-          case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
-            GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
-        }
+  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+    GalleryReadService.findById(galleryId).map(
+      _ match {
+        case None => Galleries.couldNotFindGallery(galleryId)
+        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
+          GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
       }
+    )
   }
 
-  def save() = SecuredAction(WithRole(Role.Writer)) {
-    implicit request =>
-      form.bindFromRequest.fold(
+  def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    form.bindFromRequest.fold(
 
-        formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
+      formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
-        form => {
-          val galleryId = form.galleryId
-          val actionName = form.actionName
-          val selectedIndexes = form.picIndexes
+      form => {
+        val galleryId = form.galleryId
+        val actionName = form.actionName
+        val selectedIndexes = form.picIndexes
 
-          val newSelectedIndexes =
-            if (selectedIndexes.isEmpty) {
-              Nil
-            } else if (actionName == MoveToTheBeginning || actionName == MoveToTheLeft ||
-              actionName == MoveToTheRight || actionName == MoveToTheEnd ||
-              actionName == Remove) {
-              movePictures(galleryId, actionName, selectedIndexes)
-            } else {
-              Nil
-            }
-
-          newSelectedIndexes match {
-            case Nil => Redirect(routes.GalleryPicList.view(galleryId))
-            case List() => Redirect(routes.GalleryPicList.view(galleryId))
-            case list => Redirect(routes.GalleryPicList.viewAndSelect(galleryId, newSelectedIndexes.mkString("&")))
+        val newSelectedIndexes =
+          if (selectedIndexes.isEmpty) {
+            Nil
+          } else if (actionName == MoveToTheBeginning || actionName == MoveToTheLeft ||
+            actionName == MoveToTheRight || actionName == MoveToTheEnd ||
+            actionName == Remove) {
+            movePictures(galleryId, actionName, selectedIndexes)
+          } else {
+            Nil
           }
-        })
+
+        newSelectedIndexes match {
+          case Nil => Redirect(routes.GalleryPicList.view(galleryId))
+          case List() => Redirect(routes.GalleryPicList.view(galleryId))
+          case list => Redirect(routes.GalleryPicList.viewAndSelect(galleryId, newSelectedIndexes.mkString("&")))
+        }
+      })
   }
 
   /**
@@ -160,19 +157,18 @@ object GalleryPicList extends Controller with SecureSocial {
    * @param picIndex Index of picture that will be the new thumbnail
    * @return
    */
-  def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction(WithRole(Role.Writer)).async {
-    implicit request =>
-      GalleryReadService.findById(galleryId).map {
-        _ match {
-          case None => Galleries.couldNotFindGallery(galleryId)
-          case Some(gallery) =>
-            val pictures = gallery.pictures
-            if (picIndex > -1 && picIndex < pictures.length) {
-              GalleryWriteService.updateField(galleryId, "thumbnail", Json.toJson(pictures.apply(picIndex).thumbnail))
-            }
-            Redirect(routes.GalleryPicList.view(galleryId))
-        }
+  def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+    GalleryReadService.findById(galleryId).map(
+      _ match {
+        case None => Galleries.couldNotFindGallery(galleryId)
+        case Some(gallery) =>
+          val pictures = gallery.pictures
+          if (picIndex > -1 && picIndex < pictures.length) {
+            GalleryWriteService.updateField(galleryId, "thumbnail", Json.toJson(pictures.apply(picIndex).thumbnail))
+          }
+          Redirect(routes.GalleryPicList.view(galleryId))
       }
+    )
   }
 
 }

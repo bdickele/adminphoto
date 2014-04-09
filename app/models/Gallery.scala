@@ -1,6 +1,5 @@
 package models
 
-import org.joda.time.YearMonth
 import util.Const
 
 /**
@@ -10,14 +9,11 @@ import util.Const
 case class Gallery(categoryId: Int,
                    galleryId: Int,
                    rank: Int,
-                   date: YearMonth,
                    title: String,
                    comment: Option[String],
                    thumbnail: String,
                    pictures: List[GalleryPic],
                    online: Boolean = true) {
-
-  def extendedTitle = Gallery.extendedTitle(title, date)
 
   val nbPictures = pictures.size
 
@@ -38,14 +34,3 @@ case class GalleryPicComment(categoryId: Int,
                              index: Int,
                              webComplete: String,
                              comment: Option[String])
-
-object Gallery {
-
-  def buildYearMonth(s: String): YearMonth = {
-    val data = s.split("/")
-    new YearMonth(data(0).toInt, data(1).toInt)
-  }
-
-  def extendedTitle(title: String, date: YearMonth) =
-    "“" + title + "” " + "[" + date.getMonthOfYear + "/" + date.getYear + "]"
-}

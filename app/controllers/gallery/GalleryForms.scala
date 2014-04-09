@@ -6,7 +6,6 @@ import play.api.data.Form
 import controllers.category.Categories
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
-import scala.Some
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
@@ -27,44 +26,41 @@ object GalleryForms extends Controller with SecureSocial {
   val formMapping = mapping(
     "categoryId" -> number.
       verifying("Unknown category",
-        categoryId => Categories.findAllFromCacheOrDB().find(c => c.categoryId == categoryId) match {
-          case None => false
-          case Some(_) => true
-        }),
+        categoryId =>
+          Categories.findAllFromCacheOrDB().find(c => c.categoryId == categoryId) match {
+            case None => false
+            case Some(_) => true
+          }),
     "galleryId" -> number,
     "title" -> nonEmptyText.
       verifying("Title cannot exceed 70 characters", _.length <= 70),
-    "year" -> number.
-      verifying("Incorrect value for year (has to be > 1970)", _ > 1970),
-    "month" -> number.
-      verifying("Incorrect value for month", m => m > 0 && m < 13),
     "comment" -> text.
       verifying("Description cannot exceed 3000 characters", _.length <= 3000),
     "online" -> boolean)(GalleryForm.apply)(GalleryForm.unapply).
 
     // Title is to be unique
     verifying("Another gallery with same title exists",
-      gallery => findByTitle(gallery.title) match {
-        case None => true
-        case Some(g) => g.galleryId == gallery.galleryId
-      })
+      gallery =>
+        findByTitle(gallery.title) match {
+          case None => true
+          case Some(g) => g.galleryId == gallery.galleryId
+        })
 
   val galleryForm: Form[GalleryForm] = Form(formMapping)
 
 
-  def create(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) {
-    implicit request =>
-      val categories: List[Category] = Categories.findAllFromCacheOrDB()
+  def create(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    val categories: List[Category] = Categories.findAllFromCacheOrDB()
 
-      categories.find(_.categoryId == categoryId) match {
+    categories.find(_.categoryId == categoryId) match {
 
-        case Some(category) =>
-          Ok(views.html.gallery.galleryForm("New gallery",
-            Categories.findAllFromCacheOrDB(),
-            galleryForm.fill(GalleryForm.newOne(categoryId))))
+      case Some(category) =>
+        Ok(views.html.gallery.galleryForm("New gallery",
+          Categories.findAllFromCacheOrDB(),
+          galleryForm.fill(GalleryForm.newOne(categoryId))))
 
-        case None => Categories.couldNotFindCategory(categoryId)
-      }
+      case None => Categories.couldNotFindCategory(categoryId)
+    }
   }
 
   def edit(galleryId: Int) = SecuredAction.async {
@@ -74,7 +70,7 @@ object GalleryForms extends Controller with SecureSocial {
       future.map {
         _ match {
           case Some(gallery) => Ok(views.html.gallery.galleryForm(
-            gallery.extendedTitle,
+            gallery.title,
             Categories.findAllFromCacheOrDB(),
             galleryForm.fill(GalleryForm(gallery))))
           case None => Galleries.couldNotFindGallery(galleryId)
@@ -87,8 +83,9 @@ object GalleryForms extends Controller with SecureSocial {
       galleryForm.bindFromRequest.fold(
 
         // Validation error
-        formWithErrors => Ok(views.html.gallery.galleryForm("Incorrect data for gallery",
-          Categories.findAllFromCacheOrDB(), formWithErrors)),
+        formWithErrors =>
+          Ok(views.html.gallery.galleryForm("Incorrect data for gallery",
+            Categories.findAllFromCacheOrDB(), formWithErrors)),
 
         // Validation OK
         form => {
@@ -104,8 +101,6 @@ object GalleryForms extends Controller with SecureSocial {
                 form.galleryId,
                 form.categoryId,
                 form.title,
-                form.year,
-                form.month,
                 if (form.comment.isEmpty) None else Some(form.comment),
                 form.online)
               Redirect(routes.GalleryPicList.view(form.galleryId))
@@ -113,7 +108,7 @@ object GalleryForms extends Controller with SecureSocial {
             // New gallery
             case None =>
               val newGalleryId = GalleryReadService.findMaxGalleryId + 1
-              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.year, form.month, form.comment, form.online)
+              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online)
               Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
           }
         }

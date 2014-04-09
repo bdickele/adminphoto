@@ -43,20 +43,6 @@
     '_showConstraints -> false
     )
 
-    @helper.select(form("year"),
-    List(("2004", "2004"), ("2005", "2005"), ("2006", "2006"), ("2007", "2007"), ("2008", "2008"),
-    ("2009", "2009"), ("2010", "2010"), ("2011", "2011"), ("2012", "2012"), ("2013", "2013")).reverse,
-    '_label -> "Year",
-    'class -> "input-sm",
-    '_showConstraints -> false)
-
-    @helper.select(form("month"),
-    List(("1", "January"), ("2", "February"), ("3", "March"), ("4", "April"), ("5", "May"), ("6", "June"),
-    ("7", "July"), ("8", "August"), ("9", "September"), ("10", "October"), ("11", "November"), ("12", "December")),
-    '_label -> "Month",
-    'class -> "input-sm",
-    '_showConstraints -> false)
-
     @helper.textarea(form("comment"),
     'class -> "form-control",
     '_label -> "Comment",

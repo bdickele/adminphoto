@@ -1,7 +1,7 @@
 @(gallery: models.Gallery,
     picAction: controllers.gallery.GalleryPicAction)(implicit request: play.api.mvc.RequestHeader)
 
-@main(gallery.extendedTitle){
+@main(gallery.title){
 <script src='@routes.Assets.at("javascripts/galleryPicList.js")'></script>
         <script>checkThumbnailClass()</script>
 }{
@@ -10,7 +10,7 @@
 
 @gallerymenu(views.gallery.GalleryMenuElement.PicList, gallery.categoryId,
     gallery.galleryId,
-    gallery.extendedTitle)
+    gallery.title)
 
 @if(models.BackEndUser.isWriter(request)){
 <button type="button" class="btn btn-primary btn-sm" onclick="toggleCheckBoxes(true);">

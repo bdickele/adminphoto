@@ -21,19 +21,13 @@ object Global extends GlobalSettings {
   }
 
   override def onHandlerNotFound(request: RequestHeader) =
-    Future.successful(NotFound(
-      views.html.notFound(request.path)
-    ))
+    Future.successful(NotFound(views.html.notFound(request.path)))
 
   override def onBadRequest(request: RequestHeader, error: String) =
-    Future.successful(BadRequest(
-      views.html.badRequest(error)
-    ))
+    Future.successful(BadRequest(views.html.badRequest(error)))
 
   override def onError(request: RequestHeader, ex: Throwable) =
-    Future.successful(BadRequest(
-      views.html.badRequest(ex.getMessage)
-    ))
+    Future.successful(BadRequest(views.html.badRequest(ex.getMessage)))
 
   def prettyLog(messages: String*) = {
     Logger.info("****************************************************")
