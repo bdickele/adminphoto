@@ -3,7 +3,8 @@ package service.mapper
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import models.{Gallery, GalleryPic}
+import models.{Versioning, Gallery, GalleryPic}
+import service.mapper.VersioningMapper._
 
 /**
  * Mapper for class Gallery
@@ -32,7 +33,8 @@ object GalleryMapper {
       (__ \ "comment").readNullable[String] and
       (__ \ "thumbnail").read[String] and
       (__ \ "pictures").read[List[GalleryPic]] and
-      (__ \ "online").read[Boolean])(Gallery.apply _)
+      (__ \ "online").read[Boolean] and
+      (__ \ "versioning").read[Versioning])(Gallery.apply _)
 
   // --------------------------------------------------------------
   // Writing
@@ -55,6 +57,7 @@ object GalleryMapper {
       (__ \ "comment").writeNullable[String] and
       (__ \ "thumbnail").write[String] and
       (__ \ "pictures").write[List[GalleryPic]] and
-      (__ \ "online").write[Boolean]
+      (__ \ "online").write[Boolean] and
+      (__ \ "versioning").write[Versioning]
     )(unlift(Gallery.unapply))
 }

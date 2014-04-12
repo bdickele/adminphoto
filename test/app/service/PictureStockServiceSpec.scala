@@ -1,4 +1,4 @@
-package app.models.picture
+package app.service
 
 import org.specs2.mutable._
 
@@ -10,7 +10,7 @@ import models.Picture
  * User: bdickele
  * Date: 1/6/14
  */
-class PictureSpec extends Specification {
+class PictureStockServiceSpec extends Specification {
 
   val Url = "http://www.dickele.com/photostock/"
 

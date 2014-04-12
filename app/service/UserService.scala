@@ -59,23 +59,27 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
   }
 
   def save(identity: Identity): Identity = {
-    val user = BackEndUser(
-      findMaxUserId + 1,
-      createNewAuthId(identity.lastName, identity.firstName),
-      identity.identityId,
-      identity.firstName,
-      identity.lastName,
-      identity.fullName,
-      identity.email,
-      "READER",
-      identity.avatarUrl,
-      identity.authMethod,
-      identity.oAuth1Info,
-      identity.oAuth2Info,
-      identity.passwordInfo)
+    find(identity.identityId) match {
+      case Some(_) => identity
+      case None =>
+        val user = BackEndUser(
+          findMaxUserId + 1,
+          createNewAuthId(identity.lastName, identity.firstName),
+          identity.identityId,
+          identity.firstName,
+          identity.lastName,
+          identity.fullName,
+          identity.email,
+          "READER",
+          identity.avatarUrl,
+          identity.authMethod,
+          identity.oAuth1Info,
+          identity.oAuth2Info,
+          identity.passwordInfo)
 
-    Await.result(collection.insert(Json.toJson(user)), 5 seconds)
-    user
+        Await.result(collection.insert(Json.toJson(user)), 5 seconds)
+        user
+    }
   }
 
   def createNewAuthId(lastName: String, firstName: String): String = {

@@ -1,4 +1,4 @@
-package app.models.category
+package app.service
 
 import org.specs2.mutable.Specification
 import scala.concurrent.Await

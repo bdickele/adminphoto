@@ -9,7 +9,12 @@ import controllers.category.Categories
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
 import play.api.libs.json.Json
-import models.{Role, WithRole, Gallery, Category}
+import models._
+import models.Gallery
+import models.WithRole
+import scala.Some
+import models.Category
+import play.api.mvc.SimpleResult
 
 /**
  * Controller for galleries
@@ -49,8 +54,9 @@ object Galleries extends Controller with SecureSocial {
           // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
           galleries.reverse.find(_.rank > galleryRank) match {
             case Some(otherGallery) =>
-              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank + 1))
-              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank))
+              val authId = BackEndUser.user(request).authId
+              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank + 1), authId)
+              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank), authId)
             case _ => // nothing to do then
           }
 
@@ -71,8 +77,9 @@ object Galleries extends Controller with SecureSocial {
           // List is sorted by rank, thus we pick up the first gallery whose rank is < gallery's rank
           galleries.find(_.rank < galleryRank) match {
             case Some(otherGallery) =>
-              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank - 1))
-              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank))
+              val authId = BackEndUser.user(request).authId
+              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank - 1), authId)
+              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank), authId)
             case _ => // nothing to do then
           }
 
@@ -87,7 +94,7 @@ object Galleries extends Controller with SecureSocial {
     GalleryReadService.findById(galleryId).map(
       _ match {
         case Some(gallery) =>
-          GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online))
+          GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online), BackEndUser.user(request).authId)
           Redirect(routes.Galleries.view(gallery.categoryId))
         case None =>
           couldNotFindGallery(galleryId)

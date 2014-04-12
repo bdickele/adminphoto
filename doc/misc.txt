@@ -14,3 +14,12 @@ Avec Play 1 on pouvait mais avec Play 2 je n'ai pas trouvé pour l'instant
 
     future.map(stream =>
       stream.toList.map(GalleryPicture.GalleryPictureBSONHandler.read(_)))
+
+
+
+    val versioning = Versioning.newOne("dicb_1")
+
+    collection.update(
+      Json.obj(),
+      Json.obj("$set" -> Json.obj("versioning" -> versioning)),
+      multi = true)

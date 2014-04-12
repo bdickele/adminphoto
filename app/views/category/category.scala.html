@@ -28,6 +28,7 @@
             <thead>
             <tr>
                 <th style="text-align:center;">Nom</th>
+                <th style="text-align:center;">Comment</th>
                 <th style="text-align:center;">Online</th>
                 @if(models.BackEndUser.isWriter(request)){
                 <th style="text-align:center;">Up</th>
@@ -38,33 +39,36 @@
             <tbody>
             @for((category, index) <- categories.zipWithIndex){
             <tr>
-                <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.title</a>
-                </td>
-                <td style="text-align:center;">
-                    <input type="checkbox"
-                           onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
-                           @if(models.BackEndUser.isReader(request)){disabled}
-                    @if(category.online){checked}>
-                </td>
                 @if(models.BackEndUser.isWriter(request)){
-                <td style="text-align:center;">
-                    @if(index != 0){
-                    <a href="@controllers.category.routes.Categories.up(category.categoryId)">
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <span class="glyphicon glyphicon-chevron-up"></span>
-                        </button>
-                    </a>
-                    }
-                </td>
-                <td style="text-align:center;">
-                    @if(index < (categories.size-1)){
-                    <a href="@controllers.category.routes.Categories.down(category.categoryId)">
-                        <button type="button" class="btn btn-primary btn-sm">
-                            <span class="glyphicon glyphicon-chevron-down"></span>
-                        </button>
-                    </a>
-                    }
-                </td>
+                    <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.title</a></td>
+                    <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.comment</a></td>
+                    <td style="text-align:center;">
+                        <input type="checkbox"
+                               onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
+                               @if(category.online){checked}>
+                    </td>
+                    <td style="text-align:center;">
+                        @if(index != 0){
+                        <a href="@controllers.category.routes.Categories.up(category.categoryId)">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-chevron-up"></span>
+                            </button>
+                        </a>
+                        }
+                    </td>
+                    <td style="text-align:center;">
+                        @if(index < (categories.size-1)){
+                        <a href="@controllers.category.routes.Categories.down(category.categoryId)">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
+                        </a>
+                        }
+                    </td>
+                } else {
+                    <td>@category.title</td>
+                    <td>@category.comment</td>
+                    <td style="text-align:center;"><input type="checkbox" disabled @if(category.online){checked}></td>
                 }
             </tr>
             }

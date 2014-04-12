@@ -2,13 +2,7 @@
 
 @import views.html.helper.bootstrap._
 
-@main(title){
-<script>
-            (function () {
-                title.focus();
-            })();
-        </script>
-}{
+@main(title)(){
 
 @menu.topmenu(views.menu.TopMenuElement.Gallery, form.apply("categoryId").value.get.toInt)
 
@@ -19,53 +13,10 @@
 
     <br>
 
-    @helper.form(action=controllers.gallery.routes.GalleryForms.save, args =
-    'class -> "form-horizontal",
-    'role -> "form") {
-
-    @form.globalError.map { error =>
-    <div class="alert alert-dismissable alert-danger">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        <strong>@error.message</strong>
-    </div>
+    @if(models.BackEndUser.isWriter(request)){
+        @galleryFormWrite(categories, form)
+    } else {
+        @galleryFormRead(categories, form)
     }
 
-    @helper.inputText(form("title"),
-    'class -> "form-control",
-    '_label -> "Title",
-    '_help -> "70 characters max",
-    'maxlength -> 70)
-
-    @helper.select(form("categoryId"),
-    categories.map(c => (c.categoryId.toString, c.title)),
-    '_label -> "Category",
-    'class -> "input-sm",
-    '_showConstraints -> false
-    )
-
-    @helper.textarea(form("comment"),
-    'class -> "form-control",
-    '_label -> "Comment",
-    '_help -> "3000 characters max",
-    'rows -> 10,
-    'maxlength -> 3000)
-
-    @helper.checkbox(form("online"),
-    'class -> "form-control",
-    '_label -> "On-line",
-    '_showConstraints -> false)
-
-    <input type="hidden" name="galleryId" value='@form.apply("galleryId").value'>
-
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)'
-               role="button" class="btn btn-primary btn-sm">Cancel</a>
-            &nbsp;&nbsp;
-            <button type="submit" class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save
-            </button>
-        </div>
-    </div>
-    }
 }

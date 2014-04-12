@@ -8,8 +8,7 @@ import play.api.Play
  */
 object Const {
 
-  val LocalRoot = Play.current.configuration.getString("local.photostock.root").get
-  val WebRoot = Play.current.configuration.getString("web.photostock.root").get
+  lazy val PhotoStockRoot = Play.current.configuration.getString("photostock.root").get
 
   val FolderWeb = "web/"
   val FolderThumbnail = "thumbnail/"

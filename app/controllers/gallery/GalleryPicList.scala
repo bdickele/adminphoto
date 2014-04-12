@@ -10,7 +10,7 @@ import play.api.data.Form
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
 import play.api.libs.json.Json
-import models.{Role, WithRole}
+import models.{BackEndUser, Role, WithRole}
 
 /**
  * Some actions related to pictures : move to the left/right/end/beginning + change thumbnail
@@ -71,7 +71,7 @@ object GalleryPicList extends Controller with SecureSocial {
           } else if (actionName == MoveToTheBeginning || actionName == MoveToTheLeft ||
             actionName == MoveToTheRight || actionName == MoveToTheEnd ||
             actionName == Remove) {
-            movePictures(galleryId, actionName, selectedIndexes)
+            movePictures(galleryId, actionName, selectedIndexes, BackEndUser.user(request).authId)
           } else {
             Nil
           }
@@ -91,7 +91,7 @@ object GalleryPicList extends Controller with SecureSocial {
    * @param selectedIndexes Indexes of selected pictures
    * @return Indexes of selected pictures in the new list
    */
-  def movePictures(galleryId: Int, actionName: String, selectedIndexes: List[Int]): List[Int] = {
+  def movePictures(galleryId: Int, actionName: String, selectedIndexes: List[Int], authId: String): List[Int] = {
     val future = GalleryReadService.findById(galleryId)
     Await.result(future, 5 seconds) match {
       case None => Nil
@@ -104,7 +104,7 @@ object GalleryPicList extends Controller with SecureSocial {
         val indexesReordered = reorderIndexes(actionName, selectedIndexes, nonSelectedIndexes)
         val newPics = indexesReordered.map(i => pics.apply(i)).toList
         // Waiting for update otherwise screen could be displayed before being updated
-        Await.result(GalleryWriteService.setPictures(galleryId, newPics), 5 seconds)
+        Await.result(GalleryWriteService.setPictures(galleryId, newPics, authId), 5 seconds)
 
         // We return the list of indexes of selected pictures in the new list
         for {(pic, index) <- newPics.zipWithIndex
@@ -164,7 +164,9 @@ object GalleryPicList extends Controller with SecureSocial {
         case Some(gallery) =>
           val pictures = gallery.pictures
           if (picIndex > -1 && picIndex < pictures.length) {
-            GalleryWriteService.updateField(galleryId, "thumbnail", Json.toJson(pictures.apply(picIndex).thumbnail))
+            GalleryWriteService.updateField(galleryId, "thumbnail",
+              Json.toJson(pictures.apply(picIndex).thumbnail),
+              BackEndUser.user(request).authId)
           }
           Redirect(routes.GalleryPicList.view(galleryId))
       }

@@ -7,7 +7,7 @@ import controllers.category.Categories
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
 import play.api.libs.concurrent.Execution.Implicits._
-import securesocial.core.SecureSocial
+import securesocial.core.{SecuredRequest, SecureSocial}
 import service.{GalleryReadService, GalleryWriteService}
 import models._
 import models.WithRole
@@ -102,13 +102,15 @@ object GalleryForms extends Controller with SecureSocial {
                 form.categoryId,
                 form.title,
                 if (form.comment.isEmpty) None else Some(form.comment),
-                form.online)
+                form.online,
+                BackEndUser.user(request).authId)
               Redirect(routes.GalleryPicList.view(form.galleryId))
 
             // New gallery
             case None =>
               val newGalleryId = GalleryReadService.findMaxGalleryId + 1
-              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online)
+              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online,
+                BackEndUser.user(request).authId)
               Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
           }
         }

@@ -9,7 +9,12 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import securesocial.core.SecureSocial
 import service.{PictureStockService, GalleryReadService, GalleryWriteService}
-import models.{Role, WithRole, Picture, GalleryPic}
+import models._
+import controllers.gallery.SelectablePic
+import models.WithRole
+import controllers.gallery.SelectedPics
+import scala.Some
+import models.GalleryPic
 
 /**
  * Controller related to screen where we select pictures for a gallery
@@ -58,8 +63,8 @@ object GalleryPicSelection extends Controller with SecureSocial {
           val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
             SelectablePic(
               folder,
-              WebRoot + folder + FolderThumbnail + p.thumbnail,
-              WebRoot + folder + FolderWeb + p.web,
+              PhotoStockRoot + folder + FolderThumbnail + p.thumbnail,
+              PhotoStockRoot + folder + FolderWeb + p.web,
               p.web))
 
           Ok(views.html.gallery.galleryPicSelection(
@@ -100,7 +105,8 @@ object GalleryPicSelection extends Controller with SecureSocial {
             },
             None))
         // Waiting for update otherwise screen could be displayed before being updated
-        Await.result(GalleryWriteService.addPictures(form.galleryId, galleryPics), 5 seconds)
+        val future = GalleryWriteService.addPictures(form.galleryId, galleryPics, BackEndUser.user(request).authId)
+        Await.result(future, 5 seconds)
         Redirect(routes.GalleryPicList.view(form.galleryId))
       })
   }

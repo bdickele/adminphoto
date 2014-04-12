@@ -5,14 +5,14 @@ import play.modules.reactivemongo.MongoController
 import scala.concurrent.{Await, Future}
 import play.api.libs.concurrent.Execution.Implicits._
 import reactivemongo.core.commands.LastError
-import scala.concurrent.duration._
 import play.api.Logger
 import play.api.libs.json._
-import play.api.libs.json.Reads._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
-import models.{GalleryPic, Gallery}
+import models.{Versioning, GalleryPic, Gallery}
 import service.mapper.GalleryMapper._
+import service.mapper.VersioningMapper._
+import scala.concurrent.duration._
 
 /**
  * Creation or update of gallery or pictures
@@ -31,7 +31,8 @@ object GalleryWriteService extends Controller with MongoController {
              galleryId: Int,
              title: String,
              comment: String,
-             online: Boolean): Future[LastError] = {
+             online: Boolean,
+             authId: String): Future[LastError] = {
     val gallery = Gallery(
       categoryId,
       galleryId,
@@ -40,7 +41,8 @@ object GalleryWriteService extends Controller with MongoController {
       if (comment == "") None else Some(comment),
       "",
       List(),
-      online)
+      online,
+      Versioning.newOne(authId))
 
     Logger.info("Gallery to be created : " + gallery)
     collection.insert(Json.toJson(gallery))
@@ -51,37 +53,46 @@ object GalleryWriteService extends Controller with MongoController {
              categoryId: Int,
              title: String,
              comment: Option[String],
-             online: Boolean): Future[LastError] = {
-    collection.update(Json.obj("galleryId" -> galleryId),
-      Json.obj("$set" -> Json.obj(
-        "categoryId" -> categoryId,
-        "title" -> title,
-        "online" -> online),
-        comment match {
-          case None => "$unset" -> Json.obj("comment" -> 1)
-          case Some(d) => "$set" -> Json.obj("comment" -> d)
-        }))
+             online: Boolean,
+             authId: String): Future[LastError] = {
+    val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
+    val newGallery = galleryInDB.copy(
+      categoryId = categoryId,
+      title = title,
+      online = online,
+      versioning = galleryInDB.versioning.increment(authId),
+      comment = comment)
+
+    collection.update(Json.obj("galleryId" -> galleryId), newGallery)
   }
 
-  def updateField(galleryId: Int, field: String, value: JsValue): Future[LastError] =
+  def updateField(galleryId: Int, field: String, value: JsValue, authId: String): Future[LastError] = {
+    val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
     collection.update(
       Json.obj("galleryId" -> galleryId),
-      Json.obj("$set" -> Json.obj(field -> value)))
+      Json.obj(
+        "$set" -> Json.obj(field -> value),
+        "$set" -> Json.obj("versioning" -> galleryInDB.versioning.increment(authId))))
+  }
 
   // --------------------------------------------------------------
   // Methods related to gallery's pictures
   // --------------------------------------------------------------
 
-  def addPictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
+  def addPictures(galleryId: Int, pictures: List[GalleryPic], authId: String): Future[LastError] = {
+    val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
+
     val array = JsArray(pictures.map(p => Json.toJson(p)).toList)
     collection.update(
       Json.obj("galleryId" -> galleryId),
-      Json.obj("$pushAll" -> Json.obj("pictures" -> array)))
+      Json.obj(
+        "$pushAll" -> Json.obj("pictures" -> array),
+        "$set" -> Json.obj("versioning" -> galleryInDB.versioning.increment(authId))))
   }
 
-  def setPictures(galleryId: Int, pictures: List[GalleryPic]): Future[LastError] = {
+  def setPictures(galleryId: Int, pictures: List[GalleryPic], authId: String): Future[LastError] = {
     val array = JsArray(pictures.map(p => Json.toJson(p)).toList)
-    updateField(galleryId, "pictures", array)
+    updateField(galleryId, "pictures", array, authId)
   }
 
   /**
@@ -91,7 +102,7 @@ object GalleryWriteService extends Controller with MongoController {
    * @param comment New comment
    * @return
    */
-  def updateComment(galleryId: Int, index: Int, comment: Option[String]): Future[LastError] = {
+  def updateComment(galleryId: Int, index: Int, comment: Option[String], authId: String): Future[LastError] = {
 
     // We retrieve gallery
     val future: Future[Option[JsObject]] =
@@ -109,6 +120,14 @@ object GalleryWriteService extends Controller with MongoController {
     })
 
     val listNew = pictures.take(index) ::: newPicture :: pictures.drop(index + 1)
-    updateField(galleryId, "pictures", Json.toJson(listNew))
+    updateField(galleryId, "pictures", Json.toJson(listNew), authId)
+  }
+
+  // --------------------------------------------------------------
+  // Misc
+  // --------------------------------------------------------------
+
+  def updateDatabase(): Unit = {
+    //
   }
 }

@@ -47,7 +47,7 @@ object CategoryForms extends Controller with SecureSocial {
       categoryForm.fill(Category(-1, -1, "", None))))
   }
 
-  def edit(categoryId: Int) = SecuredAction { implicit request =>
+  def edit(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) { implicit request =>
     Categories.findAllFromCacheOrDB().find(_.categoryId == categoryId) match {
       case Some(category) =>
         Ok(views.html.category.categoryForm("Category \"" + category.title + "\"", categoryForm.fill(category)))

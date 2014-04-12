@@ -7,7 +7,7 @@ import util.Const
 import securesocial.core.SecureSocial
 import service.{GalleryReadService, GalleryWriteService}
 import play.api.libs.concurrent.Execution.Implicits._
-import models.{Role, WithRole, GalleryPicComment}
+import models.{BackEndUser, Role, WithRole, GalleryPicComment}
 
 
 /**
@@ -43,7 +43,7 @@ object GalleryPicComments extends Controller with SecureSocial {
               gallery.categoryId,
               galleryId,
               realIndex,
-              Const.WebRoot + galleryPic.web,
+              Const.PhotoStockRoot + galleryPic.web,
               galleryPic.comment))))
 
         case _ => Galleries.couldNotFindGallery(galleryId)
@@ -59,7 +59,7 @@ object GalleryPicComments extends Controller with SecureSocial {
 
       // Validation OK
       form => {
-        GalleryWriteService.updateComment(form.galleryId, form.index, form.comment)
+        GalleryWriteService.updateComment(form.galleryId, form.index, form.comment, BackEndUser.user(request).authId)
         // Once comment is saved we moved to next picture
         Redirect(routes.GalleryPicComments.view(form.galleryId, form.index + 1))
       }

@@ -28,8 +28,8 @@ object Pictures extends Controller with SecureSocial {
     val folder = mainFolderName + "/" + subFolderName + "/"
     val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-    val pathThumbnailUrl = WebRoot + folder + FolderThumbnail
-    val pathWebUrl = WebRoot + folder + FolderWeb
+    val pathThumbnailUrl = PhotoStockRoot + folder + FolderThumbnail
+    val pathWebUrl = PhotoStockRoot + folder + FolderWeb
 
     val picturesVO: List[PictureVO] = picturesRaw.map(picture =>
       PictureVO(

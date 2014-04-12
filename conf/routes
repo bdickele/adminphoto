@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                           controllers.Application.index
+# GET     /update                                     controllers.Application.update
 GET     /javascriptRoutes                           controllers.Application.javascriptRoutes
 
 # #########################################################

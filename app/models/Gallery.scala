@@ -13,11 +13,12 @@ case class Gallery(categoryId: Int,
                    comment: Option[String],
                    thumbnail: String,
                    pictures: List[GalleryPic],
-                   online: Boolean = true) {
+                   online: Boolean = true,
+                   versioning: Versioning) {
 
   val nbPictures = pictures.size
 
-  val thumbnailComplete = Const.WebRoot + thumbnail
+  val thumbnailComplete = Const.PhotoStockRoot + thumbnail
 }
 
 case class GalleryPic(thumbnail: String,
@@ -25,7 +26,7 @@ case class GalleryPic(thumbnail: String,
                       print: Option[String],
                       comment: Option[String]) {
 
-  val thumbnailComplete = Const.WebRoot + thumbnail
+  val thumbnailComplete = Const.PhotoStockRoot + thumbnail
 }
 
 // Case class dedicated to screen where we update picture's comment

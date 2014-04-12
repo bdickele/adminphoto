@@ -2,6 +2,7 @@ package controllers
 
 import play.api.mvc._
 import play.api.Routes
+import service.GalleryWriteService
 
 /**
  * Default controller
@@ -11,6 +12,11 @@ object Application extends Controller {
 
 
   def index = Action {
+    Redirect(gallery.routes.Galleries.view(-1))
+  }
+
+  def update = Action {
+    GalleryWriteService.updateDatabase()
     Redirect(gallery.routes.Galleries.view(-1))
   }
 

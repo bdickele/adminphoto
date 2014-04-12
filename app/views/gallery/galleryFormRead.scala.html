@@ -1,0 +1,41 @@
+@(categories: List[models.Category], form: Form[models.GalleryForm])
+
+@import views.html.helper.bootstrap._
+
+
+<form class="form-horizontal" role="form">
+
+    @helper.inputText(form("title"),
+    'class -> "form-control",
+    '_label -> "Title",
+    '_showConstraints -> false,
+    'disabled -> false)
+
+    @helper.select(form("categoryId"),
+    categories.map(c => (c.categoryId.toString, c.title)),
+    '_label -> "Category",
+    'class -> "input-sm",
+    '_showConstraints -> false,
+    'disabled -> true)
+
+    @helper.textarea(form("comment"),
+    'class -> "form-control",
+    '_label -> "Comment",
+    'rows -> 10,
+    '_showConstraints -> false,
+    'disabled -> true)
+
+    @helper.checkbox(form("online"),
+    'class -> "form-control",
+    '_label -> "On-line",
+    '_showConstraints -> false,
+    'disabled -> true)
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a href='@controllers.gallery.routes.Galleries.view(form.apply("categoryId").value.get.toInt)'
+               role="button" class="btn btn-primary btn-sm">Back</a>
+        </div>
+    </div>
+
+</form>
