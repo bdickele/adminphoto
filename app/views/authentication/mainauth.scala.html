@@ -1,4 +1,4 @@
-@(title: String)(moreScripts: Html = null)(content: Html)(implicit request: RequestHeader)
+@(title: String)(content: Html)
 
 <!DOCTYPE html>
 
@@ -14,8 +14,6 @@
     <link rel="shortcut icon" href='@routes.Assets.at("images/favicon.ico")'/>
     <link rel="stylesheet" media="screen" href='@routes.Assets.at("stylesheets/bootstrap_spacelab.css")'>
 
-    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src='@routes.Assets.at("javascripts/html5shiv.js")'></script>
@@ -26,13 +24,7 @@
 <body>
 
 <nav class="navbar navbar-fixed-top" role="navigation">
-    <span class="navbar-text navbar-left">[Administration module]</span>
-    <span class="navbar-text navbar-right">
-        Signed in as @models.BackEndUser.user(request).fullName (@models.BackEndUser.user(request).role) &nbsp;&nbsp;
-        <a href="/logout" class="btn btn-default btn-xs" title="Sign out" role="button">
-            <span class="glyphicon glyphicon-off"></span>
-        </a>
-    </span>
+    <span class="navbar-text navbar-left">[Administration module] - @title</span>
 </nav>
 
 <div class="container">
@@ -43,8 +35,6 @@
 <script src='@routes.Assets.at("javascripts/jquery-1.9.0.min.js")'></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src='@routes.Assets.at("javascripts/bootstrap.min.js")'></script>
-
-@moreScripts
 
 </body>
 </html>
