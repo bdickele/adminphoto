@@ -10,9 +10,7 @@ import scala.concurrent.duration._
 import securesocial.core.SecureSocial
 import service.{PictureStockService, GalleryReadService, GalleryWriteService}
 import models._
-import controllers.gallery.SelectablePic
 import models.WithRole
-import controllers.gallery.SelectedPics
 import scala.Some
 import models.GalleryPic
 
@@ -49,12 +47,12 @@ object GalleryPicSelection extends Controller with SecureSocial {
         case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
         case Some(gallery) =>
 
-          val mainFolders = PictureStockService.mainFolders
+          val mainFolders = PictureStockService.remoteMainFolders
 
           // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
           val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-          val subFolders = PictureStockService.subFolders(mainFolderName)
+          val subFolders = PictureStockService.remoteSubFolders(mainFolderName)
           val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
           val folder = mainFolderName + "/" + subFolderName + "/"

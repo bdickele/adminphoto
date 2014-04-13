@@ -9,16 +9,16 @@ class UserServiceSpec extends Specification {
 
   "When creating a new authId (with a list of existing authIds) it" should {
 
-    "create appropriate prefix" {
+    "create appropriate prefix" in {
 
       val result1 = UserService.buildAuthIdPrefix("DICKELE", "Bertrand")
       result1 must equalTo("dicb_")
 
       val result2 = UserService.buildAuthIdPrefix("DI", "Bertrand")
-      result1 must equalTo("dib_")
+      result2 must equalTo("dib_")
     }
 
-    "return an authId with appropriate suffix" {
+    "return an authId with appropriate suffix" in {
 
       val result1 = UserService.createNewAuthId("dicb_", List())
       result1 must equalTo("dicb_1")

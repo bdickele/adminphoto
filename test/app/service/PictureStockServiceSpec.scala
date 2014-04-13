@@ -14,7 +14,7 @@ class PictureStockServiceSpec extends Specification {
 
   val Url = "http://www.dickele.com/photostock/"
 
-  lazy val mainFolders = PictureStockService.mainFolders
+  lazy val mainFolders = PictureStockService.remoteMainFolders
 
 
   "The list of categories" should {
@@ -25,7 +25,7 @@ class PictureStockServiceSpec extends Specification {
 
   "The list of sub-folders for 2004" should {
     "contain 2 galleries : misc and venise" in new TestApplication {
-      val subFolderNames = PictureStockService.subFolders(mainFolders.last)
+      val subFolderNames = PictureStockService.remoteSubFolders(mainFolders.last)
       subFolderNames must equalTo(List("0408_venise", "0406_misc"))
     }
   }

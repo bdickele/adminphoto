@@ -141,7 +141,7 @@ object UserService {
   def createNewAuthId(prefix: String, existingAuthIds: List[String]): String = {
     val currentMaxCounter: Int = existingAuthIds match {
       case Nil => 0
-      case _ => existingAuthIds.map(authId => authId.substring(authId.indexOf("_")).toInt).toList.max
+      case _ => existingAuthIds.map(authId => authId.substring(authId.indexOf("_") + 1).toInt).toList.max
     }
     prefix + (currentMaxCounter + 1)
   }
