@@ -10,10 +10,9 @@ import play.api.Logger
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.libs.json._
 import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 import securesocial.core.providers.Token
-import org.joda.time.DateTime
 import models.BackEndUser
+import models.Role
 import service.mapper.BackEndUserMapper._
 
 /**
@@ -60,7 +59,12 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
 
   def save(identity: Identity): Identity = {
     find(identity.identityId) match {
-      case Some(_) => identity
+      case Some(_) =>
+        collection.update(
+          Json.obj("identityId" -> identity.identityId),
+          Json.obj("$set" -> Json.obj(
+            "passwordInfo" -> identity.passwordInfo
+          )))
       case None =>
         val user = BackEndUser(
           findMaxUserId + 1,
@@ -70,16 +74,16 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
           identity.lastName,
           identity.fullName,
           identity.email,
-          "READER",
+          Role.Reader.toString,
           identity.avatarUrl,
           identity.authMethod,
           identity.oAuth1Info,
           identity.oAuth2Info,
           identity.passwordInfo)
 
-        Await.result(collection.insert(Json.toJson(user)), 5 seconds)
-        user
+        collection.insert(user)
     }
+    identity
   }
 
   def createNewAuthId(lastName: String, firstName: String): String = {

@@ -1,4 +1,6 @@
-@(form: Form[(String, String)], msg: Option[String])
+@(form: Form[(String, String)], msg: Option[String])(implicit flash: Flash)
+
+@import securesocial.core.IdentityProvider
 
 @mainauth("Login"){
 
@@ -15,47 +17,58 @@
         <div class="panel-body">
 
             <div class="clearfix">
+                @if(msg.isDefined){
+                <div class="alert alert-dismissable alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@Messages(msg.get)</strong>
+                </div>
+                }
+
+                @if(flash.get("success").isDefined){
+                <div class="alert alert-dismissable alert-info">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@flash.get("success")</strong>
+                </div>
+                }
+
                 <p>Login using a username and password.</p>
 
-                <form action = "http://localhost:9000/authenticate/userpass"
-                      class="form-horizontal" autocomplete="off" method="POST">
+                <div class="col-xs-12 col-md-6">
 
-                    <fieldset>
-                        <div class="col-xs-12 col-md-6">
-                            <div class="control-group" id="username_field">
-                                <label class="control-label" for="username">Email</label>
-                                <div class="controls">
-                                    <input type="text" id="username" name="username" value="" class="input-xlarge">
-                                    <span class="help-block">Required</span>
-                                </div>
-                            </div>
+                @helper.form(action=securesocial.core.providers.utils.RoutesHelper.authenticateByPost("userpass"), args =
+                'class -> "form-horizontal",
+                'role -> "form") {
 
-                            <div class="control-group" id="password_field">
-                                <label class="control-label" for="password">Password</label>
-                                <div class="controls">
-                                    <input type="password" id="password" name="password" class="input-xlarge">
-                                    <span class="help-block">Required</span>
-                                </div>
-                            </div>
+                @helper.inputText(form("username"),
+                'class -> "form-control",
+                '_label -> "Email",
+                'required -> true,
+                '_showConstraints -> false)
 
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">Login</button>
-                            </div>
-                        </div>
+                @helper.inputPassword(form("password"),
+                'class -> "form-control",
+                '_label -> "Password",
+                'required -> true,
+                '_showConstraints -> false)
 
-                        <div class="col-xs-12 col-md-6">
-                            <br>
-                            <div class="clearfix">
-                                <a href="/reset"><p>Did you forget your password? </a></p>
-                            </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
 
-                            <div class="clearfix">
-                                <p>If you don&#x27;t have an account with us yet you can sign up <a href="/signup">here</a></p>
-                            </div>
-                        </div>
+                }
 
-                    </fieldset>
-                </form>
+                </div>
+
+                <div class="col-xs-12 col-md-6">
+                    <br>
+                    <div class="clearfix">
+                        <a href="/reset"><p>Did you forget your password? </a></p>
+                    </div>
+
+                    <div class="clearfix">
+                        <p>If you don&#x27;t have an account with us yet you can sign up <a href="/signup">here</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -19,8 +19,6 @@ object CategoryService extends Controller with MongoController {
 
   def collection = db.collection[JSONCollection]("category")
 
-  val findAllQuery = Json.obj()
-
 
   // --------------------------------------------------------------
   // Find
@@ -35,7 +33,7 @@ object CategoryService extends Controller with MongoController {
     *         category with greater rank to lower rank */
   def findAll: Future[List[Category]] =
     collection.
-      find(findAllQuery).
+      find(Json.obj()).
       sort(Json.obj("rank" -> -1)).
       cursor[Category].
       collect[List]()
@@ -57,14 +55,16 @@ object CategoryService extends Controller with MongoController {
       comment,
       online)
 
-    collection.insert(Json.toJson(category))
+    collection.insert(category)
   }
 
+  // That method updates a category by passing the whole object (an implicit mapper will be used)
   def update(category: Category): Future[LastError] =
     collection.update(
       Json.obj("categoryId" -> category.categoryId),
-      Json.toJson(category))
+      category)
 
+  // That method updates a singled field of a document
   def updateField(categoryId: Int, field: String, value: JsValue): Future[LastError] =
     collection.update(
       Json.obj("categoryId" -> categoryId),

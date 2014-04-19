@@ -19,7 +19,7 @@ object Pictures extends Controller with SecureSocial {
   }
 
   def view(mainFolder: String = "", subFolder: String = "") = SecuredAction { implicit request =>
-    val mainFolders = PictureStockService.loadMainFolders
+    val mainFolders = PictureStockService.loadMainFolders()
     val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
     val subFolders = PictureStockService.loadSubFolders(mainFolderName)

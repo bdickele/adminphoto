@@ -37,28 +37,24 @@ object GalleryPicList extends Controller with SecureSocial {
 
 
   def view(galleryId: Int) = SecuredAction.async { implicit request =>
-    GalleryReadService.findById(galleryId).map(
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
-      }
-    )
+    GalleryReadService.findById(galleryId).map {
+      case None => Galleries.couldNotFindGallery(galleryId)
+      case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
+    }
   }
 
   def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
-    GalleryReadService.findById(galleryId).map(
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
-          GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
-      }
-    )
+    GalleryReadService.findById(galleryId).map {
+      case None => Galleries.couldNotFindGallery(galleryId)
+      case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
+        GalleryPicAction(galleryId, "", indexes.split("&").map(_.toInt).toList)))
+    }
   }
 
   def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
     form.bindFromRequest.fold(
 
-      formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
+      formWithErrors => BadRequest(views.html.global.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
       form => {
         val galleryId = form.galleryId
@@ -158,19 +154,17 @@ object GalleryPicList extends Controller with SecureSocial {
    * @return
    */
   def changeThumbnail(galleryId: Int, picIndex: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
-    GalleryReadService.findById(galleryId).map(
-      _ match {
-        case None => Galleries.couldNotFindGallery(galleryId)
-        case Some(gallery) =>
-          val pictures = gallery.pictures
-          if (picIndex > -1 && picIndex < pictures.length) {
-            GalleryWriteService.updateField(galleryId, "thumbnail",
-              Json.toJson(pictures.apply(picIndex).thumbnail),
-              BackEndUser.user(request).authId)
-          }
-          Redirect(routes.GalleryPicList.view(galleryId))
-      }
-    )
+    GalleryReadService.findById(galleryId).map {
+      case None => Galleries.couldNotFindGallery(galleryId)
+      case Some(gallery) =>
+        val pictures = gallery.pictures
+        if (picIndex > -1 && picIndex < pictures.length) {
+          GalleryWriteService.updateField(galleryId, "thumbnail",
+            Json.toJson(pictures.apply(picIndex).thumbnail),
+            BackEndUser.user(request).authId)
+        }
+        Redirect(routes.GalleryPicList.view(galleryId))
+    }
   }
 
 }

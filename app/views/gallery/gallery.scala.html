@@ -65,7 +65,7 @@
                 @if(models.BackEndUser.isWriter(request)){
                 <td style="text-align:center;">
                     @if(index != 0){
-                    <a href="@controllers.gallery.routes.Galleries.up(gallery.categoryId, gallery.galleryId)">
+                    <a href="@controllers.gallery.routes.Galleries.up(gallery.galleryId)">
                         <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-up"></span>
                         </button>
@@ -74,7 +74,7 @@
                 </td>
                 <td style="text-align:center;">
                     @if(index < (galleries.size-1)){
-                    <a href="@controllers.gallery.routes.Galleries.down(gallery.categoryId, gallery.galleryId)">
+                    <a href="@controllers.gallery.routes.Galleries.down(gallery.galleryId)">
                         <button type="button" class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </button>

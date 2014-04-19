@@ -32,22 +32,20 @@ object GalleryPicComments extends Controller with SecureSocial {
 
   def view(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
     GalleryReadService.findById(galleryId).map {
-      _ match {
-        case Some(gallery) =>
-          val realIndex = if (index < 0 || index > (gallery.pictures.length - 1)) 0 else index
+      case Some(gallery) =>
+        val realIndex = if (index < 0 || index > (gallery.pictures.length - 1)) 0 else index
 
-          val galleryPic = gallery.pictures.apply(realIndex)
+        val galleryPic = gallery.pictures.apply(realIndex)
 
-          Ok(views.html.gallery.galleryPicComment(
-            picForm.fill(GalleryPicComment(
-              gallery.categoryId,
-              galleryId,
-              realIndex,
-              Const.PhotoStockRoot + galleryPic.web,
-              galleryPic.comment))))
+        Ok(views.html.gallery.galleryPicComment(
+          picForm.fill(GalleryPicComment(
+            gallery.categoryId,
+            galleryId,
+            realIndex,
+            Const.PhotoStockRoot + galleryPic.web,
+            galleryPic.comment))))
 
-        case _ => Galleries.couldNotFindGallery(galleryId)
-      }
+      case _ => Galleries.couldNotFindGallery(galleryId)
     }
   }
 
@@ -55,7 +53,7 @@ object GalleryPicComments extends Controller with SecureSocial {
     picForm.bindFromRequest.fold(
 
       // Validation error
-      formWithErrors => BadRequest(views.html.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
+      formWithErrors => BadRequest(views.html.global.badRequest("" + formWithErrors.errors.map(error => error.message).toList)),
 
       // Validation OK
       form => {

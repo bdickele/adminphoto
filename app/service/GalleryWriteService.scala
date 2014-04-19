@@ -13,6 +13,7 @@ import models.{Versioning, GalleryPic, Gallery}
 import service.mapper.GalleryMapper._
 import service.mapper.VersioningMapper._
 import scala.concurrent.duration._
+import org.joda.time.DateTime
 
 /**
  * Creation or update of gallery or pictures
@@ -21,6 +22,7 @@ import scala.concurrent.duration._
 object GalleryWriteService extends Controller with MongoController {
 
   def collection = db.collection[JSONCollection]("gallery")
+
 
   // --------------------------------------------------------------
   // Methods related to gallery but not its pictures
@@ -45,34 +47,37 @@ object GalleryWriteService extends Controller with MongoController {
       Versioning.newOne(authId))
 
     Logger.info("Gallery to be created : " + gallery)
-    collection.insert(Json.toJson(gallery))
+    collection.insert(gallery)
   }
 
-  /** In that method we update everything that is not related to pictures */
+  // In that method we update everything that is not related to pictures
   def update(galleryId: Int,
-             categoryId: Int,
-             title: String,
-             comment: Option[String],
-             online: Boolean,
+             newCategoryId: Int,
+             newTitle: String,
+             newComment: Option[String],
+             newOnline: Boolean,
              authId: String): Future[LastError] = {
     val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
     val newGallery = galleryInDB.copy(
-      categoryId = categoryId,
-      title = title,
-      online = online,
+      categoryId = newCategoryId,
+      title = newTitle,
+      online = newOnline,
       versioning = galleryInDB.versioning.increment(authId),
-      comment = comment)
+      comment = newComment)
 
     collection.update(Json.obj("galleryId" -> galleryId), newGallery)
   }
 
+  // In that method we update fields field by field
   def updateField(galleryId: Int, field: String, value: JsValue, authId: String): Future[LastError] = {
     val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
     collection.update(
       Json.obj("galleryId" -> galleryId),
-      Json.obj(
-        "$set" -> Json.obj(field -> value),
-        "$set" -> Json.obj("versioning" -> galleryInDB.versioning.increment(authId))))
+      Json.obj("$set" -> Json.obj(
+        field -> value,
+        "versioning.version" -> (galleryInDB.versioning.version + 1),
+        "versioning.updateDate" -> new DateTime(), // It will be formatted as a String as converter is imported
+        "versioning.updateUser" -> authId)))
   }
 
   // --------------------------------------------------------------
@@ -83,6 +88,8 @@ object GalleryWriteService extends Controller with MongoController {
     val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
 
     val array = JsArray(pictures.map(p => Json.toJson(p)).toList)
+
+    // Here we mix "manual" update (use of $pushAll) and an update through a converter for Versioning class
     collection.update(
       Json.obj("galleryId" -> galleryId),
       Json.obj(

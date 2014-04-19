@@ -68,53 +68,50 @@ object GalleryForms extends Controller with SecureSocial {
       val future = GalleryReadService.findById(galleryId)
 
       future.map {
-        _ match {
-          case Some(gallery) => Ok(views.html.gallery.galleryForm(
-            gallery.title,
-            Categories.findAllFromCacheOrDB(),
-            galleryForm.fill(GalleryForm(gallery))))
-          case None => Galleries.couldNotFindGallery(galleryId)
-        }
+        case Some(gallery) => Ok(views.html.gallery.galleryForm(
+          gallery.title,
+          Categories.findAllFromCacheOrDB(),
+          galleryForm.fill(GalleryForm(gallery))))
+        case None => Galleries.couldNotFindGallery(galleryId)
       }
   }
 
-  def save() = SecuredAction(WithRole(Role.Writer)) {
-    implicit request =>
-      galleryForm.bindFromRequest.fold(
+  def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    galleryForm.bindFromRequest.fold(
 
-        // Validation error
-        formWithErrors =>
-          Ok(views.html.gallery.galleryForm("Incorrect data for gallery",
-            Categories.findAllFromCacheOrDB(), formWithErrors)),
+      // Validation error
+      formWithErrors =>
+        Ok(views.html.gallery.galleryForm("Incorrect data for gallery",
+          Categories.findAllFromCacheOrDB(), formWithErrors)),
 
-        // Validation OK
-        form => {
-          val galleryId = form.galleryId
-          val future: Future[Option[Gallery]] = GalleryReadService.findById(galleryId)
-          val option: Option[Gallery] = Await.result(future, 5 seconds)
+      // Validation OK
+      form => {
+        val galleryId = form.galleryId
+        val future: Future[Option[Gallery]] = GalleryReadService.findById(galleryId)
+        val option: Option[Gallery] = Await.result(future, 5 seconds)
 
-          option match {
+        option match {
 
-            // Edition of an existing gallery
-            case Some(gallery) =>
-              GalleryWriteService.update(
-                form.galleryId,
-                form.categoryId,
-                form.title,
-                if (form.comment.isEmpty) None else Some(form.comment),
-                form.online,
-                BackEndUser.user(request).authId)
-              Redirect(routes.GalleryPicList.view(form.galleryId))
+          // Edition of an existing gallery
+          case Some(gallery) =>
+            GalleryWriteService.update(
+              form.galleryId,
+              form.categoryId,
+              form.title,
+              if (form.comment.isEmpty) None else Some(form.comment),
+              form.online,
+              BackEndUser.user(request).authId)
+            Redirect(routes.GalleryPicList.view(form.galleryId))
 
-            // New gallery
-            case None =>
-              val newGalleryId = GalleryReadService.findMaxGalleryId + 1
-              GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online,
-                BackEndUser.user(request).authId)
-              Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
-          }
+          // New gallery
+          case None =>
+            val newGalleryId = GalleryReadService.findMaxGalleryId + 1
+            GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online,
+              BackEndUser.user(request).authId)
+            Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
         }
-      )
+      }
+    )
   }
 
   // Required by form's validation
@@ -131,11 +128,10 @@ object GalleryForms extends Controller with SecureSocial {
       val gallery = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
 
       val previousFuture = GalleryReadService.findPreviousGalleryInCategory(gallery.categoryId, gallery.rank)
+
       val previousGallery: Future[Gallery] = previousFuture.map {
-        _ match {
-          case Some(g) => g
-          case None => lastGalleryOfPreviousCategory(gallery.categoryId)
-        }
+        case Some(g) => g
+        case None => lastGalleryOfPreviousCategory(gallery.categoryId)
       }
 
       previousGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
@@ -178,10 +174,8 @@ object GalleryForms extends Controller with SecureSocial {
 
       val nextFuture = GalleryReadService.findNextGalleryInCategory(gallery.categoryId, gallery.rank)
       val nextGallery: Future[Gallery] = nextFuture.map {
-        _ match {
-          case Some(g) => g
-          case None => firstGalleryOfNextCategory(gallery.categoryId)
-        }
+        case Some(g) => g
+        case None => firstGalleryOfNextCategory(gallery.categoryId)
       }
 
       nextGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))

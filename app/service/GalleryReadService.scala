@@ -43,6 +43,20 @@ object GalleryReadService extends Controller with MongoController {
   /** As title has to be unique, we need that method */
   def findByTitle(title: String): Future[Option[Gallery]] = findOne(Json.obj("title" -> title))
 
+  // Returns categoryId of a gallery
+  def findCategoryId(galleryId: Int): Int = {
+    val future: Future[Option[JsObject]] =
+      collection.find(Json.obj()).
+        sort(Json.obj("galleryId" -> -1)).
+        one[JsObject]
+
+    val option: Option[JsObject] = Await.result(future, 5 seconds)
+    option match {
+      case None => 0
+      case Some(doc) => (doc \ "categoryId").as[Int]
+    }
+  }
+
   def findMaxGalleryId: Int = {
     val future: Future[Option[JsObject]] =
       collection.find(Json.obj()).

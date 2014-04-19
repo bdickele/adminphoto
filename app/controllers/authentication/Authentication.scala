@@ -1,98 +1,52 @@
 package controllers.authentication
 
-import securesocial.controllers.DefaultTemplatesPlugin
-import play.api.mvc.{RequestHeader, Request}
+import play.api.mvc.Request
 import play.api.data.Form
-import play.api.templates.{Txt, Html}
-import securesocial.core.{Identity, SecuredRequest}
-import securesocial.controllers.PasswordChange.ChangeInfo
+import play.api.templates.Html
+import securesocial.controllers.DefaultTemplatesPlugin
 import securesocial.controllers.Registration.RegistrationInfo
+import securesocial.controllers.PasswordChange.ChangeInfo
+import securesocial.core.SecuredRequest
 
 /**
- * That plugin is required to display customized views related to authentication
+ * That plugin is required to display customized views/messages related to authentication
  * bdickele
  */
-
 class Authentication(app: play.api.Application) extends DefaultTemplatesPlugin(app) {
 
   // Returns the html for the login page
   override def getLoginPage[A](implicit request: Request[A], form: Form[(String, String)], msg: Option[String] = None): Html = {
-    views.html.authentication.login(form, msg)
+    views.html.authentication.login(form, msg)(request.flash)
   }
 
   // Returns the html for the signup page
   override def getSignUpPage[A](implicit request: Request[A], form: Form[RegistrationInfo], token: String): Html = {
-    //TODO views.html.authentication.signUp(form, token)
-    super.getSignUpPage
+    views.html.authentication.signUp(form, token)
   }
 
   // Returns the html for the start signup page
   override def getStartSignUpPage[A](implicit request: Request[A], form: Form[String]): Html = {
-    //TODO views.html.authentication.startSignUp(form)
-    super.getStartSignUpPage
+    views.html.authentication.startSignUp(form)
   }
 
   // Returns the html for the reset password page
   override def getStartResetPasswordPage[A](implicit request: Request[A], form: Form[String]): Html = {
-    //TODO views.html.authentication.startResetPassword(form)
-    super.getStartResetPasswordPage
+    views.html.authentication.startResetPassword(form)
   }
 
-   /*
   // Returns the html for the start reset page
-  def getResetPasswordPage[A](implicit request: Request[A], form: Form[(String, String)], token: String): Html = {
-    //TODO views.html.custom.authentication.resetPasswordPage(form, token)
-    super.getResetPasswordPage
+  override def getResetPasswordPage[A](implicit request: Request[A], form: Form[(String, String)], token: String): Html = {
+    views.html.authentication.resetPassword(form, token)
   }
 
-  // Returns the html for the change password page
-  def getPasswordChangePage[A](implicit request: SecuredRequest[A], form: Form[ChangeInfo]): Html = {
+  // Returns the html for the change password page (instead of doing a reset)
+  override def getPasswordChangePage[A](implicit request: SecuredRequest[A], form: Form[ChangeInfo]): Html = {
     //TODO views.html.authentication.passwordChange(form)
     super.getPasswordChangePage
   }
 
-  // Returns the email sent when a user starts the sign up process
-  def getSignUpEmail(token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.authentication.signUpEmail(token)))
-    super.getSignUpEmail(token)
-  }
-
-  // Returns the email sent when the user is already registered
-  def getAlreadyRegisteredEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.authentication.alreadyRegisteredEmail(user)))
-    super.getAlreadyRegisteredEmail(user)
-  }
-
-  // Returns the welcome email sent when the user finished the sign up process
-  def getWelcomeEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.authentication.welcomeEmail(user)))
-    super.getWelcomeEmail(user)
-  }
-
-  // Returns the email sent when a user tries to reset the password but there is no account for
-  // that email address in the system
-  def getUnknownEmailNotice()(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.authentication.unknownEmailNotice(request)))
-    super.getUnknownEmailNotice()
-  }
-
-  // Returns the email sent to the user to reset the password
-  def getSendPasswordResetEmail(user: Identity, token: String)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.authentication.passwordResetEmail(user, token)))
-    super.getSendPasswordResetEmail(user, token)
-  }
-
-  // Returns the email sent as a confirmation of a password change
-  def getPasswordChangedNoticeEmail(user: Identity)(implicit request: RequestHeader): (Option[Txt], Option[Html]) = {
-    //TODO (None, Some(views.html.custom.mails.passwordChangedNotice(user)))
-    super.getPasswordChangedNoticeEmail(user)
-  }
-
   // Returns the html of the Not Authorized page
-  def getNotAuthorizedPage[A](implicit request: Request[A]): Html = {
-    //TODO views.html.custom.mails.notAuthorizedPage()
-    super.getNotAuthorizedPage
-  }
-  */
+  override def getNotAuthorizedPage[A](implicit request: Request[A]): Html =
+    views.html.global.badRequest("You are not authorized to access that page")
 }
 

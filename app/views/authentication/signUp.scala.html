@@ -1,0 +1,69 @@
+@(form: Form[securesocial.controllers.Registration.RegistrationInfo], token: String)
+
+@mainauth("Sign up"){
+
+<br>
+
+<div class="col-xs-12 col-md-6">
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h3 class="panel-title">Sign up</h3>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="clearfix">
+                @helper.form(action=securesocial.core.providers.utils.RoutesHelper.handleSignUp(token), args =
+                'class -> "form-horizontal",
+                'role -> "form") {
+
+                @form.globalError.map{ error =>
+                <div class="alert alert-dismissable alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@error.message</strong>
+                </div>
+                }
+
+                @if(form.hasErrors){
+                <div class="alert alert-dismissable alert-danger">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>@form.errors.head.message</strong>
+                </div>
+                }
+
+                @helper.inputText(form("firstName"),
+                'class -> "form-control",
+                '_label -> "First name",
+                'required -> true,
+                '_showConstraints -> true)
+
+                @helper.inputText(form("lastName"),
+                'class -> "form-control",
+                '_label -> "Last name",
+                'required -> true,
+                '_showConstraints -> true)
+
+                @helper.inputPassword(form("password.password1"),
+                'class -> "form-control",
+                '_label -> "Password",
+                'required -> true,
+                '_showConstraints -> true)
+
+                @helper.inputPassword(form("password.password2"),
+                'class -> "form-control",
+                '_label -> "Password confirmation",
+                'required -> true,
+                '_showConstraints -> true)
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create account</button>
+                    <a class="btn" href="/login">Cancel</a>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}

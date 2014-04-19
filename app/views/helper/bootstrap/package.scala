@@ -2,7 +2,7 @@ package views.html.helper
 
 
 /**
- * Created by bdickele on 25/01/14.
+ * bdickele
  */
 package object bootstrap {
 

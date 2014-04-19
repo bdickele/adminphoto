@@ -42,43 +42,41 @@ object GalleryPicSelection extends Controller with SecureSocial {
 
   def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async { implicit request =>
     val future = GalleryReadService.findById(galleryId)
-    future.map(
-      _ match {
-        case None => BadRequest(views.html.badRequest("Com'on, that was not supposed to happen, really"))
-        case Some(gallery) =>
+    future.map {
+      case None => BadRequest(views.html.global.badRequest("Com'on, that was not supposed to happen, really"))
+      case Some(gallery) =>
 
-          val mainFolders = PictureStockService.remoteMainFolders
+        val mainFolders = PictureStockService.remoteMainFolders
 
-          // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
-          val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
+        // Let's select main folder with same name as gallery's year if user hasn't selected any parentFolder
+        val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 
-          val subFolders = PictureStockService.remoteSubFolders(mainFolderName)
-          val subFolderName = if (subFolder == "") subFolders.head else subFolder
+        val subFolders = PictureStockService.remoteSubFolders(mainFolderName)
+        val subFolderName = if (subFolder == "") subFolders.head else subFolder
 
-          val folder = mainFolderName + "/" + subFolderName + "/"
-          val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
+        val folder = mainFolderName + "/" + subFolderName + "/"
+        val picturesRaw: List[Picture] = Picture.picturesFromFolder(folder)
 
-          val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
-            SelectablePic(
-              folder,
-              PhotoStockRoot + folder + FolderThumbnail + p.thumbnail,
-              PhotoStockRoot + folder + FolderWeb + p.web,
-              p.web))
+        val selectablePics: List[SelectablePic] = picturesRaw.map(p =>
+          SelectablePic(
+            folder,
+            PhotoStockRoot + folder + FolderThumbnail + p.thumbnail,
+            PhotoStockRoot + folder + FolderWeb + p.web,
+            p.web))
 
-          Ok(views.html.gallery.galleryPicSelection(
-            form.fill(SelectedPics(galleryId, folder, List())),
-            gallery,
-            mainFolders, subFolders, mainFolderName, subFolderName,
-            selectablePics))
-      }
-    )
+        Ok(views.html.gallery.galleryPicSelection(
+          form.fill(SelectedPics(galleryId, folder, List())),
+          gallery,
+          mainFolders, subFolders, mainFolderName, subFolderName,
+          selectablePics))
+    }
   }
 
   def save() = SecuredAction(WithRole(Role.Writer)) { implicit request =>
     form.bindFromRequest.fold(
 
       // Validation error
-      formWithErrors => BadRequest(views.html.badRequest("But that was not supposed to happen !")),
+      formWithErrors => BadRequest(views.html.global.badRequest("But that was not supposed to happen !")),
 
       /*
       So now we have a list of String looking like "pictureName.jpg" that

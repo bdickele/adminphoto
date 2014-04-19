@@ -57,12 +57,12 @@ object Categories extends Controller with SecureSocial {
         val categoryRank = category.rank
 
         // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
-        categories.reverse.find(_.rank > categoryRank) match {
-          case None => // nothing to do then
-          case Some(otherCategory) =>
-            clearCache()
-            CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank + 1))
-            CategoryService.updateField(otherCategory.categoryId, "rank", Json.toJson(categoryRank))
+        // find method returns an Option, but if it returns None I don't do nothing
+        // That's why I directly use map method
+        categories.reverse.find(_.rank > categoryRank).map { categoryAbove =>
+          clearCache()
+          CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank + 1))
+          CategoryService.updateField(categoryAbove.categoryId, "rank", Json.toJson(categoryRank))
         }
 
         Redirect(routes.Categories.view())
@@ -85,12 +85,10 @@ object Categories extends Controller with SecureSocial {
         val categoryRank = category.rank
 
         // List is sorted by rank, thus we pick up the first category whose rank is < category's rank
-        categories.find(_.rank < categoryRank) match {
-          case None => // nothing to do then
-          case Some(otherCategory) =>
-            clearCache()
-            CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank - 1))
-            CategoryService.updateField(otherCategory.categoryId, "rank", Json.toJson(categoryRank))
+        categories.find(_.rank < categoryRank).map { categoryUnderneath =>
+          clearCache()
+          CategoryService.updateField(category.categoryId, "rank", Json.toJson(categoryRank - 1))
+          CategoryService.updateField(categoryUnderneath.categoryId, "rank", Json.toJson(categoryRank))
         }
 
         Redirect(routes.Categories.view())
@@ -111,5 +109,5 @@ object Categories extends Controller with SecureSocial {
   }
 
   def couldNotFindCategory(categoryId: Int): SimpleResult =
-    BadRequest(views.html.badRequest("Could not find a category with ID " + categoryId))
+    BadRequest(views.html.global.badRequest("Could not find a category with ID " + categoryId))
 }

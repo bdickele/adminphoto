@@ -14,7 +14,6 @@ import models.Gallery
 import models.WithRole
 import scala.Some
 import models.Category
-import play.api.mvc.SimpleResult
 
 /**
  * Controller for galleries
@@ -35,7 +34,7 @@ object Galleries extends Controller with SecureSocial {
       }.recover {
         case e =>
           Logger.error(e.getMessage)
-          BadRequest(views.html.badRequest(e.getMessage))
+          BadRequest(views.html.global.badRequest(e.getMessage))
       }
     }
   }
@@ -45,19 +44,20 @@ object Galleries extends Controller with SecureSocial {
   }
 
   /** A gallery has to "go up" in the hierarchy of galleries */
-  def up(categoryId: Int, galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+  def up(galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+    val categoryId = GalleryReadService.findCategoryId(galleryId)
     findAllFuture(categoryId).map { galleries =>
       galleries.find(_.galleryId == galleryId) match {
         case Some(gallery) =>
           val galleryRank = gallery.rank
+          val authId = BackEndUser.user(request).authId
 
           // List is sorted by rank: we reverse it and pick up the first category whose rank is > category's rank
-          galleries.reverse.find(_.rank > galleryRank) match {
-            case Some(otherGallery) =>
-              val authId = BackEndUser.user(request).authId
-              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank + 1), authId)
-              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank), authId)
-            case _ => // nothing to do then
+          // find method returns an Option, but if it returns None I don't do nothing
+          // That's why I directly use map method
+          galleries.reverse.find(_.rank > galleryRank).map { galleryAbove =>
+            GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank + 1), authId)
+            GalleryWriteService.updateField(galleryAbove.galleryId, "rank", Json.toJson(galleryRank), authId)
           }
 
           Redirect(routes.Galleries.view(categoryId))
@@ -68,19 +68,18 @@ object Galleries extends Controller with SecureSocial {
   }
 
   /** A gallery has to "go down" in the hierarchy of galleries */
-  def down(categoryId: Int, galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+  def down(galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+    val categoryId = GalleryReadService.findCategoryId(galleryId)
     findAllFuture(categoryId).map { galleries =>
       galleries.find(_.galleryId == galleryId) match {
         case Some(gallery) =>
           val galleryRank = gallery.rank
+          val authId = BackEndUser.user(request).authId
 
           // List is sorted by rank, thus we pick up the first gallery whose rank is < gallery's rank
-          galleries.find(_.rank < galleryRank) match {
-            case Some(otherGallery) =>
-              val authId = BackEndUser.user(request).authId
-              GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank - 1), authId)
-              GalleryWriteService.updateField(otherGallery.galleryId, "rank", Json.toJson(galleryRank), authId)
-            case _ => // nothing to do then
+          galleries.find(_.rank < galleryRank).map { galleryUnderneath =>
+            GalleryWriteService.updateField(galleryId, "rank", Json.toJson(galleryRank - 1), authId)
+            GalleryWriteService.updateField(galleryUnderneath.galleryId, "rank", Json.toJson(galleryRank), authId)
           }
 
           Redirect(routes.Galleries.view(categoryId))
@@ -91,15 +90,13 @@ object Galleries extends Controller with SecureSocial {
   }
 
   def onOffLine(galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
-    GalleryReadService.findById(galleryId).map(
-      _ match {
-        case Some(gallery) =>
-          GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online), BackEndUser.user(request).authId)
-          Redirect(routes.Galleries.view(gallery.categoryId))
-        case None =>
-          couldNotFindGallery(galleryId)
-      }
-    )
+    GalleryReadService.findById(galleryId).map {
+      case Some(gallery) =>
+        GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online), BackEndUser.user(request).authId)
+        Redirect(routes.Galleries.view(gallery.categoryId))
+      case None =>
+        couldNotFindGallery(galleryId)
+    }
   }
 
   def findAll(categoryId: Int): List[Gallery] =
@@ -109,8 +106,5 @@ object Galleries extends Controller with SecureSocial {
     GalleryReadService.findAll(categoryId)
 
   def couldNotFindGallery(galleryId: Int): SimpleResult =
-    BadRequest(views.html.badRequest("Could not find a gallery with ID " + galleryId))
-
-  def notAllowed: SimpleResult =
-    BadRequest(views.html.badRequest("You're not allowed to perform this operation"))
+    BadRequest(views.html.global.badRequest("Could not find a gallery with ID " + galleryId))
 }
