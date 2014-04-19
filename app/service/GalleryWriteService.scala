@@ -13,6 +13,7 @@ import models.{Versioning, GalleryPic, Gallery}
 import models.GalleryMapper._
 import scala.concurrent.duration._
 import org.joda.time.DateTime
+import models.Versioning._
 
 /**
  * Creation or update of gallery or pictures

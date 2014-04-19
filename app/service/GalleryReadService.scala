@@ -11,6 +11,7 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import models.Gallery
 import models.GalleryMapper._
+import models.Versioning._
 
 
 /**
