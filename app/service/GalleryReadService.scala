@@ -10,7 +10,8 @@ import play.api.libs.json.Reads._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import models.Gallery
-import service.mapper.GalleryMapper._
+import models.GalleryMapper._
+
 
 /**
  * Service related to reading of data related to galleries

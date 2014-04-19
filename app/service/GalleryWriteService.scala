@@ -10,8 +10,7 @@ import play.api.libs.json._
 import play.modules.reactivemongo.json.collection.JSONCollection
 import scala.Some
 import models.{Versioning, GalleryPic, Gallery}
-import service.mapper.GalleryMapper._
-import service.mapper.VersioningMapper._
+import models.GalleryMapper._
 import scala.concurrent.duration._
 import org.joda.time.DateTime
 
@@ -58,6 +57,7 @@ object GalleryWriteService extends Controller with MongoController {
              newOnline: Boolean,
              authId: String): Future[LastError] = {
     val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
+    //TODO Quand on change de category il faut re-ordonner les galleries des 2 categories
     val newGallery = galleryInDB.copy(
       categoryId = newCategoryId,
       title = newTitle,

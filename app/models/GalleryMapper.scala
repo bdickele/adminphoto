@@ -1,10 +1,9 @@
-package service.mapper
+package models
 
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import models.{Versioning, Gallery, GalleryPic}
-import service.mapper.VersioningMapper._
+import models.Gallery
 
 /**
  * Mapper for class Gallery
@@ -16,7 +15,7 @@ object GalleryMapper {
   // Reading
   // --------------------------------------------------------------
 
-  // Mapper: JsObject -> GalleryPic
+  // Mapper: JSON -> GalleryPic
   implicit val galleryPicReader: Reads[GalleryPic] = (
     (__ \ "thumbnail").read[String] and
       (__ \ "web").read[String] and
@@ -24,7 +23,7 @@ object GalleryMapper {
       (__ \ "comment").readNullable[String]
     )(GalleryPic.apply _)
 
-  // Mapper: JsObject -> Gallery
+  // Mapper: JSON -> Gallery
   implicit val galleryReader: Reads[Gallery] = (
     (__ \ "categoryId").read[Int] and
       (__ \ "galleryId").read[Int] and
@@ -40,7 +39,7 @@ object GalleryMapper {
   // Writing
   // --------------------------------------------------------------
 
-  // Mapper: GalleryPic -> JsObject
+  // Mapper: GalleryPic -> JSON
   implicit val galleryPicWriter: Writes[GalleryPic] = (
     (__ \ "thumbnail").write[String] and
       (__ \ "web").write[String] and
@@ -48,7 +47,7 @@ object GalleryMapper {
       (__ \ "comment").writeNullable[String]
     )(unlift(GalleryPic.unapply))
 
-  // Mapper: Gallery -> JsObject
+  // Mapper: Gallery -> JSON
   implicit val galleryWriter: Writes[Gallery] = (
     (__ \ "categoryId").write[Int] and
       (__ \ "galleryId").write[Int] and

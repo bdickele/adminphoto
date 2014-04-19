@@ -12,8 +12,8 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import securesocial.core.providers.Token
 import models.BackEndUser
+import models.BackEndUser._
 import models.Role
-import service.mapper.BackEndUserMapper._
 
 /**
  * Service related to (back-end) users

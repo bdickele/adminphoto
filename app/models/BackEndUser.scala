@@ -2,6 +2,14 @@ package models
 
 import securesocial.core._
 import play.api.mvc.RequestHeader
+import play.api.libs.json._
+import securesocial.core.OAuth2Info
+import play.api.libs.json.JsSuccess
+import securesocial.core.OAuth1Info
+import securesocial.core.IdentityId
+import securesocial.core.PasswordInfo
+import securesocial.core.SecuredRequest
+import securesocial.core.providers.Token
 
 /**
  * Class for users
@@ -43,6 +51,47 @@ object BackEndUser {
   def isWriter(s: String) = s == Role.Writer.toString
 
   def isReader(s: String) = !isWriter(s)
+
+  // --------------------------------------------------------------
+  // Mappers JSON -> BackEndUser (Reads)
+  // --------------------------------------------------------------
+
+  implicit val identityIdReader = Json.reads[IdentityId]
+
+  implicit object authenticationMethodReader extends Reads[AuthenticationMethod] {
+    def reads(json: JsValue): JsResult[AuthenticationMethod] =
+      new JsSuccess[AuthenticationMethod](AuthenticationMethod(json.as[String]))
+  }
+
+  implicit val oAuth1InfoReader = Json.reads[OAuth1Info]
+
+  implicit val oAuth2InfoReader = Json.reads[OAuth2Info]
+
+  implicit val passwordInfoReader = Json.reads[PasswordInfo]
+
+  implicit val backEndReader = Json.reads[BackEndUser]
+
+  implicit val tokenReader = Json.reads[Token]
+
+  // --------------------------------------------------------------
+  // Mappers BackEndUser -> JSON (Writes)
+  // --------------------------------------------------------------
+
+  implicit val identityIdWriter = Json.writes[IdentityId]
+
+  implicit object authenticationMethodWriter extends Writes[AuthenticationMethod] {
+    def writes(authMethod: AuthenticationMethod): JsValue = JsString(authMethod.method)
+  }
+
+  implicit val oAuth1InfoWriter = Json.writes[OAuth1Info]
+
+  implicit val oAuth2InfoWriter = Json.writes[OAuth2Info]
+
+  implicit val passwordInfoWriter = Json.writes[PasswordInfo]
+
+  implicit val backEndWriter = Json.writes[BackEndUser]
+
+  implicit val tokenWriter = Json.writes[Token]
 
 }
 

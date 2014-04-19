@@ -9,7 +9,6 @@ import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.core.commands.LastError
 import play.api.libs.concurrent.Execution.Implicits._
 import models.Category
-import service.mapper.CategoryMapper._
 
 /**
  * Services related to CRUD operations of categories
