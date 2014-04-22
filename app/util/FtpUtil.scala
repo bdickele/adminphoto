@@ -17,27 +17,28 @@ object FtpUtil {
   def load(parentFolder: Option[String])(filterFunction: FTPFile => Boolean): List[String] = {
     val client = new FTPClient()
     try {
+      Logger.info("Connecting to pictures hoster through FTP...")
       client.connect(FtpClientAddress)
       client.login(FtpClientLogin, FtpClientPassword)
+      Logger.info("Connected")
 
       val photoStockRoot = FtpClientPhotoStock
-      client.changeWorkingDirectory(parentFolder match {
+      val workingDirectory = parentFolder match {
         case None => photoStockRoot
         case Some(s) => photoStockRoot + s
-      })
+      }
 
-      //Logger.info("FTPClient dir : " + client.printWorkingDirectory())
-
-      val folders = client.listFiles().filter(filterFunction)
-
+      val files = client.listFiles(workingDirectory)
+      val folders = if (files.isEmpty) List() else files.filter(filterFunction).map(_.getName).toList
       client.logout()
-      folders.map(f => f.getName).toList
+      folders
     } catch {
-      case e: Exception => Logger.error(e.getMessage)
+      case e: Exception => Logger.error(e.getCause + " : " + e.getMessage)
         List()
     } finally {
       try {
         client.disconnect()
+        Logger.info("FTP connection closed")
       } catch {
         case e: Exception => Logger.error(e.getMessage)
       }

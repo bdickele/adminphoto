@@ -30,7 +30,7 @@ object GalleryPicComments extends Controller with SecureSocial {
   val picForm: Form[GalleryPicComment] = Form(formMapping)
 
 
-  def view(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+  def comment(galleryId: Int, index: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
     GalleryReadService.findById(galleryId).map {
       case Some(gallery) =>
         val realIndex = if (index < 0 || index > (gallery.pictures.length - 1)) 0 else index
@@ -59,7 +59,7 @@ object GalleryPicComments extends Controller with SecureSocial {
       form => {
         GalleryWriteService.updateComment(form.galleryId, form.index, form.comment, BackEndUser.user(request).authId)
         // Once comment is saved we moved to next picture
-        Redirect(routes.GalleryPicComments.view(form.galleryId, form.index + 1))
+        Redirect(routes.GalleryPicComments.comment(form.galleryId, form.index + 1))
       }
     )
   }

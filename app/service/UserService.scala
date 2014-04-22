@@ -6,6 +6,7 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import language.postfixOps
 import play.api.Logger
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.libs.json._

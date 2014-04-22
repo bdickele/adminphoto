@@ -52,7 +52,7 @@
             <tbody>
             @for((gallery, index) <- galleries.zipWithIndex){
             <tr>
-                <td><a href="@controllers.gallery.routes.GalleryPicList.view(gallery.galleryId)">
+                <td><a href="@controllers.gallery.routes.GalleryPicList.pictures(gallery.galleryId)">
                     <img src='@gallery.thumbnailComplete'></a></td>
                 <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a></td>
                 <td style="text-align:center;">@gallery.nbPictures</td>

@@ -2,6 +2,8 @@ name := "adminphoto"
 
 version := "1.0"
 
+scalacOptions ++= Seq("-feature")
+
 libraryDependencies ++= Seq(
   cache,
   "commons-io" % "commons-io"% "2.4",

@@ -6,6 +6,7 @@ import play.api.cache.Cache
 import play.api.Play.current
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import language.postfixOps
 import securesocial.core.SecureSocial
 import service.CategoryService
 import play.api.libs.json.Json
@@ -21,7 +22,7 @@ object Categories extends Controller with SecureSocial {
   val CacheCategory = "CacheCategory"
 
 
-  def view() = SecuredAction { implicit request =>
+  def categories() = SecuredAction { implicit request =>
     clearCache()
     Ok(views.html.category.category(findAllFromCacheOrDB()))
   }
@@ -33,7 +34,7 @@ object Categories extends Controller with SecureSocial {
 
   def refresh() = SecuredAction { implicit request =>
     clearCache()
-    Redirect(routes.Categories.view())
+    Redirect(routes.Categories.categories())
   }
 
   /** Clear cache from categories */
@@ -65,7 +66,7 @@ object Categories extends Controller with SecureSocial {
           CategoryService.updateField(categoryAbove.categoryId, "rank", Json.toJson(categoryRank))
         }
 
-        Redirect(routes.Categories.view())
+        Redirect(routes.Categories.categories())
 
       case None => couldNotFindCategory(categoryId)
     }
@@ -91,7 +92,7 @@ object Categories extends Controller with SecureSocial {
           CategoryService.updateField(categoryUnderneath.categoryId, "rank", Json.toJson(categoryRank))
         }
 
-        Redirect(routes.Categories.view())
+        Redirect(routes.Categories.categories())
 
       case None => couldNotFindCategory(categoryId)
     }
@@ -102,7 +103,7 @@ object Categories extends Controller with SecureSocial {
       case Some(category) =>
         clearCache()
         CategoryService.updateField(category.categoryId, "online", Json.toJson(!category.online))
-        Redirect(routes.Categories.view())
+        Redirect(routes.Categories.categories())
 
       case None => couldNotFindCategory(categoryId)
     }

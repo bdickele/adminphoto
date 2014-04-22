@@ -6,6 +6,7 @@ import play.api.data.Form
 import controllers.category.Categories
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
+import language.postfixOps
 import play.api.libs.concurrent.Execution.Implicits._
 import securesocial.core.{SecuredRequest, SecureSocial}
 import service.{GalleryReadService, GalleryWriteService}
@@ -101,14 +102,14 @@ object GalleryForms extends Controller with SecureSocial {
               if (form.comment.isEmpty) None else Some(form.comment),
               form.online,
               BackEndUser.user(request).authId)
-            Redirect(routes.GalleryPicList.view(form.galleryId))
+            Redirect(routes.GalleryPicList.pictures(form.galleryId))
 
           // New gallery
           case None =>
             val newGalleryId = GalleryReadService.findMaxGalleryId + 1
             GalleryWriteService.create(form.categoryId, newGalleryId, form.title, form.comment, form.online,
               BackEndUser.user(request).authId)
-            Redirect(routes.GalleryPicSelection.view(newGalleryId, "", ""))
+            Redirect(routes.GalleryPicSelection.pictures(newGalleryId, "", ""))
         }
       }
     )
@@ -134,7 +135,7 @@ object GalleryForms extends Controller with SecureSocial {
         case None => lastGalleryOfPreviousCategory(gallery.categoryId)
       }
 
-      previousGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
+      previousGallery.map(g => Redirect(routes.GalleryPicList.pictures(g.galleryId)))
   }
 
   /**
@@ -178,7 +179,7 @@ object GalleryForms extends Controller with SecureSocial {
         case None => firstGalleryOfNextCategory(gallery.categoryId)
       }
 
-      nextGallery.map(g => Redirect(routes.GalleryPicList.view(g.galleryId)))
+      nextGallery.map(g => Redirect(routes.GalleryPicList.pictures(g.galleryId)))
   }
 
   /**

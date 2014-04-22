@@ -12,12 +12,12 @@ object Application extends Controller {
 
 
   def index = Action {
-    Redirect(gallery.routes.Galleries.view(-1))
+    Redirect(gallery.routes.Galleries.galleries(-1))
   }
 
   def update = Action {
     GalleryWriteService.updateDatabase()
-    Redirect(gallery.routes.Galleries.view(-1))
+    Redirect(gallery.routes.Galleries.galleries(-1))
   }
 
   /**
@@ -27,8 +27,8 @@ object Application extends Controller {
   def javascriptRoutes = Action {
     implicit request =>
       Ok(Routes.javascriptRouter("jsRoutes")(
-        controllers.gallery.routes.javascript.Galleries.view,
-        controllers.gallery.routes.javascript.GalleryPicSelection.view,
-        controllers.picture.routes.javascript.Pictures.view)).as("text/javascript")
+        controllers.gallery.routes.javascript.Galleries.galleries,
+        controllers.gallery.routes.javascript.GalleryPicSelection.pictures,
+        controllers.picture.routes.javascript.Pictures.pictures)).as("text/javascript")
   }
 }

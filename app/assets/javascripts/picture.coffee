@@ -1,9 +1,9 @@
 this.folder1.onchange = ->
-    path = jsRoutes.controllers.picture.Pictures.view(folder1.value, "")['url']
+    path = jsRoutes.controllers.picture.Pictures.pictures(folder1.value, "")['url']
     self.location = path
 
 this.folder2.onchange = ->
-    path = jsRoutes.controllers.picture.Pictures.view(folder1.value, folder2.value)['url']
+    path = jsRoutes.controllers.picture.Pictures.pictures(folder1.value, folder2.value)['url']
     self.location = path
 
 # onchange="self.location = folder1.value"

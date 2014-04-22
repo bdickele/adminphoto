@@ -1,3 +1,3 @@
 this.category.onchange = ->
-    path = jsRoutes.controllers.gallery.Galleries.view(category.value)['url']
+    path = jsRoutes.controllers.gallery.Galleries.galleries(category.value)['url']
     self.location = path

@@ -3,6 +3,7 @@ package controllers.gallery
 import play.api.mvc.{SimpleResult, Controller}
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import language.postfixOps
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.Logger
 import controllers.category.Categories
@@ -21,11 +22,11 @@ import models.Category
  */
 object Galleries extends Controller with SecureSocial {
 
-  def view(passedCategoryId: Int = -1) = SecuredAction.async { implicit request =>
+  def galleries(passedCategoryId: Int = -1) = SecuredAction.async { implicit request =>
     val categories: List[Category] = Categories.findAllFromCacheOrDB()
     val categoryId = if (passedCategoryId > 0) passedCategoryId else categories.head.categoryId
 
-    // In case URL contains an incorrect gallery ID
+    // In case URL contains an incorrect category ID
     categories.exists(c => c.categoryId == categoryId) match {
       case false => Future.successful(Categories.couldNotFindCategory(categoryId))
 
@@ -40,7 +41,7 @@ object Galleries extends Controller with SecureSocial {
   }
 
   def refresh(categoryId: Int) = SecuredAction { implicit request =>
-    Redirect(routes.Galleries.view(categoryId))
+    Redirect(routes.Galleries.galleries(categoryId))
   }
 
   /** A gallery has to "go up" in the hierarchy of galleries */
@@ -60,7 +61,7 @@ object Galleries extends Controller with SecureSocial {
             GalleryWriteService.updateField(galleryAbove.galleryId, "rank", Json.toJson(galleryRank), authId)
           }
 
-          Redirect(routes.Galleries.view(categoryId))
+          Redirect(routes.Galleries.galleries(categoryId))
 
         case None => couldNotFindGallery(galleryId)
       }
@@ -82,7 +83,7 @@ object Galleries extends Controller with SecureSocial {
             GalleryWriteService.updateField(galleryUnderneath.galleryId, "rank", Json.toJson(galleryRank), authId)
           }
 
-          Redirect(routes.Galleries.view(categoryId))
+          Redirect(routes.Galleries.galleries(categoryId))
 
         case _ => couldNotFindGallery(galleryId)
       }
@@ -93,7 +94,7 @@ object Galleries extends Controller with SecureSocial {
     GalleryReadService.findById(galleryId).map {
       case Some(gallery) =>
         GalleryWriteService.updateField(galleryId, "online", Json.toJson(!gallery.online), BackEndUser.user(request).authId)
-        Redirect(routes.Galleries.view(gallery.categoryId))
+        Redirect(routes.Galleries.galleries(gallery.categoryId))
       case None =>
         couldNotFindGallery(galleryId)
     }

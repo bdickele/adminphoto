@@ -1,9 +1,9 @@
 this.folder1.onchange = ->
-    path = jsRoutes.controllers.gallery.GalleryPicSelection.view(galleryId, folder1.value, "")['url']
+    path = jsRoutes.controllers.gallery.GalleryPicSelection.pictures(galleryId, folder1.value, "")['url']
     self.location = path
 
 this.folder2.onchange = ->
-    path = jsRoutes.controllers.gallery.GalleryPicSelection.view(galleryId, folder1.value, folder2.value)['url']
+    path = jsRoutes.controllers.gallery.GalleryPicSelection.pictures(galleryId, folder1.value, folder2.value)['url']
     self.location = path
 
 this.toggleCheckBoxes = (checkToggle) ->

@@ -7,6 +7,7 @@ import util.Const._
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import language.postfixOps
 import securesocial.core.SecureSocial
 import service.{PictureStockService, GalleryReadService, GalleryWriteService}
 import models._
@@ -40,7 +41,7 @@ object GalleryPicSelection extends Controller with SecureSocial {
   val form: Form[SelectedPics] = Form(formMapping)
 
 
-  def view(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async { implicit request =>
+  def pictures(galleryId: Int, mainFolder: String = "", subFolder: String = "") = SecuredAction.async { implicit request =>
     val future = GalleryReadService.findById(galleryId)
     future.map {
       case None => BadRequest(views.html.global.badRequest("Com'on, that was not supposed to happen, really"))
@@ -103,7 +104,7 @@ object GalleryPicSelection extends Controller with SecureSocial {
         // Waiting for update otherwise screen could be displayed before being updated
         val future = GalleryWriteService.addPictures(form.galleryId, galleryPics, BackEndUser.user(request).authId)
         Await.result(future, 5 seconds)
-        Redirect(routes.GalleryPicList.view(form.galleryId))
+        Redirect(routes.GalleryPicList.pictures(form.galleryId))
       })
   }
 }

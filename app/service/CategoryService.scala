@@ -4,6 +4,7 @@ import play.api.mvc.Controller
 import play.api.libs.json._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import language.postfixOps
 import play.modules.reactivemongo.MongoController
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.core.commands.LastError
@@ -68,4 +69,19 @@ object CategoryService extends Controller with MongoController {
     collection.update(
       Json.obj("categoryId" -> categoryId),
       Json.obj("$set" -> Json.obj(field -> value)))
+
+  def delete(categoryId: Int): Future[LastError] = {
+    val galleries = Await.result(GalleryReadService.findAll(categoryId), 5 seconds)
+
+    galleries.isEmpty match {
+      case true => collection.remove(Json.obj("categoryId" -> categoryId))
+      //case false => Future.failed(new Error("You can't delete a non-empty category"))
+      case false => Future.failed(new LastError(
+        ok = false,
+        err = Some("Non-empty category"),
+        code = None,
+        errMsg = Some("You can't delete a non-empty category"),
+        None, -1, false))
+    }
+  }
 }

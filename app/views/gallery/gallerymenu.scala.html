@@ -36,10 +36,10 @@
         <li @if(menuIndex==GalleryMenuElement.GalleryForm){class="active"}>
         <a href="@controllers.gallery.routes.GalleryForms.edit(galleryId)">Gallery's description</a></li>
         <li @if(menuIndex==GalleryMenuElement.PicList){class="active"}>
-        <a href='@controllers.gallery.routes.GalleryPicList.view(galleryId)'>Gallery's pictures</a></li>
+        <a href='@controllers.gallery.routes.GalleryPicList.pictures(galleryId)'>Gallery's pictures</a></li>
         @if(models.BackEndUser.isWriter(request)){
         <li @if(menuIndex==GalleryMenuElement.PicSelection){class="active"}>
-        <a href='@controllers.gallery.routes.GalleryPicSelection.view(galleryId, "", "")'>Add pictures</a></li>
+        <a href='@controllers.gallery.routes.GalleryPicSelection.pictures(galleryId, "", "")'>Add pictures</a></li>
         }
     } else {
         <li class="active"><a href="#">Gallery's description</a></li>

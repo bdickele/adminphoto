@@ -78,7 +78,7 @@ object CategoryForms extends Controller with SecureSocial {
         }
 
         Categories.clearCache()
-        Redirect(routes.Categories.view())
+        Redirect(routes.Categories.categories())
       }
     )
   }

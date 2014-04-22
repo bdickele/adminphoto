@@ -12,6 +12,7 @@ import scala.Some
 import models.{Versioning, GalleryPic, Gallery}
 import models.GalleryMapper._
 import scala.concurrent.duration._
+import language.postfixOps
 import org.joda.time.DateTime
 import models.Versioning._
 

@@ -3,6 +3,7 @@ package controllers.gallery
 import play.api.mvc.Controller
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import language.postfixOps
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.data.Forms._
 import scala.Some
@@ -36,14 +37,14 @@ object GalleryPicList extends Controller with SecureSocial {
   val Remove = "REMOVE"
 
 
-  def view(galleryId: Int) = SecuredAction.async { implicit request =>
+  def pictures(galleryId: Int) = SecuredAction.async { implicit request =>
     GalleryReadService.findById(galleryId).map {
       case None => Galleries.couldNotFindGallery(galleryId)
       case Some(pics) => Ok(views.html.gallery.galleryPicList(pics, GalleryPicAction(galleryId, "", Nil)))
     }
   }
 
-  def viewAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
+  def picturesAndSelect(galleryId: Int, indexes: String) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
     GalleryReadService.findById(galleryId).map {
       case None => Galleries.couldNotFindGallery(galleryId)
       case Some(pics) => Ok(views.html.gallery.galleryPicList(pics,
@@ -73,9 +74,9 @@ object GalleryPicList extends Controller with SecureSocial {
           }
 
         newSelectedIndexes match {
-          case Nil => Redirect(routes.GalleryPicList.view(galleryId))
-          case List() => Redirect(routes.GalleryPicList.view(galleryId))
-          case list => Redirect(routes.GalleryPicList.viewAndSelect(galleryId, newSelectedIndexes.mkString("&")))
+          case Nil => Redirect(routes.GalleryPicList.pictures(galleryId))
+          case List() => Redirect(routes.GalleryPicList.pictures(galleryId))
+          case list => Redirect(routes.GalleryPicList.picturesAndSelect(galleryId, newSelectedIndexes.mkString("&")))
         }
       })
   }
@@ -163,7 +164,7 @@ object GalleryPicList extends Controller with SecureSocial {
             Json.toJson(pictures.apply(picIndex).thumbnail),
             BackEndUser.user(request).authId)
         }
-        Redirect(routes.GalleryPicList.view(galleryId))
+        Redirect(routes.GalleryPicList.pictures(galleryId))
     }
   }
 

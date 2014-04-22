@@ -11,7 +11,7 @@ abstract class TestApplication extends WithApplication(
   FakeApplication(
     additionalConfiguration = Map(
       "mongodb.servers" -> List("localhost:27017"),
-      "mongodb.db" -> "websitetest"))) {
+      "mongodb.db" -> "website"))) {
 
   override def around[T: AsResult](test: => T): Result = super.around {
     setupData()

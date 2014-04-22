@@ -15,10 +15,10 @@ object Pictures extends Controller with SecureSocial {
 
   def refresh() = Action { implicit request =>
     PictureStockService.clearCache()
-    Redirect(routes.Pictures.view("", ""))
+    Redirect(routes.Pictures.pictures("", ""))
   }
 
-  def view(mainFolder: String = "", subFolder: String = "") = SecuredAction { implicit request =>
+  def pictures(mainFolder: String = "", subFolder: String = "") = SecuredAction { implicit request =>
     val mainFolders = PictureStockService.loadMainFolders()
     val mainFolderName = if (mainFolder == "") mainFolders.head else mainFolder
 

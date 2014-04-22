@@ -11,12 +11,12 @@ GET     /javascriptRoutes                           controllers.Application.java
 # GALLERY
 # #########################################################
 
-GET     /gallery                                    controllers.gallery.Galleries.view(categoryId: Int = -1)
+GET     /gallery                                    controllers.gallery.Galleries.galleries(categoryId: Int = -1)
 GET     /gallery/create/:categoryId                 controllers.gallery.GalleryForms.create(categoryId: Int)
 GET     /gallery/edit/:galleryId                    controllers.gallery.GalleryForms.edit(galleryId: Int)
 GET     /gallery/previous/:galleryId                controllers.gallery.GalleryForms.previousGallery(galleryId: Int)
 GET     /gallery/next/:galleryId                    controllers.gallery.GalleryForms.nextGallery(galleryId: Int)
-GET     /gallery/:categoryId                        controllers.gallery.Galleries.view(categoryId: Int)
+GET     /gallery/:categoryId                        controllers.gallery.Galleries.galleries(categoryId: Int)
 GET     /gallery/refresh/:categoryId                controllers.gallery.Galleries.refresh(categoryId: Int)
 GET     /gallery/up/:galleryId                      controllers.gallery.Galleries.up(galleryId: Int)
 GET     /gallery/down/:galleryId                    controllers.gallery.Galleries.down(galleryId: Int)
@@ -24,18 +24,18 @@ GET     /gallery/onOffLine/:galleryId               controllers.gallery.Gallerie
 
 POST    /gallery/save                               controllers.gallery.GalleryForms.save
 
-GET     /galleryPicList/view/:galleryId             controllers.gallery.GalleryPicList.view(galleryId: Int)
-GET     /galleryPicList/select/:galleryId/:indexes  controllers.gallery.GalleryPicList.viewAndSelect(galleryId: Int, indexes: String)
+GET     /galleryPicList/view/:galleryId             controllers.gallery.GalleryPicList.pictures(galleryId: Int)
+GET     /galleryPicList/select/:galleryId/:indexes  controllers.gallery.GalleryPicList.picturesAndSelect(galleryId: Int, indexes: String)
 GET     /galleryPicList/thumbnail/:galleryId/:index controllers.gallery.GalleryPicList.changeThumbnail(galleryId: Int, index: Int)
 
 POST    /galleryPicList/save                        controllers.gallery.GalleryPicList.save
 
-GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComments.view(galleryId: Int, index: Int)
+GET     /galleryPicComment/:galleryId/:index        controllers.gallery.GalleryPicComments.comment(galleryId: Int, index: Int)
 POST    /galleryPicComment/save                     controllers.gallery.GalleryPicComments.save
 
-GET     /galleryPicSelection/:galleryId                             controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String = "", subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:parentFolder               controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String = "")
-GET     /galleryPicSelection/:galleryId/:parentFolder/:subFolder    controllers.gallery.GalleryPicSelection.view(galleryId: Int, parentFolder: String, subFolder: String)
+GET     /galleryPicSelection/:galleryId                             controllers.gallery.GalleryPicSelection.pictures(galleryId: Int, parentFolder: String = "", subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder               controllers.gallery.GalleryPicSelection.pictures(galleryId: Int, parentFolder: String, subFolder: String = "")
+GET     /galleryPicSelection/:galleryId/:parentFolder/:subFolder    controllers.gallery.GalleryPicSelection.pictures(galleryId: Int, parentFolder: String, subFolder: String)
 
 POST    /galleryPicSelection/save                   controllers.gallery.GalleryPicSelection.save
 
@@ -43,7 +43,7 @@ POST    /galleryPicSelection/save                   controllers.gallery.GalleryP
 # CATEGORY
 # #########################################################
 
-GET     /category                           controllers.category.Categories.view
+GET     /category                           controllers.category.Categories.categories
 GET     /category/refresh                   controllers.category.Categories.refresh
 GET     /category/create                    controllers.category.CategoryForms.create
 GET     /category/edit/:categoryId          controllers.category.CategoryForms.edit(categoryId: Int)
@@ -57,10 +57,10 @@ POST    /category/save                      controllers.category.CategoryForms.s
 # STOCK OF PICTURE
 # #########################################################
 
-GET     /picture                            controllers.picture.Pictures.view(parentFolder: String = "", subFolder: String = "")
+GET     /picture                            controllers.picture.Pictures.pictures(parentFolder: String = "", subFolder: String = "")
 GET     /picture/refresh                    controllers.picture.Pictures.refresh
-GET     /picture/:parentFolder              controllers.picture.Pictures.view(parentFolder: String, subFolder: String = "")
-GET     /picture/:parentFolder/:subFolder   controllers.picture.Pictures.view(parentFolder: String, subFolder: String)
+GET     /picture/:parentFolder              controllers.picture.Pictures.pictures(parentFolder: String, subFolder: String = "")
+GET     /picture/:parentFolder/:subFolder   controllers.picture.Pictures.pictures(parentFolder: String, subFolder: String)
 
 # #########################################################
 # REQUIRED BY SECURESOCIAL

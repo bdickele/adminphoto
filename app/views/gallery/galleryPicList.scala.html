@@ -57,7 +57,7 @@
                     <tr>
                         <td><a id="@index"></a>
                             @if(models.BackEndUser.isWriter(request)){
-                            <a href="@controllers.gallery.routes.GalleryPicComments.view(gallery.galleryId, index)">
+                            <a href="@controllers.gallery.routes.GalleryPicComments.comment(gallery.galleryId, index)">
                             }
                             <img src='@picture.thumbnailComplete' title='@picture.comment.getOrElse("")'>
                             @if(models.BackEndUser.isWriter(request)){</a>}

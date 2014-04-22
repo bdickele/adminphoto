@@ -12,6 +12,7 @@ import play.api.mvc.Controller
 import play.modules.reactivemongo.MongoController
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import language.postfixOps
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.Play.current
 
