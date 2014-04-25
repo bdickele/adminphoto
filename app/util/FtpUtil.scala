@@ -1,6 +1,6 @@
 package util
 
-import org.apache.commons.net.ftp.{FTPFile, FTPClient}
+import org.apache.commons.net.ftp.{FTPClientConfig, FTPFile, FTPClient}
 import play.api.{Logger, Play}
 
 /**
@@ -16,8 +16,10 @@ object FtpUtil {
 
   def load(parentFolder: Option[String])(filterFunction: FTPFile => Boolean): List[String] = {
     val client = new FTPClient()
+    val config = new FTPClientConfig((FTPClientConfig.SYST_UNIX))
     try {
       Logger.info("Connecting to pictures hoster through FTP...")
+      client.configure(config)
       client.connect(FtpClientAddress)
       client.login(FtpClientLogin, FtpClientPassword)
       Logger.info("Connected")
