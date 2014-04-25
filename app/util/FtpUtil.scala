@@ -1,6 +1,6 @@
 package util
 
-import org.apache.commons.net.ftp.{FTPClientConfig, FTPFile, FTPClient}
+import org.apache.commons.net.ftp.{FTPConnectionClosedException, FTPClientConfig, FTPFile, FTPClient}
 import play.api.{Logger, Play}
 
 /**
@@ -14,23 +14,20 @@ object FtpUtil {
   lazy val FtpClientPassword = Play.current.configuration.getString("ftp.client.password").get
   lazy val FtpClientPhotoStock = Play.current.configuration.getString("ftp.client.photostock").get
 
+
   def load(parentFolder: Option[String])(filterFunction: FTPFile => Boolean): List[String] = {
     val client = new FTPClient()
-    val config = new FTPClientConfig((FTPClientConfig.SYST_UNIX))
     try {
       Logger.info("Connecting to pictures hoster through FTP...")
-      client.configure(config)
       client.connect(FtpClientAddress)
       client.login(FtpClientLogin, FtpClientPassword)
+      client.enterLocalPassiveMode()
       Logger.info("Connected")
 
-      val photoStockRoot = FtpClientPhotoStock
-      val workingDirectory = parentFolder match {
-        case None => photoStockRoot
-        case Some(s) => photoStockRoot + s
-      }
+      client.changeWorkingDirectory(FtpClientPhotoStock)
+      if (parentFolder.isDefined) client.changeWorkingDirectory(parentFolder.get)
 
-      val files = client.listFiles(workingDirectory)
+      val files = client.listFiles()
       val folders = if (files.isEmpty) List() else files.filter(filterFunction).map(_.getName).toList
       client.logout()
       folders
@@ -68,6 +65,7 @@ object FtpUtil {
     try {
       client.connect(FtpClientAddress)
       client.login(FtpClientLogin, FtpClientPassword)
+      client.enterLocalPassiveMode()
 
       val picturesRoot = FtpClientPhotoStock + parentFolder
 
