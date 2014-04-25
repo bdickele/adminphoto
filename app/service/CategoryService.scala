@@ -76,7 +76,7 @@ object CategoryService extends Controller with MongoController {
     galleries.isEmpty match {
       case true => collection.remove(Json.obj("categoryId" -> categoryId))
       //case false => Future.failed(new Error("You can't delete a non-empty category"))
-      case false => Future.failed(new LastError(
+      case false => Future.successful(new LastError(
         ok = false,
         err = Some("Non-empty category"),
         code = None,
