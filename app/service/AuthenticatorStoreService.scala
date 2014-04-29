@@ -2,10 +2,7 @@ package service
 
 import securesocial.core._
 import play.api.cache.Cache
-import org.joda.time.DateTime
 import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 import securesocial.core.IdentityId
 import play.modules.reactivemongo.json.collection.JSONCollection
 import play.api.mvc.Controller
@@ -59,37 +56,15 @@ class AuthenticatorStoreService(application: play.api.Application) extends Authe
     Right(())
   }
 
-  // --------------------------------------------------------------
-  // Mappers (reading)
-  // --------------------------------------------------------------
+  // Mappers : Json -> Authenticator
 
-  implicit val identityIdReader: Reads[IdentityId] = (
-    (__ \ "userId").read[String] and
-      (__ \ "providerId").read[String]
-    )(IdentityId.apply _)
+  implicit val identityIdReader = Json.reads[IdentityId]
 
-  implicit val authenticatorReader: Reads[Authenticator] = (
-    (__ \ "id").read[String] and
-      (__ \ "identityId").read[IdentityId] and
-      (__ \ "creationDate").read[DateTime] and
-      (__ \ "lastUsed").read[DateTime] and
-      (__ \ "expirationDate").read[DateTime]
-    )(Authenticator.apply _)
+  implicit val authenticatorReader = Json.reads[Authenticator]
 
-  // --------------------------------------------------------------
-  // Mappers (writing)
-  // --------------------------------------------------------------
+  // Mappers : Authenticator -> Json
 
-  implicit val identityIdWriter: Writes[IdentityId] = (
-    (__ \ "userId").write[String] and
-      (__ \ "providerId").write[String]
-    )(unlift(IdentityId.unapply))
+  implicit val identityWriter = Json.writes[IdentityId]
 
-  implicit val tokenWriter: Writes[Authenticator] = (
-    (__ \ "id").write[String] and
-      (__ \ "identityId").write[IdentityId] and
-      (__ \ "creationDate").write[DateTime] and
-      (__ \ "lastUsed").write[DateTime] and
-      (__ \ "expirationDate").write[DateTime]
-    )(unlift(Authenticator.unapply))
+  implicit val tokenWriter = Json.writes[Authenticator]
 }

@@ -15,6 +15,8 @@ case class Versioning(version: Int,
                       updateUser: String) {
 
   def increment(user: String) = copy(version = this.version + 1, updateDate = new DateTime(), updateUser = user)
+
+  lazy val updateDateAsString = updateDate.toString(Versioning.DateFormatter)
 }
 
 
