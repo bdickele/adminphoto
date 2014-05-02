@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit
 import app.TestApplication
 import service.CategoryService
 import models.Category
+import play.api.libs.json.JsObject
 
 
 class CategoryServiceSpec extends Specification {
@@ -38,6 +39,17 @@ class CategoryServiceSpec extends Specification {
       val c = list.last
       c.categoryId must equalTo(1)
       c.title must equalTo("2004")
+    }
+  }
+
+  "Method findAllJson()" should {
+
+    lazy val future = CategoryService.findAllJson
+    lazy val list: List[JsObject] = Await.result(future, Duration(5, TimeUnit.SECONDS))
+
+    "contain all categories" in new TestApplication {
+      list.foreach(c => println("> JsObject found " + c.toString))
+      list.size must equalTo(11)
     }
   }
 

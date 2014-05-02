@@ -1,7 +1,7 @@
 package service
 
 import play.api.mvc.Controller
-import play.api.libs.json._
+import play.api.libs.json.{JsObject, Json, JsValue}
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import language.postfixOps
@@ -37,6 +37,14 @@ object CategoryService extends Controller with MongoController {
       sort(Json.obj("rank" -> -1)).
       cursor[Category].
       collect[List]()
+
+  def findAllJson: Future[List[JsObject]] =
+    collection.
+      find(Json.obj(), Json.obj("_id" -> 0, "categoryId" -> 1, "title" -> 1)).
+      sort(Json.obj("rank" -> -1)).
+      cursor[JsObject].
+      collect[List]()
+
 
   // --------------------------------------------------------------
   // Create & update
