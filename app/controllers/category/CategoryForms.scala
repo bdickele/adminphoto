@@ -65,14 +65,8 @@ object CategoryForms extends Controller with SecureSocial {
       // Validation OK
       form => {
         Categories.findAllFromCacheOrDB().find(_.categoryId == form.categoryId) match {
-
           // Edition of an existing category
-          case Some(category) => CategoryService.update(
-            category.copy(
-              title = form.title,
-              comment = form.comment,
-              online = form.online))
-
+          case Some(category) => CategoryService.update(form.categoryId, form.title, form.comment, form.online)
           // New category
           case None => CategoryService.create(form.title, form.comment, form.online)
         }

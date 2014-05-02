@@ -71,7 +71,7 @@ object Galleries extends Controller with SecureSocial {
   /** A gallery has to "go down" in the hierarchy of galleries */
   def down(galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
     val categoryId = GalleryReadService.findCategoryId(galleryId)
-    findAllFuture(categoryId).map { galleries =>
+    findAllFuture(categoryId).map {galleries =>
       galleries.find(_.galleryId == galleryId) match {
         case Some(gallery) =>
           val galleryRank = gallery.rank

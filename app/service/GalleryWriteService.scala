@@ -13,7 +13,6 @@ import models.{Versioning, GalleryPic, Gallery}
 import models.GalleryMapper._
 import scala.concurrent.duration._
 import language.postfixOps
-import org.joda.time.DateTime
 
 
 /**
@@ -58,28 +57,27 @@ object GalleryWriteService extends Controller with MongoController {
              newComment: Option[String],
              newOnline: Boolean,
              authId: String): Future[LastError] = {
-    val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
+    val future = GalleryReadService.findById(galleryId)
+    val currentGallery = Await.result(future, 5 seconds).get
     //TODO Quand on change de category il faut re-ordonner les galleries des 2 categories
-    val newGallery = galleryInDB.copy(
+    val newGallery = currentGallery.copy(
       categoryId = newCategoryId,
       title = newTitle,
       online = newOnline,
-      versioning = galleryInDB.versioning.increment(authId),
+      versioning = currentGallery.versioning.increment(authId),
       comment = newComment)
 
     collection.update(Json.obj("galleryId" -> galleryId), newGallery)
   }
 
-  // In that method we update fields field by field
+  // In that method we update a field (individually) and versioning property (using a mapper)
   def updateField(galleryId: Int, field: String, value: JsValue, authId: String): Future[LastError] = {
     val galleryInDB = Await.result(GalleryReadService.findById(galleryId), 5 seconds).get
     collection.update(
       Json.obj("galleryId" -> galleryId),
       Json.obj("$set" -> Json.obj(
         field -> value,
-        "versioning.version" -> (galleryInDB.versioning.version + 1),
-        "versioning.updateDate" -> new DateTime(), // It will be formatted as a String as converter is imported
-        "versioning.updateUser" -> authId)))
+        "versioning" -> galleryInDB.versioning.increment(authId))))
   }
 
   // --------------------------------------------------------------

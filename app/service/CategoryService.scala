@@ -66,11 +66,36 @@ object CategoryService extends Controller with MongoController {
     collection.insert(category)
   }
 
-  // That method updates a category by passing the whole object (an implicit mapper will be used)
-  def update(category: Category): Future[LastError] =
+  // That method updates properties not related to pictures
+  def update(categoryId: Int, newTitle: String, newComment: Option[String],
+             newOnline: Boolean): Future[LastError] = {
+    // Document currently in database
+    val future = find(categoryId)
+    val currentCategory = Await.result(future, 5 seconds).get
+
+    // Let's update it
+    val newCategory = currentCategory.copy(
+      title = newTitle,
+      comment = newComment,
+      online = newOnline)
+    collection.update(Json.obj("categoryId" -> categoryId), newCategory)
+  }
+
+  // Update using JsObject : more complicated isn't it ?
+  def updateWithJsObject(categoryId: Int, newTitle: String, newComment: Option[String], newOnline: Boolean): Future[LastError] = {
+    // Document currently in database
+    val future = collection.find(Json.obj("categoryId" -> categoryId)).one[JsObject]
+    val currentDoc = Await.result(future, 5 seconds).get
+
+    // Let's update it
+    val newValues = Json.obj("title" -> newTitle, "online" -> newOnline) ++
+      (if (newComment.isDefined) Json.obj("comment" -> newComment.get) else Json.obj())
+    val newDoc = currentDoc - "comment" ++ newValues
+
     collection.update(
-      Json.obj("categoryId" -> category.categoryId),
-      category)
+      Json.obj("categoryId" -> categoryId),
+      newDoc)
+  }
 
   // That method updates a singled field of a document
   def updateField(categoryId: Int, field: String, value: JsValue): Future[LastError] =

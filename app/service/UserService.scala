@@ -126,11 +126,10 @@ class UserService(application: play.api.Application) extends UserServicePlugin(a
       cursor[Token].
       collect[List]()
 
-    future.map {
-      list =>
-        val filtered: List[Token] = list.filter(!_.isExpired)
-        deleteTokens()
-        filtered.foreach(save)
+    future.map { list =>
+      val filtered: List[Token] = list.filter(!_.isExpired)
+      deleteTokens()
+      filtered.foreach(save)
     }
   }
 }
