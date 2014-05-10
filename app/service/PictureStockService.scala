@@ -35,9 +35,9 @@ object PictureStockService {
 
   /** @return picture folders from cache or load it if not already cached */
   def loadMainFolders(): List[String] =
-    Cache.getOrElse[List[String]](CacheMainFolders) {
-      if (Const.OffLine) localMainFolders else remoteMainFolders
-    }
+  //Cache.getOrElse[List[String]](CacheMainFolders) {
+    if (Const.OffLine) localMainFolders else remoteMainFolders
+  //}
 
   /**
    * Loads sub-folders of a main folder (from cache if already cached)
@@ -45,9 +45,9 @@ object PictureStockService {
    * @return list of sub-folder names
    */
   def loadSubFolders(mainFolderName: String): List[String] =
-    Cache.getOrElse[List[String]](CacheSubFolders + mainFolderName) {
-      if (Const.OffLine) localSubFolders(mainFolderName) else remoteSubFolders(mainFolderName)
-    }
+  //Cache.getOrElse[List[String]](CacheSubFolders + mainFolderName) {
+    if (Const.OffLine) localSubFolders(mainFolderName) else remoteSubFolders(mainFolderName)
+  //}
 
   // --------------------------------------------------------------
   // Getting available pictures stock from pictures hoster
