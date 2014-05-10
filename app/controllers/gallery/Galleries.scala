@@ -40,6 +40,51 @@ object Galleries extends Controller with SecureSocial {
     }
   }
 
+  def galleriesOfPreviousCategory(categoryId: Int) = SecuredAction { implicit request =>
+    val categories: List[Category] = Categories.findAllFromCacheOrDB()
+
+    // In case URL contains an incorrect category ID
+    categories.find(_.categoryId == categoryId) match {
+      case None => Categories.couldNotFindCategory(categoryId)
+
+      case Some(category) => {
+
+        // List is sorted by rank (from the higher to the lower)
+        // Thus, I just need to pick up the first one whose rank is < than passed category
+        val previousCategory = categories.find(_.rank < category.rank) match {
+          // If we can't find a category before, then first category is selected
+          case None => categories.head
+          case Some(c) => c
+        }
+
+        Redirect(routes.Galleries.galleries(previousCategory.categoryId))
+      }
+    }
+  }
+
+  def galleriesOfNextCategory(categoryId: Int) = SecuredAction { implicit request =>
+    // Here we need to reverse the list so that they're sorted from smaller rank to higher
+    val categories: List[Category] = Categories.findAllFromCacheOrDB().reverse
+
+    // In case URL contains an incorrect category ID
+    categories.find(_.categoryId == categoryId) match {
+      case None => Categories.couldNotFindCategory(categoryId)
+
+      case Some(category) => {
+
+        // Here list is sorted by from the smaller rank to the higher
+        // Thus, we pick up the first one whose rank is > than passed category
+        val nextCategory = categories.find(_.rank > category.rank) match {
+          // If we can't find a category after, then first category is selected
+          case None => categories.head
+          case Some(c) => c
+        }
+
+        Redirect(routes.Galleries.galleries(nextCategory.categoryId))
+      }
+    }
+  }
+
   def refresh(categoryId: Int) = SecuredAction { implicit request =>
     Redirect(routes.Galleries.galleries(categoryId))
   }
@@ -71,7 +116,7 @@ object Galleries extends Controller with SecureSocial {
   /** A gallery has to "go down" in the hierarchy of galleries */
   def down(galleryId: Int) = SecuredAction(WithRole(Role.Writer)).async { implicit request =>
     val categoryId = GalleryReadService.findCategoryId(galleryId)
-    findAllFuture(categoryId).map {galleries =>
+    findAllFuture(categoryId).map { galleries =>
       galleries.find(_.galleryId == galleryId) match {
         case Some(gallery) =>
           val galleryRank = gallery.rank

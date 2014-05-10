@@ -67,16 +67,13 @@ object PictureStockService {
   // in case we can't connect to pictures hoster
   // --------------------------------------------------------------
 
-  def localMainFolders: List[String] = {
-    localSubFolders("").reverse
-  }
+  def localMainFolders: List[String] = localSubFolders("").reverse
 
-  def localSubFolders(folder: String): List[String] = {
+  def localSubFolders(folder: String): List[String] =
     new File(PhotoStockRootComputer + folder).
       listFiles().
       filter(_.isDirectory).
       map(_.getName).
       toList.
       reverse
-  }
 }

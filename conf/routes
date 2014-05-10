@@ -17,6 +17,8 @@ GET     /gallery/edit/:galleryId                    controllers.gallery.GalleryF
 GET     /gallery/previous/:galleryId                controllers.gallery.GalleryForms.previousGallery(galleryId: Int)
 GET     /gallery/next/:galleryId                    controllers.gallery.GalleryForms.nextGallery(galleryId: Int)
 GET     /gallery/:categoryId                        controllers.gallery.Galleries.galleries(categoryId: Int)
+GET     /gallery/previousCategory/:categoryId       controllers.gallery.Galleries.galleriesOfPreviousCategory(categoryId: Int)
+GET     /gallery/nextCategory/:categoryId           controllers.gallery.Galleries.galleriesOfNextCategory(categoryId: Int)
 GET     /gallery/refresh/:categoryId                controllers.gallery.Galleries.refresh(categoryId: Int)
 GET     /gallery/up/:galleryId                      controllers.gallery.Galleries.up(galleryId: Int)
 GET     /gallery/down/:galleryId                    controllers.gallery.Galleries.down(galleryId: Int)

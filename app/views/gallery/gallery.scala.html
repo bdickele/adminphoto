@@ -20,22 +20,32 @@
             <option value="@category.categoryId" @if(category.categoryId==selectedCategoryId){selected}>@category.title</option>
             }
         </select>
+        <a href="@controllers.gallery.routes.Galleries.galleriesOfPreviousCategory(selectedCategoryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Galleries of previous category">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a href="@controllers.gallery.routes.Galleries.galleriesOfNextCategory(selectedCategoryId)" role="button"
+           class="btn btn-primary btn-sm"
+           title="Galleries of next category">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+        <span style="float:right">
+            @if(models.BackEndUser.isWriter(request)){
+            <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
+               class="btn btn-primary btn-sm"
+               title="Create a new gallery">
+                <span class="glyphicon glyphicon-plus"></span> Add
+            </a>
+            }
+            <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
+               class="btn btn-primary btn-sm"
+               title="Refresh list of galleries">
+                <span class="glyphicon glyphicon-refresh"></span> Refresh
+            </a>
+        </span>
     </div>
     <div class="panel-body">
-        @if(models.BackEndUser.isWriter(request)){
-        <a href="@controllers.gallery.routes.GalleryForms.create(selectedCategoryId)" role="button"
-           class="btn btn-primary btn-sm"
-           title="Create a new gallery">
-            <span class="glyphicon glyphicon-plus"></span> Add
-        </a>
-        }
-        <a href="@controllers.gallery.routes.Galleries.refresh(selectedCategoryId)" role="button"
-           class="btn btn-primary btn-sm"
-           title="Refresh list of galleries">
-            <span class="glyphicon glyphicon-refresh"></span> Refresh
-        </a>
-        <br>
-
         <table class="table table-condensed table-striped">
             <thead>
             <tr>
