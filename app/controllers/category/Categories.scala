@@ -9,9 +9,14 @@ import scala.concurrent.duration._
 import language.postfixOps
 import securesocial.core.SecureSocial
 import service.CategoryService
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import models.{Role, Category}
 import models.WithRole
+import models.WithRole
+import play.api.libs.json.JsObject
+import scala.Some
+import play.api.mvc.SimpleResult
+import java.util.concurrent.TimeUnit
 
 /**
  * Controller for screen related to list of categories
@@ -24,7 +29,13 @@ object Categories extends Controller with SecureSocial {
 
   def categories() = SecuredAction { implicit request =>
     clearCache()
-    Ok(views.html.category.category(findAllFromCacheOrDB()))
+    val categories = findAllFromCacheOrDB()
+
+    // Data related to number of galleries per category
+    val mapCategoryNbGallery = CategoryService.findNumberOfGalleryByCategory()
+    categories.foreach(category => category.nbGallery = mapCategoryNbGallery.getOrElse(category.categoryId, 0))
+
+    Ok(views.html.category.category(categories))
   }
 
   def findAllFromCacheOrDB(): List[Category] =
@@ -107,6 +118,11 @@ object Categories extends Controller with SecureSocial {
 
       case None => couldNotFindCategory(categoryId)
     }
+  }
+
+  def deleteCategory(categoryId: Int) = SecuredAction(WithRole(Role.Writer)) { implicit request =>
+    CategoryService.delete(categoryId)
+    Redirect(routes.Categories.categories())
   }
 
   def couldNotFindCategory(categoryId: Int): SimpleResult =

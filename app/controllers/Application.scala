@@ -27,6 +27,7 @@ object Application extends Controller {
   def javascriptRoutes = Action {
     implicit request =>
       Ok(Routes.javascriptRouter("jsRoutes")(
+        controllers.category.routes.javascript.Categories.deleteCategory,
         controllers.gallery.routes.javascript.Galleries.galleries,
         controllers.gallery.routes.javascript.GalleryPicSelection.pictures,
         controllers.picture.routes.javascript.Pictures.pictures)).as("text/javascript")

@@ -1,15 +1,23 @@
 package service
 
 import play.api.mvc.Controller
-import play.api.libs.json.{JsObject, Json, JsValue}
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import language.postfixOps
 import play.modules.reactivemongo.MongoController
-import play.modules.reactivemongo.json.collection.JSONCollection
-import reactivemongo.core.commands.LastError
-import play.api.libs.concurrent.Execution.Implicits._
+import play.modules.reactivemongo.json.BSONFormats._
+import reactivemongo.core.commands._
 import models.Category
+import reactivemongo.bson.BSONDocument
+import play.modules.reactivemongo.json.collection.JSONCollection
+import scala.Some
+import reactivemongo.core.commands.SumValue
+import reactivemongo.core.commands.GroupField
+import play.api.libs.json.JsObject
+import java.util.concurrent.TimeUnit
 
 /**
  * Services related to CRUD operations of categories
@@ -45,6 +53,23 @@ object CategoryService extends Controller with MongoController {
       cursor[JsObject].
       collect[List]()
 
+  /**
+   * @return Map : <ul>
+   *           <li>Key = category ID</li>
+   *           <li>Value = number of galleries</li>
+   *           </ul>
+   */
+  def findNumberOfGalleryByCategory(): Map[Int, Int] = {
+    val command = Aggregate("gallery", Seq(
+      GroupField("categoryId")("number" -> SumValue(1))
+    ))
+
+    val futureBsonDoc = db.command(command)
+    val futureJsObject = futureBsonDoc.map(doc => doc.toList.map(Json.toJson(_).as[JsObject]))
+
+    val list: List[JsObject] = Await.result(futureJsObject, Duration(5, TimeUnit.SECONDS))
+    list.map(jsObj => ((jsObj \ "_id").as[Int] -> (jsObj \ "number").as[Int])).toMap
+  }
 
   // --------------------------------------------------------------
   // Create & update
@@ -104,17 +129,16 @@ object CategoryService extends Controller with MongoController {
       Json.obj("$set" -> Json.obj(field -> value)))
 
   def delete(categoryId: Int): Future[LastError] = {
-    val galleries = Await.result(GalleryReadService.findAll(categoryId), 5 seconds)
+    val command = Count("gallery", Some(BSONDocument("categoryId" -> categoryId)))
+    val result = db.command(command) // returns Future[Int]
 
-    galleries.isEmpty match {
-      case true => collection.remove(Json.obj("categoryId" -> categoryId))
-      //case false => Future.failed(new Error("You can't delete a non-empty category"))
-      case false => Future.successful(new LastError(
+    val nbGalleries = Await.result(result, 5 seconds)
+    if (nbGalleries == 0) collection.remove(Json.obj("categoryId" -> categoryId))
+    else Future.successful(new LastError(
         ok = false,
         err = Some("Non-empty category"),
         code = None,
         errMsg = Some("You can't delete a non-empty category"),
         None, -1, false))
-    }
   }
 }

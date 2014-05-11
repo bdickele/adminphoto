@@ -10,7 +10,16 @@ case class Category(categoryId: Int,
                     rank: Int,
                     title: String,
                     comment: Option[String],
-                    online: Boolean = true)
+                    online: Boolean = true) {
+
+  private var nbGall = 0
+
+  def nbGallery = nbGall
+
+  def nbGallery_= (x: Int) {
+    nbGall = x
+  }
+}
 
 object Category {
 

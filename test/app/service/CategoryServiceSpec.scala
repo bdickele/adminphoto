@@ -8,6 +8,7 @@ import app.TestApplication
 import service.CategoryService
 import models.Category
 import play.api.libs.json.JsObject
+import reactivemongo.bson.{BSONValue, BSONDocument}
 
 
 class CategoryServiceSpec extends Specification {
@@ -31,7 +32,7 @@ class CategoryServiceSpec extends Specification {
     lazy val list: List[Category] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     "contain all categories" in new TestApplication {
-      list.foreach(c => println("> Found " + c.toString))
+      //list.foreach(c => println("> Found " + c.toString))
       list.size must equalTo(11)
     }
 
@@ -48,8 +49,31 @@ class CategoryServiceSpec extends Specification {
     lazy val list: List[JsObject] = Await.result(future, Duration(5, TimeUnit.SECONDS))
 
     "contain all categories" in new TestApplication {
-      list.foreach(c => println("> JsObject found " + c.toString))
+      //list.foreach(c => println("> JsObject found " + c.toString))
       list.size must equalTo(11)
+    }
+  }
+
+  "Method findNumberOfGalleryByCategory" should {
+
+    "return number of galleries by category" in new TestApplication {
+      val future = CategoryService.findNumberOfGalleryByCategory()
+
+      val list: List[JsObject] = Await.result(future, Duration(5, TimeUnit.SECONDS))
+
+      val map: Map[Int, Int] = list.map { jsObj =>
+        ((jsObj \ "_id").as[Int] -> (jsObj \ "number").as[Int])
+      }.toMap
+
+      //println(map)
+
+      // 2 galleries for 2004
+      var nb = map.get(1).get
+      nb must equalTo(2)
+
+      // 2 galleries for 2005
+      nb = map.get(2).get
+      nb must equalTo(8)
     }
   }
 

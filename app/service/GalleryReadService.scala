@@ -14,7 +14,6 @@ import models.Gallery
 import models.GalleryMapper._
 
 
-
 /**
  * Service related to reading of data related to galleries
  * bdickele

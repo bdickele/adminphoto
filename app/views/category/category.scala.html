@@ -1,11 +1,13 @@
 @(categories: List[models.Category])(implicit request: RequestHeader)
 
 @main("Categories"){
+    @deletionConfirmation()
     <script>
             (function () {
                 document.getElementById("addPictures").focus();
             })();
     </script>
+    <script src='@routes.Assets.at("javascripts/category.js")'></script>
 }{
 
 @menu.topmenu(views.menu.TopMenuElement.Category)
@@ -29,10 +31,12 @@
             <tr>
                 <th style="text-align:center;">Name</th>
                 <th style="text-align:center;">Comment</th>
+                <th style="text-align:center;">Nb galleries</th>
                 <th style="text-align:center;">Online</th>
                 @if(models.BackEndUser.isWriter(request)){
                 <th style="text-align:center;">Up</th>
                 <th style="text-align:center;">Down</th>
+                <th style="text-align:center;">Delete</th>
                 }
             </tr>
             </thead>
@@ -42,6 +46,7 @@
                 @if(models.BackEndUser.isWriter(request)){
                     <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.title</a></td>
                     <td><a href="@controllers.category.routes.CategoryForms.edit(category.categoryId)">@category.comment</a></td>
+                    <td style="text-align:center;">@category.nbGallery</td>
                     <td style="text-align:center;">
                         <input type="checkbox"
                                onchange="self.location='@controllers.category.routes.Categories.onOffLine(category.categoryId)'"
@@ -64,6 +69,13 @@
                             </button>
                         </a>
                         }
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="javascript:askDeletionConfirmation(@category.categoryId); return false">
+                            <button type="button" class="btn btn-primary btn-sm" @if(category.nbGallery > 0){ disabled }>
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </a>
                     </td>
                 } else {
                     <td>@category.title</td>
