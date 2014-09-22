@@ -65,7 +65,7 @@
                     <img src='@gallery.thumbnailComplete'></a></td>
                 <td><a href="@controllers.gallery.routes.GalleryForms.edit(gallery.galleryId)">@gallery.title</a>
                     <br>&nbsp;&nbsp;@gallery.nbPictures pictures
-                    <br>&nbsp;&nbsp;<i>Last update at @gallery.versioning.updateDateAsString by @gallery.versioning.updateUser</i></td>
+                    <br>&nbsp;&nbsp;<i>Last update at @gallery.versioning.updateDateAsStringShort by @gallery.versioning.updateUser</i></td>
                 <td style="text-align:center;">
                     <label><input type="checkbox"
                                   onchange="self.location='@controllers.gallery.routes.Galleries.onOffLine(gallery.galleryId)'"

@@ -16,15 +16,17 @@ case class Versioning(version: Int,
 
   def increment(user: String) = copy(version = this.version + 1, updateDate = new DateTime(), updateUser = user)
 
-  lazy val updateDateAsString = updateDate.toString(Versioning.DateFormatter)
+  lazy val updateDateAsStringShort = updateDate.toString(Versioning.DateFormatter_WithoutMillis)
 }
 
 
 object Versioning {
 
-  val pattern = "yyyy-MM-dd HH:mm:ss.SSS"
+  val pattern_yyyyMMdd_HHmmssSSS = "yyyy-MM-dd HH:mm:ss.SSS"
+  val pattern_yyyyMMdd_HHmmss = "yyyy-MM-dd HH:mm:ss"
 
-  val DateFormatter = DateTimeFormat.forPattern(pattern)
+  val DateFormatter = DateTimeFormat.forPattern(pattern_yyyyMMdd_HHmmssSSS)
+  val DateFormatter_WithoutMillis = DateTimeFormat.forPattern(pattern_yyyyMMdd_HHmmss)
 
 
   def newOne(user: String) = {
