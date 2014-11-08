@@ -57,13 +57,8 @@ class CategoryServiceSpec extends Specification {
   "Method findNumberOfGalleryByCategory" should {
 
     "return number of galleries by category" in new TestApplication {
-      val future = CategoryService.findNumberOfGalleryByCategory()
 
-      val list: List[JsObject] = Await.result(future, Duration(5, TimeUnit.SECONDS))
-
-      val map: Map[Int, Int] = list.map { jsObj =>
-        ((jsObj \ "_id").as[Int] -> (jsObj \ "number").as[Int])
-      }.toMap
+      val map: Map[Int, Int] = CategoryService.findNumberOfGalleryByCategory()
 
       //println(map)
 
